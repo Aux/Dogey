@@ -64,6 +64,9 @@ namespace Dogey
             _dogey.ProfileUpdated += Events.OnProfileUpdated;
             _dogey.UserUpdated += Events.OnUserUpdated;
             _dogey.JoinedServer += Events.OnJoinedServer;
+            
+            _dogey.AddModule<Modules.Chatlog.Initialize>("Chatlog", ModuleFilter.None);
+            _dogey.AddModule<Modules.Bot.Initialize>("Bot", ModuleFilter.None);
 
             _dogey.ExecuteAndWait(async () =>
             {
@@ -73,12 +76,12 @@ namespace Dogey
                         if (string.IsNullOrEmpty(config.Discord.Token))
                         {
                             await _dogey.Connect(config.Discord.Email, config.Discord.Password);
-                            DogeyConsole.Write("Connected to Discord with User Account\n");
+                            DogeyConsole.Write($"Connected to Discord using {config.Discord.Email}\n");
                             break;
                         } else
                         {
                             await _dogey.Connect(config.Discord.Token);
-                            DogeyConsole.Write("Connected to Discord with Bot Account\n");
+                            DogeyConsole.Write("Connected to Discord using bot token.\n");
                             break;
                         }
                     } catch (Exception ex)
