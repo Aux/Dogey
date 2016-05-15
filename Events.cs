@@ -49,10 +49,18 @@ namespace Dogey
 
         internal static void OnMessageRecieved(object s, MessageEventArgs e)
         {
+            if (Program.config.ChatlogModule && !e.Message.IsAuthor) {
+                if (!Log.Exists(e.Server))
+                {
+                    Log.Create(e.Server);
+                }
+                Log.Message(e.Server, e.Message);
+            }
+
             if (e.Server != null) DogeyConsole.Append($"[{e.Server.Name}]", ConsoleColor.Gray);
             DogeyConsole.Append($"[{e.Channel.Name}]", ConsoleColor.Gray);
             DogeyConsole.Append($" {e.User.Name}: ", ConsoleColor.Yellow);
-
+            
             if (e.Message.Attachments.Count() != 0)
             {
                 DogeyConsole.Append("[attachment]\n", ConsoleColor.White);
