@@ -66,7 +66,8 @@ namespace Dogey
             _dogey.JoinedServer += Events.OnJoinedServer;
             
             _dogey.AddModule<Modules.Chatlog.Initialize>("Chatlog", ModuleFilter.None);
-            _dogey.AddModule<Modules.Bot.Initialize>("Bot", ModuleFilter.None);
+            _dogey.AddModule<Modules.Bot.Default>("Bot", ModuleFilter.None);
+            _dogey.AddModule<Modules.Games.Draft>("Games", ModuleFilter.None);
 
             _dogey.ExecuteAndWait(async () =>
             {

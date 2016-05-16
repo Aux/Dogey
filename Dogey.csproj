@@ -155,7 +155,7 @@
     <Compile Include="Config\MySqlCredential.cs" />
     <Compile Include="Config\TwitchCredential.cs" />
     <Compile Include="Events.cs" />
-    <Compile Include="Modules\Bot\Initialize.cs" />
+    <Compile Include="Modules\Bot\Default.cs" />
     <Compile Include="Modules\Chatlog\Initialize.cs" />
     <Compile Include="Modules\Chatlog\Log.cs" />
     <Compile Include="Modules\Custom\Custom.cs" />
@@ -163,6 +163,10 @@
     <Compile Include="Modules\Custom\Types\Command.cs" />
     <Compile Include="Modules\Custom\Types\Returnable.cs" />
     <Compile Include="Modules\Custom\Types\ReturnableType.cs" />
+    <Compile Include="Modules\Games\Game.cs" />
+    <Compile Include="Modules\Games\Draft.cs" />
+    <Compile Include="Modules\Games\Types\DraftColor.cs" />
+    <Compile Include="Modules\Games\Types\DraftTeam.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\DogeyConsole.cs" />
