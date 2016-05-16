@@ -158,6 +158,11 @@
     <Compile Include="Modules\Bot\Initialize.cs" />
     <Compile Include="Modules\Chatlog\Initialize.cs" />
     <Compile Include="Modules\Chatlog\Log.cs" />
+    <Compile Include="Modules\Custom\Custom.cs" />
+    <Compile Include="Modules\Custom\Initialize.cs" />
+    <Compile Include="Modules\Custom\Types\Command.cs" />
+    <Compile Include="Modules\Custom\Types\Returnable.cs" />
+    <Compile Include="Modules\Custom\Types\ReturnableType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\DogeyConsole.cs" />
@@ -172,7 +177,6 @@
   <ItemGroup>
     <Folder Include="Modules\Admin\" />
     <Folder Include="Modules\Chatlog\Types\" />
-    <Folder Include="Modules\Custom\" />
     <Folder Include="Modules\Help\" />
     <Folder Include="Modules\Twitch\" />
   </ItemGroup>

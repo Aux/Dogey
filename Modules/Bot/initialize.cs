@@ -49,6 +49,7 @@ namespace Dogey.Modules.Bot
                         }
 
                         await e.Channel.SendFile(dogeFile);
+                        System.IO.File.Delete(dogeFile);
                     });
             });
 
