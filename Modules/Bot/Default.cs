@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Bot
 {
-    public class Initialize : IModule
+    public class Default : IModule
     {
         private ModuleManager _manager;
         private DiscordClient _dogey;

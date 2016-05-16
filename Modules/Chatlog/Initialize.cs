@@ -26,8 +26,6 @@ namespace Dogey.Modules.Chatlog
                 cmd.CreateCommand("count")
                     .Description("Get the number of messages posted on this server, optionally specify a user and/or a span of time.")
                     .Parameter("phrase", ParameterType.Unparsed)
-                    //.Parameter("begintime", ParameterType.Optional)
-                    //.Parameter("endtime", ParameterType.Optional)
                     .Do(async e =>
                     {
                         string serverFolder = $"servers\\{e.Server.Id}";

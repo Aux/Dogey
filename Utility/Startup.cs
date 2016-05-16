@@ -62,7 +62,7 @@ namespace Dogey.Utility
             DogeyConsole.Append("[Error] ", ConsoleColor.Red);
             DogeyConsole.Append("Configuration created at ");
             DogeyConsole.Append("\"config\\configuration.json\"", ConsoleColor.Gray);
-            DogeyConsole.Write(". Please fill in therequired fields and restart Dogey.");
+            DogeyConsole.Write(". Please fill in the required fields and restart Dogey.");
         }
     }
 }
