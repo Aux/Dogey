@@ -37,22 +37,26 @@ namespace Dogey.Modules.Games
                         DraftInProgress = true;
                         Players.Clear();
 
-                        int teams = Convert.ToInt32(e.Args[0]);
+                        int teamCount = Convert.ToInt32(e.Args[0]);
                         int playersPerTeam = 10;
                         
                         if (!string.IsNullOrEmpty(e.Args[1])) playersPerTeam = Convert.ToInt32(e.Args[1]);
 
-                    var draftMsg = await e.Channel.SendMessage(
-                        $"@here, There are currently 0/{teams * playersPerTeam} players waiting. " +
-                        $"\nType `{Program.config.DefaultPrefix}draft join` to play!" +
-                        "\n**Time Remaining:** 30 seconds"
-                        );
-                        
+                        var draftMsg = await e.Channel.SendMessage(
+                            $"@here, There are currently 0/{teamCount * playersPerTeam} players waiting. " +
+                            $"\nType `{Program.config.DefaultPrefix}draft join` to play!" +
+                            "\n**Time Remaining:** 30 seconds"
+                            );
+
                         int timer = 30;
-                        int maxPlayers = teams * playersPerTeam;
+                        int maxPlayers = teamCount * playersPerTeam;
                         while (Players.Count < maxPlayers)
                         {
-                            if (!DraftInProgress) { await e.Channel.SendMessage("Draft Cancelled."); return; }
+                            if (!DraftInProgress) {
+                                await draftMsg.Delete();
+                                await e.Channel.SendMessage("Draft Cancelled.");
+                                return;
+                            }
 
                             await Task.Delay(1000);
                             timer -= 1;
@@ -63,13 +67,42 @@ namespace Dogey.Modules.Games
                             if (timer <= 0) break;
                         }
 
+                        await draftMsg.Delete();
                         if (Players.Count() < maxPlayers)
                         {
-                            await e.Channel.SendMessage("Not enough players joined to initiate a draft.");
+                            await e.Channel.SendMessage($"I need {maxPlayers - Players.Count()} more players to start a draft.");
                             return;
                         } else
                         {
-                            //Pick team captains, pick teams, create voice channels, move teams to channels.
+                            List<int> chosenTeams = new List<int>();
+                            List<int> chosenCapts = new List<int>();
+                            for (int i = 0; i <= teamCount; i++)
+                            {
+                                int teami = new Random().Next(0, DraftColor.Colors.Count() - 1);
+                                do { teami = new Random().Next(0, DraftColor.Colors.Count() - 1); } while (chosenTeams.Contains(teami));
+                                chosenTeams.Add(teami);
+                                int capti = new Random().Next(0, Players.Count() - 1);
+                                do { capti = new Random().Next(0, Players.Count() - 1); } while (chosenCapts.Contains(capti));
+                                chosenCapts.Add(capti);
+
+                                DraftTeam team = new DraftTeam()
+                                {
+                                    Name = DraftColor.Names[teami],
+                                    Color = DraftColor.Colors[teami],
+                                    Captain = Players[capti]
+                                };
+
+                                team.Role = await e.Server.CreateRole(
+                                    name: "Team " + team.Name,
+                                    color: team.Color);
+                            }
+
+                            string captainMsg = "The team captains have been chosen!\n";
+                            foreach(DraftTeam team in Teams)
+                            {
+                                captainMsg += $"{team.Name}'s captain is {team.Captain.Mention}";
+                            }
+                            await e.Channel.SendMessage(captainMsg);
                         }
 
                         DraftInProgress = false;
@@ -90,5 +123,11 @@ namespace Dogey.Modules.Games
 
             DogeyConsole.Write("Games Module loaded.");
         }
+        
+        public static async void MoveTeams(CommandEventArgs e, List<DraftTeam> draftTeams)
+        {
+            await e.Channel.SendMessage("");
+        }
+
     }
 }

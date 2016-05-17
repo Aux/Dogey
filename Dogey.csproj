@@ -170,6 +170,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\DogeyConsole.cs" />
+    <Compile Include="Utility\Extensions.cs" />
     <Compile Include="Utility\Messages.cs" />
     <Compile Include="Utility\SQLite.cs" />
     <Compile Include="Utility\Startup.cs" />
