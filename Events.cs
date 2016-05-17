@@ -38,6 +38,8 @@ namespace Dogey
             if (activity != null)
             {
                 string message = Messages.Activity(e.Before, e.After);
+                if (message == null) return;
+
                 if (!string.IsNullOrEmpty(message)) activity.SendMessage(message);
             }
         }
