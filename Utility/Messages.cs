@@ -18,6 +18,7 @@ namespace Dogey.Utility
             else
                 if (Before.Status.Value != After.Status.Value)
             {
+                if (After.Status.Value == "idle") return null;
                 if (After.Status.Value == "online")
                 {
                     return $"**STATUS:** *{After.Name}* is now *{After.Status.Value}*";
