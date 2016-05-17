@@ -51,6 +51,49 @@ namespace Dogey.Modules.Bot
                         await e.Channel.SendFile(dogeFile);
                         System.IO.File.Delete(dogeFile);
                     });
+                cmd.CreateCommand("whosagoodboy")
+                    .Alias(new string[] { "wag", "goodboy" })
+                    .Description("Who's a good boy?")
+                    .Parameter("Name", ParameterType.Multiple)
+                    .Do(async e =>
+                    {
+                        string name;
+                        if (string.IsNullOrEmpty(e.Args[0])) {
+                            name = e.User.Name;
+                        } else {
+                            name = e.Args.Aggregate((i, j) => i + " " + j);
+                        }
+                        
+                        byte[] nameBytes = Encoding.ASCII.GetBytes(name);
+                        int[] nameInts = nameBytes.Select(x => (int)x).ToArray();
+
+                        int goodBoy = (nameInts.Sum() * nameInts.Count()) % 1000 / 10;
+                        
+                        if (goodBoy == 0)
+                        {
+                            await e.Channel.SendMessage($"{name} is {goodBoy}% good. Most definitely not a good dog.");
+                        } else
+                        if (goodBoy <= 20)
+                        {
+                            await e.Channel.SendMessage($"{name} is {goodBoy}% good. Bad doge! >:(");
+                        } else
+                        if (goodBoy <= 40)
+                        {
+                            await e.Channel.SendMessage($"{name} is {goodBoy}% good. Not you, but maybe someone near you.");
+                        } else
+                        if (goodBoy <= 60)
+                        {
+                            await e.Channel.SendMessage($"{name} is {goodBoy}% good. Cute lil dogey :D");
+                        } else
+                        if (goodBoy <= 80)
+                        {
+                            await e.Channel.SendMessage($"{name} is {goodBoy}% good. You are! \\o/");
+                        } else
+                        if (goodBoy <= 100)
+                        {
+                            await e.Channel.SendMessage($"{name} is {goodBoy}% good. WHO'S A GOOD BOY???? YOU ARE!!!!!! \\o3o/");
+                        }
+                    });
             });
 
             DogeyConsole.Write("Bot Module loaded.");

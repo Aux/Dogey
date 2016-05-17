@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Discord;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,14 @@ namespace Dogey.Modules.Games.Types
     public class DraftTeam
     {
         public string Name { get; set; }
-        public DraftColor Color { get; set; }
-        public List<Discord.User> Players { get; set; }
+        public Color Color { get; set; }
+        public User Captain { get; set; }
+        public List<User> Players { get; set; }
+        public Role Role { get; set; }
 
+        public DraftTeam()
+        {
+            
+        }
     }
 }
