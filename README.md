@@ -6,9 +6,10 @@ Dogey is currently a bot for use with Discord. Built using the Discord.Net libra
 Keep in mind these commands are mostly for testing features as I add them.
 
 ######Chat Module
-~chat count - *Get the total number of messages you have sent on this server.
+~chat count - *Get the total number of messages you have sent on this server*.
 
 ######Bot Module
-~doge verytext muchparameter - *Generate a doge*
+~doge verytext muchparameter - *Generate a doge.*
+~whosagooddog ~goodboy ~wag user - *Let's you know how good a dog this user is.*
 
-**Note:** You can test Dogey at http://www.voice.auxesis.tv/, he is currently not available to be added to servers yet.
+**Note:** You can test Dogey at http://www.voice.auxesis.tv/, he is currently not available to be added to servers.
