@@ -23,9 +23,10 @@ namespace Dogey.Modules.Chatlog
             
             manager.CreateCommands("chat", cmd =>
             {
-                cmd.CreateCommand("count")
-                    .Description("Get the number of messages posted on this server, optionally specify a user and/or a span of time.")
-                    .Parameter("phrase", ParameterType.Unparsed)
+                cmd.CreateCommand("total")
+                    .Description("Get the total number of messages posted on this server by the user,")
+                    .Parameter("user", ParameterType.Unparsed)
+                    .Parameter("channel", ParameterType.Unparsed)
                     .Do(async e =>
                     {
                         string serverFolder = $"servers\\{e.Server.Id}";
@@ -52,22 +53,12 @@ namespace Dogey.Modules.Chatlog
                         
                         await e.Channel.SendMessage($"{e.User.Mention}, you have posted {count} messages.");
                     });
-                //cmd.CreateCommand("download")
-                //    .Description("Download all chat messages in the current server.")
-                //    .Do(async e =>
-                //    {
-                //        await e.Channel.SendMessage($"{e.User.Mention}, starting message download...");
-
-                //        IEnumerable<Message> msgs;
-                //        msgs = (await e.Channel.DownloadMessages(100000));
-
-                //        foreach(Message msg in msgs)
-                //        {
-                //            Log.Message(e.Server, msg);
-                //        }
-                        
-                //        await e.Channel.SendMessage($"{e.User.Mention}, {msgs.Count()} messages have been downloaded.");
-                //    });
+                cmd.CreateCommand("count")
+                    .Description("Download all chat messages in the current server.")
+                    .Do(async e =>
+                    {
+                        await e.Channel.SendMessage($"{e.User.Mention}, this doesn't work yet...");
+                    });
             });
 
             DogeyConsole.Write("Chatlog Module loaded.");

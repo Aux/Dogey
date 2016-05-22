@@ -167,6 +167,7 @@
     <Compile Include="Modules\Games\Draft.cs" />
     <Compile Include="Modules\Games\Types\DraftColor.cs" />
     <Compile Include="Modules\Games\Types\DraftTeam.cs" />
+    <Compile Include="Modules\Twitch\Initialize.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\DogeyConsole.cs" />
@@ -183,7 +184,7 @@
     <Folder Include="Modules\Admin\" />
     <Folder Include="Modules\Chatlog\Types\" />
     <Folder Include="Modules\Help\" />
-    <Folder Include="Modules\Twitch\" />
+    <Folder Include="Modules\Twitch\Types\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Dogey.ico" />
