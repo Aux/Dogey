@@ -1,5 +1,5 @@
 ## Dogey
-Dogey is a bot for use with Discord. He is currently not available to be added to personal servers, but you can join http://voice.auxesis.tv to test some commands.
+Dogey is a bot for use with Discord, created using the wonderful Discord.Net. He is currently not available to be added to personal servers, but you can join http://voice.auxesis.tv to test some commands.
 
 
 ### Commands
