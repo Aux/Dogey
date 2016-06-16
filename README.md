@@ -7,7 +7,7 @@ Dogey is a bot for use with Discord. He is currently not available to be added t
 - [Custom](https://github.com/Auxes/Dogey/wiki/Commands%5C-Custom)
 - [Dogey](https://github.com/Auxes/Dogey/wiki/Commands%5C-Dogey)
 - [GameStats](https://github.com/Auxes/Dogey/wiki/Commands%5C-GameStats)
-- [Inforamation](https://github.com/Auxes/Dogey/wiki/Commands%5C-Information)
+- [Information](https://github.com/Auxes/Dogey/wiki/Commands%5C-Information)
 - [Search](https://github.com/Auxes/Dogey/wiki/Commands%5C-Search)
 - [Usage](https://github.com/Auxes/Dogey/wiki/Commands%5C-Usage)
 
