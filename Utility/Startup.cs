@@ -1,4 +1,5 @@
-﻿using Dogey.Config;
+﻿using Dogey.Common;
+using Dogey.Common.Modules;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,13 @@ namespace Dogey.Utility
         /// </summary>
         public static void DogeyBanner()
         {
-            DogeyConsole.Write("┌──────────────────────┐", ConsoleColor.Yellow);
-            DogeyConsole.Append($"│    ", ConsoleColor.Yellow);
-            DogeyConsole.Append($"Dogey v{ Assembly.GetEntryAssembly().GetName().Version}");
+            string bannerText = $"Dogey v{Assembly.GetEntryAssembly().GetName().Version}";
+            
+            DogeyConsole.Write($"┌────{new string('─', bannerText.Count())}────┐", ConsoleColor.Yellow);
+            DogeyConsole.Append("│    ", ConsoleColor.Yellow);
+            DogeyConsole.Append(bannerText);
             DogeyConsole.Write("    │", ConsoleColor.Yellow);
-            DogeyConsole.Write("└──────────────────────┘\n", ConsoleColor.Yellow);
+            DogeyConsole.Write($"└────{new string('─', bannerText.Count())}────┘\n", ConsoleColor.Yellow);
         }
 
         /// <summary>
@@ -47,11 +50,7 @@ namespace Dogey.Utility
 
             var config = new Configuration()
             {
-                DefaultPrefix = '~',
-                Discord = new DiscordCredential(),
-                MySQL = new MySqlCredential(),
-                Google = new GoogleCredential(),
-                Twitch = new TwitchCredential(),
+                Prefix = '~'
             };
 
             if (!Directory.Exists("config")) Directory.CreateDirectory("config");
@@ -64,5 +63,6 @@ namespace Dogey.Utility
             DogeyConsole.Append("\"config\\configuration.json\"", ConsoleColor.Gray);
             DogeyConsole.Write(". Please fill in the required fields and restart Dogey.");
         }
+        
     }
 }
