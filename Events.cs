@@ -1,79 +1,40 @@
-﻿//using Discord;
-//using Dogey.Modules.Chatlog;
-//using Dogey.Utility;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using Discord;
+using Dogey.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-//namespace Dogey
-//{
-//    public class Events
-//    {
-//        internal static void OnJoinedServer(object sender, ServerEventArgs e)
-//        {
-//            if (Program.config.ChatlogModule)
-//            {
-//                Log.Exists(e.Server);
-//            }
-//            if (Program.config.CustomModule)
-//            {
+namespace Dogey
+{
+    public class Events
+    {
+        internal static void OnMessageRecieved(object s, MessageEventArgs e)
+        {
+            if (e.Message.IsMentioningMe()) Console.BackgroundColor = ConsoleColor.DarkBlue;
+            if (e.Channel.IsPrivate && e.Server == null)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write("[PM]");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.Write($"[{e.Server.Name} - {e.Channel.Name}]");
+            }
 
-//            }
-//        }
-
-//        internal static void OnUserUpdated(object sender, UserUpdatedEventArgs e)
-//        {
-//            Channel activity = null;
-//            foreach (var channel in e.Server.TextChannels)
-//            {
-//                if (channel.Name == "activity")
-//                {
-//                    activity = channel;
-//                    continue;
-//                }
-//            }
-
-//            if (activity != null)
-//            {
-//                string message = Messages.Activity(e.Before, e.After);
-//                if (message == null) return;
-
-//                if (!string.IsNullOrEmpty(message)) activity.SendMessage(message);
-//            }
-//        }
-
-//        internal static void OnProfileUpdated(object sender, ProfileUpdatedEventArgs e)
-//        {
-
-//        }
-
-//        internal static void OnMessageRecieved(object s, MessageEventArgs e)
-//        {
-//            if (Program.config.ChatlogModule && !e.Message.IsAuthor) {
-//                if (!Log.Exists(e.Server))
-//                {
-//                    Log.Create(e.Server);
-//                }
-//                Log.Message(e.Server, e.Message);
-//            }
-
-//            if (e.Server != null) DogeyConsole.Append($"[{e.Server.Name}]", ConsoleColor.Gray);
-//            DogeyConsole.Append($"[{e.Channel.Name}]", ConsoleColor.Gray);
-//            DogeyConsole.Append($" {e.User.Name}: ", ConsoleColor.Yellow);
-            
-//            if (e.Message.Attachments.Count() != 0)
-//            {
-//                DogeyConsole.Append("[attachment]\n", ConsoleColor.White);
-//                return;
-//            }
-//            if (e.Message.IsTTS)
-//            {
-//                DogeyConsole.Append($"TTS:= {e.Message.RawText}\n", ConsoleColor.White);
-//                return;
-//            }
-//            DogeyConsole.Append(e.Message.RawText + "\n", ConsoleColor.White);
-//        }
-//    }
-//}
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Write($"[{e.User.Name}]");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write($" {e.Message.RawText}");
+            if (e.Message.Attachments.Count() > 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($" +{e.Message.Attachments.Count()}");
+            }
+            Console.WriteLine();
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
+    }
+}

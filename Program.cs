@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Audio;
 using Discord.Commands;
 using Discord.Modules;
 using Dogey.Common;
@@ -51,13 +50,14 @@ namespace Dogey
             })
             .UsingModules();
 
-            //_dogey.MessageReceived += Events.OnMessageRecieved;
+            _dogey.MessageReceived += Events.OnMessageRecieved;
             //_dogey.ProfileUpdated += Events.OnProfileUpdated;
             //_dogey.UserUpdated += Events.OnUserUpdated;
             //_dogey.JoinedServer += Events.OnJoinedServer;
 
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
+            //_dogey.AddModule<UsageModule>("Usage", ModuleFilter.None);
 
             _dogey.ExecuteAndWait(async () =>
             {
