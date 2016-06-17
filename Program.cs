@@ -2,7 +2,8 @@
 using Discord.Audio;
 using Discord.Commands;
 using Discord.Modules;
-using Dogey.Config;
+using Dogey.Common;
+using Dogey.Common.Modules;
 using Dogey.Utility;
 using Newtonsoft.Json;
 using System;
@@ -17,10 +18,8 @@ namespace Dogey
     class Program
     {
         public static DiscordClient _dogey { get; set; }
-
         public static Configuration config = null;
-
-
+        
         static void Main(string[] args)
         {
             Console.Title = "Dogey";
@@ -37,7 +36,7 @@ namespace Dogey
             config = new Configuration().FromFile("config\\configuration.json");
             _dogey = new DiscordClient(x =>
             {
-                x.AppName = config.Discord.Username;
+                x.AppName = "Dogey";
                 x.AppUrl = "https://github.com/Auxes/Dogey";
                 x.MessageCacheSize = 0;
                 x.UsePermissionsCache = true;
@@ -46,45 +45,28 @@ namespace Dogey
             })
             .UsingCommands(x =>
             {
-                x.AllowMentionPrefix = config.AllowMentionCommands;
+                x.AllowMentionPrefix = false;
                 x.HelpMode = HelpMode.Public;
-                x.PrefixChar = config.DefaultPrefix;
-            })
-            .UsingAudio(x =>
-            {
-                x.Mode = AudioMode.Outgoing;
-                x.EnableMultiserver = true;
-                x.EnableEncryption = true;
-                x.Bitrate = AudioServiceConfig.MaxBitrate;
-                x.BufferLength = 10000;
+                x.PrefixChar = config.Prefix;
             })
             .UsingModules();
 
-            _dogey.MessageReceived += Events.OnMessageRecieved;
-            _dogey.ProfileUpdated += Events.OnProfileUpdated;
-            _dogey.UserUpdated += Events.OnUserUpdated;
-            _dogey.JoinedServer += Events.OnJoinedServer;
-            
-            _dogey.AddModule<Modules.Chatlog.Initialize>("Chatlog", ModuleFilter.None);
-            _dogey.AddModule<Modules.Bot.Default>("Bot", ModuleFilter.None);
-            _dogey.AddModule<Modules.Games.Draft>("Games", ModuleFilter.None);
+            //_dogey.MessageReceived += Events.OnMessageRecieved;
+            //_dogey.ProfileUpdated += Events.OnProfileUpdated;
+            //_dogey.UserUpdated += Events.OnUserUpdated;
+            //_dogey.JoinedServer += Events.OnJoinedServer;
+
+            _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
+            _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
 
             _dogey.ExecuteAndWait(async () =>
             {
                 while (true)
                 {
                     try {
-                        if (string.IsNullOrEmpty(config.Discord.Token))
-                        {
-                            await _dogey.Connect(config.Discord.Email, config.Discord.Password);
-                            DogeyConsole.Write($"Connected to Discord using {config.Discord.Email}\n");
-                            break;
-                        } else
-                        {
-                            await _dogey.Connect(config.Discord.Token);
-                            DogeyConsole.Write("Connected to Discord using bot token.\n");
-                            break;
-                        }
+                        await _dogey.Connect(config.Token);
+                        DogeyConsole.Write("Connected to Discord using bot token.\n");
+                        break;
                     } catch (Exception ex)
                     {
                         _dogey.Log.Error($"Login Failed", ex);
