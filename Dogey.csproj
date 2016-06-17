@@ -100,6 +100,7 @@
     <Compile Include="Common\Configuration.cs" />
     <Compile Include="Common\Models\CustomCommand.cs" />
     <Compile Include="Common\Models\UsageItem.cs" />
+    <Compile Include="Common\Modules\AdminModule.cs" />
     <Compile Include="Common\Modules\CustomModule.cs" />
     <Compile Include="Common\Modules\DogeyModule.cs" />
     <Compile Include="Common\Modules\UsageModule.cs" />
