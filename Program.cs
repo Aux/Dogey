@@ -57,7 +57,7 @@ namespace Dogey
 
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
-            //_dogey.AddModule<UsageModule>("Usage", ModuleFilter.None);
+            _dogey.AddModule<AdminModule>("Admin", ModuleFilter.None);
 
             _dogey.ExecuteAndWait(async () =>
             {

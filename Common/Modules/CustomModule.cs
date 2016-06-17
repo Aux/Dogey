@@ -54,7 +54,7 @@ namespace Dogey.Common.Modules
                     .Do(async e =>
                     {
                         serverFolder = $@"servers\{e.Server.Id}\commands\";
-                        if (e.Args.Count() == 0)
+                        if (e.Args.Count() < 1)
                         {
                             await e.Channel.SendMessage("`create {command} [message]`");
                             return;
@@ -98,7 +98,7 @@ namespace Dogey.Common.Modules
                             File.Delete(commandFile);
                         } else
                         {
-                            await e.Channel.SendMessage($"{e.Args[0]} is does not exist and therefore cannot be deleted.");
+                            await e.Channel.SendMessage($"{e.Args[0]} is not an existing command.");
                         }
 
                         await e.Channel.SendMessage($"Successfully deleted `{e.Args[0]}`.");
@@ -133,15 +133,26 @@ namespace Dogey.Common.Modules
             {
                 cmd.CreateCommand(command.Name)
                     .Description("Custom command.")
+                    .Parameter("Index", ParameterType.Optional)
                     .Do(async e =>
                     {
                         string commandFile = $@"servers\{e.Server.Id}\commands\{e.Command.Text}.doge";
                         if (!File.Exists(commandFile)) return;
 
                         var cmdObj = JsonConvert.DeserializeObject<CustomCommand>(File.ReadAllText(commandFile));
-                        var r = new Random();
 
-                        await e.Channel.SendMessage(cmdObj.Messages[r.Next(0, cmdObj.Messages.Count())]);
+                        int i;
+                        bool isNumeric = Int32.TryParse(e.Args[0], out i);
+                        if (isNumeric)
+                        {
+                            await e.Channel.SendMessage($"**{i}** {cmdObj.Messages[i]}");
+                            return;
+                        }
+
+                        var r = new Random();
+                        string message = cmdObj.Messages[r.Next(0, cmdObj.Messages.Count())];
+
+                        await e.Channel.SendMessage($"**{cmdObj.Messages.IndexOf(message)}** {message}");
                     });
                 cmd.CreateCommand(command.Name + ".add")
                     .Description("Add a new message to the custom command.")
@@ -151,6 +162,7 @@ namespace Dogey.Common.Modules
                         string commandName = e.Command.Text.Split('.')[0];
                         string commandFile = $@"servers\{e.Server.Id}\commands\{commandName}.doge";
                         if (!File.Exists(commandFile)) return;
+                        if (string.IsNullOrEmpty(e.Args[0])) return;
 
                         var cmdObj = JsonConvert.DeserializeObject<CustomCommand>(File.ReadAllText(commandFile));
                         cmdObj.Messages.Add(e.Args[0]);
@@ -175,7 +187,7 @@ namespace Dogey.Common.Modules
                             await e.Channel.SendMessage($"**{e.Args[0]}** is not a valid index.");
                             return;
                         }
-
+                        
                         var cmdObj = JsonConvert.DeserializeObject<CustomCommand>(File.ReadAllText(commandFile));
                         if (cmdObj.Messages.Count() < i)
                         {
@@ -187,7 +199,7 @@ namespace Dogey.Common.Modules
 
                         File.WriteAllText(commandFile, JsonConvert.SerializeObject(cmdObj));
 
-                        await e.Channel.SendMessage($"Deleted message #{cmdObj.Messages.Count()} to `{cmdObj.Name}`.");
+                        await e.Channel.SendMessage($"Deleted message #{i} from `{cmdObj.Name}`.");
                     });
                 cmd.CreateCommand(command.Name + ".count")
                     .Description("Custom command.")
