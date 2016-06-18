@@ -51,9 +51,6 @@ namespace Dogey
             .UsingModules();
 
             _dogey.MessageReceived += Events.OnMessageRecieved;
-            //_dogey.ProfileUpdated += Events.OnProfileUpdated;
-            //_dogey.UserUpdated += Events.OnUserUpdated;
-            //_dogey.JoinedServer += Events.OnJoinedServer;
 
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
