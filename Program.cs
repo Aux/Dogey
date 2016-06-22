@@ -37,10 +37,9 @@ namespace Dogey
             {
                 x.AppName = "Dogey";
                 x.AppUrl = "https://github.com/Auxes/Dogey";
-                x.MessageCacheSize = 0;
                 x.UsePermissionsCache = true;
                 x.EnablePreUpdateEvents = true;
-                x.LogLevel = LogSeverity.Debug;
+                x.LogLevel = LogSeverity.Info;
             })
             .UsingCommands(x =>
             {
@@ -51,13 +50,19 @@ namespace Dogey
             .UsingModules();
 
             _dogey.MessageReceived += Events.OnMessageRecieved;
-            //_dogey.ProfileUpdated += Events.OnProfileUpdated;
-            //_dogey.UserUpdated += Events.OnUserUpdated;
-            //_dogey.JoinedServer += Events.OnJoinedServer;
+            _dogey.UserJoined += Events.UserJoined;
+            _dogey.UserLeft += Events.UserLeft;
+            _dogey.UserBanned += Events.UserBannned;
+            _dogey.JoinedServer += Events.JoinedServer;
 
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
             _dogey.AddModule<AdminModule>("Admin", ModuleFilter.None);
+
+            _dogey.Log.Message += (s, e) =>
+            {
+                DogeyConsole.Log(e.Severity, e.Source, e.Message);
+            };
 
             _dogey.ExecuteAndWait(async () =>
             {
@@ -65,7 +70,7 @@ namespace Dogey
                 {
                     try {
                         await _dogey.Connect(config.Token);
-                        DogeyConsole.Write("Connected to Discord using bot token.\n");
+                        if (!string.IsNullOrEmpty(config.Playing)) _dogey.SetGame(config.Playing);
                         break;
                     } catch (Exception ex)
                     {

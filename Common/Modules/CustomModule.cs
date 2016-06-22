@@ -105,7 +105,7 @@ namespace Dogey.Common.Modules
                     });
             });
 
-            DogeyConsole.Write("Custom Module loaded.");
+            DogeyConsole.Log(LogSeverity.Info, "CustomModule", "Loaded.");
         }
 
         public void LoadExistingCommands(ModuleManager manager)
@@ -124,7 +124,7 @@ namespace Dogey.Common.Modules
                 servers++;
             }
 
-            DogeyConsole.Write($"Loaded {commands} command(s) for {servers} server(s).");
+            DogeyConsole.Log(LogSeverity.Info, "CustomModule", $"Loaded {commands} command(s) for {servers} server(s).");
         }
 
         public void CreateCommand(ModuleManager manager, CustomCommand command)
@@ -145,14 +145,14 @@ namespace Dogey.Common.Modules
                         bool isNumeric = Int32.TryParse(e.Args[0], out i);
                         if (isNumeric)
                         {
-                            await e.Channel.SendMessage($"**{i}** {cmdObj.Messages[i]}");
+                            await e.Channel.SendMessage($"{i}. {cmdObj.Messages[i]}");
                             return;
                         }
 
                         var r = new Random();
                         string message = cmdObj.Messages[r.Next(0, cmdObj.Messages.Count())];
 
-                        await e.Channel.SendMessage($"**{cmdObj.Messages.IndexOf(message)}** {message}");
+                        await e.Channel.SendMessage($"{cmdObj.Messages.IndexOf(message)}. {message}");
                     });
                 cmd.CreateCommand(command.Name + ".add")
                     .Description("Add a new message to the custom command.")

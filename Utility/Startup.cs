@@ -20,11 +20,11 @@ namespace Dogey.Utility
         {
             string bannerText = $"Dogey v{Assembly.GetEntryAssembly().GetName().Version}";
             
-            DogeyConsole.Write($"┌────{new string('─', bannerText.Count())}────┐", ConsoleColor.Yellow);
-            DogeyConsole.Append("│    ", ConsoleColor.Yellow);
+            DogeyConsole.Write($"┌────────────{new string('─', bannerText.Count())}────────────┐", ConsoleColor.Yellow);
+            DogeyConsole.Append("│            ", ConsoleColor.Yellow);
             DogeyConsole.Append(bannerText);
-            DogeyConsole.Write("    │", ConsoleColor.Yellow);
-            DogeyConsole.Write($"└────{new string('─', bannerText.Count())}────┘\n", ConsoleColor.Yellow);
+            DogeyConsole.Write("            │", ConsoleColor.Yellow);
+            DogeyConsole.Write($"└────────────{new string('─', bannerText.Count())}────────────┘\n", ConsoleColor.Yellow);
         }
 
         /// <summary>

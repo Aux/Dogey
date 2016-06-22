@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,22 @@ namespace Dogey.Utility
 {
     public class Usage
     {
-        public static void LogCommand(CommandEventArgs e)
+        public static void Log(CommandEventArgs e)
+        {
+
+        }
+
+        public static void Log(ServerEventArgs e)
+        {
+
+        }
+
+        public static void Log(ChannelEventArgs e)
+        {
+
+        }
+
+        public static void Log(UserEventArgs e)
         {
 
         }
