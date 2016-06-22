@@ -115,7 +115,7 @@ namespace Dogey.Common.Modules
                     });
             });
 
-            DogeyConsole.Write("Dogey Module loaded.");
+            DogeyConsole.Log(LogSeverity.Info, "DogeyModule", "Loaded.");
         }
     }
 }

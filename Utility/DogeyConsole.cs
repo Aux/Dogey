@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Discord;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,16 @@ namespace Dogey.Utility
             if (color == null) color = ConsoleColor.White;
             Console.ForegroundColor = (ConsoleColor)color;
             Console.WriteLine(text);
+        }
+
+        public static void Log(LogSeverity severity, string source, string message)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write($"[{severity}] ");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.Write($"{source}: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write($"{message}\n");
         }
     }
 }

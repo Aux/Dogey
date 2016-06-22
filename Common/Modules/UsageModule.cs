@@ -61,7 +61,7 @@ namespace Dogey.Common.Modules
                     });
             });
 
-            DogeyConsole.Write("Usage Module Loaded");
+            DogeyConsole.Log(LogSeverity.Info, "UsageModule", "Loaded.");
         }
     }
 }
