@@ -31,8 +31,8 @@ namespace Dogey.Common.Modules
                     .Parameter("messages", ParameterType.Optional)
                     .Do(async e =>
                     {
-                        int MaxDeletion = 100;
-                        User user = e.Message.MentionedUsers.FirstOrDefault();
+                        int MaxDeletion = 25;
+                        User user = e.Server.FindUsers(e.Args[0]).FirstOrDefault();
 
                         int deletion = MaxDeletion++;
                         if (!string.IsNullOrEmpty(e.Args[1]))
@@ -46,18 +46,20 @@ namespace Dogey.Common.Modules
                             msgs = await e.Channel.DownloadMessages(deletion);
                         else
                             msgs = e.Channel.Messages.OrderByDescending(x => x.Timestamp).Take(deletion);
-                        
+
                         int deletedMessages = 0;
                         foreach (Message msg in msgs)
                         {
-                            if (e.Message.User == user)
+                            if (msg.User.Id == user.Id)
                             {
-                                await e.Message.Delete();
+                                await msg.Delete();
                                 deletedMessages++;
                             }
                         }
 
-                        await e.Channel.SendMessage($"Deleted **{deletedMessages}** message(s) by **{user.Name}**");
+                        var message = await e.Channel.SendMessage($"Deleted **{deletedMessages}** message(s) by **{user.Name}**");
+                        await Task.Delay(10000);
+                        await e.Message.Delete();
                     });
                 cmd.CreateCommand("bans")
                     .Description("Shows the number of Dogey servers this user is banned from.")

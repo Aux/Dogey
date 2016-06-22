@@ -31,7 +31,7 @@ namespace Dogey
                 Console.ReadKey();
                 return;
             }
-
+            
             config = new Configuration().FromFile("config\\configuration.json");
             _dogey = new DiscordClient(x =>
             {

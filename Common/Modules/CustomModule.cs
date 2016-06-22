@@ -85,6 +85,8 @@ namespace Dogey.Common.Modules
                         CreateCommand(manager, command);
 
                         await e.Channel.SendMessage($"Successfully created `{command.Name}`");
+                        await Task.Delay(1000);
+                        await e.Message.Delete();
                     });
                 cmd.CreateCommand("delete")
                     .Description("Delete an existing custom command.")
@@ -102,6 +104,8 @@ namespace Dogey.Common.Modules
                         }
 
                         await e.Channel.SendMessage($"Successfully deleted `{e.Args[0]}`.");
+                        await Task.Delay(1000);
+                        await e.Message.Delete();
                     });
             });
 
@@ -112,6 +116,8 @@ namespace Dogey.Common.Modules
         {
             int servers = 0;
             int commands = 0;
+
+            if (!Directory.Exists("servers")) Directory.CreateDirectory("servers");
             foreach (string folder in Directory.GetDirectories("servers"))
             {
                 foreach (string file in Directory.GetFiles(Path.Combine(folder, "commands")))
