@@ -27,29 +27,11 @@ namespace Dogey.Common.Modules
             _dogey = manager.Client;
             serverFolder = null;
 
-            LoadExistingCommands(manager);
-
-            manager.CreateCommands("", cmd =>
+            manager.CreateCommands("command", cmd =>
             {
-                cmd.CreateCommand("commands")
-                    .Description("Displays a list of all available custom commands for this server.")
-                    .Do(async e =>
-                    {
-                        serverFolder = $@"servers\{e.Server.Id}\commands\";
-
-                        var commands = new List<string>();
-                        var dir = new DirectoryInfo(serverFolder);
-                        var commandFiles = dir.GetFiles("*.doge");
-                        foreach(FileInfo file in commandFiles)
-                        {
-                            commands.Add(file.Name.Replace(".doge", ""));
-                        }
-
-                        await e.Channel.SendMessage($"**Commands:**\n{string.Join(", ", commands)}");
-                    });
                 cmd.CreateCommand("create")
                     .Description("Create a new custom command.")
-                    .Parameter("custom", ParameterType.Required)
+                    .Parameter("command", ParameterType.Required)
                     .Parameter("message", ParameterType.Unparsed)
                     .Do(async e =>
                     {
@@ -59,7 +41,7 @@ namespace Dogey.Common.Modules
                             await e.Channel.SendMessage("`create {command} [message]`");
                             return;
                         }
-
+                        
                         if (!Directory.Exists(serverFolder)) Directory.CreateDirectory(serverFolder);
 
                         string commandText = Regex.Replace(e.Args[0], @"[^\w\s]", "");
@@ -90,7 +72,7 @@ namespace Dogey.Common.Modules
                     });
                 cmd.CreateCommand("delete")
                     .Description("Delete an existing custom command.")
-                    .Parameter("custom", ParameterType.Required)
+                    .Parameter("command", ParameterType.Required)
                     .Do(async e =>
                     {
                         string commandFile = $@"servers\{e.Server.Id}\commands\{e.Args[0]}.doge";
@@ -107,7 +89,44 @@ namespace Dogey.Common.Modules
                         await Task.Delay(1000);
                         await e.Message.Delete();
                     });
+
             });
+
+            manager.CreateCommands("", cmd =>
+            {
+                cmd.CreateCommand("commands")
+                    .Description("Displays a list of all available custom commands for this server.")
+                    .Do(async e =>
+                    {
+                        serverFolder = $@"servers\{e.Server.Id}\commands\";
+
+                        var commands = new List<string>();
+                        var dir = new DirectoryInfo(serverFolder);
+                        var commandFiles = dir.GetFiles("*.doge");
+                        foreach (FileInfo file in commandFiles)
+                        {
+                            commands.Add(file.Name.Replace(".doge", ""));
+                        }
+
+                        await e.Channel.SendMessage($"**Commands:**\n{string.Join(", ", commands)}");
+                    });
+                cmd.CreateCommand("*.del")
+                    .Description("Delete an existing custom command.")
+                    .Parameter("Index", ParameterType.Optional)
+                    .Do(e => { return; });
+                cmd.CreateCommand("*.add")
+                    .Description("Add a new message to the custom command.")
+                    .Parameter("Message", ParameterType.Unparsed)
+                    .Do(e => { return; });
+                cmd.CreateCommand("*.count")
+                    .Description("Get the total number of messages saved in this command.")
+                    .Do(e => { return; });
+                cmd.CreateCommand("*.created")
+                    .Description("Get the date and time this command was created.")
+                    .Do(e => { return; });
+            });
+
+            LoadExistingCommands(manager);
 
             DogeyConsole.Log(LogSeverity.Info, "CustomModule", "Loaded.");
         }
@@ -163,6 +182,7 @@ namespace Dogey.Common.Modules
                 cmd.CreateCommand(command.Name + ".add")
                     .Description("Add a new message to the custom command.")
                     .Parameter("Message", ParameterType.Unparsed)
+                    .Hide()
                     .Do(async e =>
                     {
                         string commandName = e.Command.Text.Split('.')[0];
@@ -178,8 +198,9 @@ namespace Dogey.Common.Modules
                         await e.Channel.SendMessage($"Added message #{cmdObj.Messages.Count()} to `{cmdObj.Name}`.");
                     });
                 cmd.CreateCommand(command.Name + ".del")
-                    .Description("Custom command.")
+                    .Description("Delete a specific message from this command.")
                     .Parameter("Index", ParameterType.Required)
+                    .Hide()
                     .Do(async e =>
                     {
                         string commandName = e.Command.Text.Split('.')[0];
@@ -208,7 +229,8 @@ namespace Dogey.Common.Modules
                         await e.Channel.SendMessage($"Deleted message #{i} from `{cmdObj.Name}`.");
                     });
                 cmd.CreateCommand(command.Name + ".count")
-                    .Description("Custom command.")
+                    .Description("Get the total number of messages saved in this command.")
+                    .Hide()
                     .Do(async e =>
                     {
                         string commandName = e.Command.Text.Split('.')[0];
@@ -220,7 +242,8 @@ namespace Dogey.Common.Modules
                         await e.Channel.SendMessage($"`{cmdObj.Name}` currently contains **{cmdObj.Messages.Count()}** message(s).");
                     });
                 cmd.CreateCommand(command.Name + ".created")
-                    .Description("Get the time and who created this custom command.")
+                    .Description("Get the date and time this command was created.")
+                    .Hide()
                     .Do(async e =>
                     {
                         string commandName = e.Command.Text.Split('.')[0];
@@ -229,11 +252,41 @@ namespace Dogey.Common.Modules
 
                         var cmdObj = JsonConvert.DeserializeObject<CustomCommand>(File.ReadAllText(commandFile));
 
-                        string message = $"The command `{cmdObj.Name}` was created on "+
-                                         $"**{cmdObj.CreatedOn.ToString("MMM d, yyyy")}** at " +
-                                         $"**{cmdObj.CreatedOn.ToString("h:mm:ss tt z")}** " +
-                                         $"by **{e.Server.GetUser(cmdObj.CreatedBy).Name}**.";
+                        string message;
+                        var span = DateTime.Now - cmdObj.CreatedOn;
 
+                        double total = span.TotalDays;
+                        if (total >= 1)
+                        {
+                            message = $"The command `{cmdObj.Name}` was created " +
+                                      $"**{total.ToString("#.0")}** day(s) ago " +
+                                      $"by **{e.Server.GetUser(cmdObj.CreatedBy).Name}**.";
+                        } else
+                        {
+                            total = span.TotalHours;
+                            if (total >= 1)
+                            {
+                                message = $"The command `{cmdObj.Name}` was created " +
+                                          $"**{total.ToString("#.0")}** hour(s) ago " +
+                                          $"by **{e.Server.GetUser(cmdObj.CreatedBy).Name}**.";
+                            }
+                            else
+                            {
+                                total = span.TotalMinutes;
+                                if (total >= 1)
+                                {
+                                    message = $"The command `{cmdObj.Name}` was created " +
+                                              $"**{total.ToString("#.0")}** minute(s) ago " +
+                                              $"by **{e.Server.GetUser(cmdObj.CreatedBy).Name}**.";
+                                }
+                                else
+                                {
+                                    message = $"The command `{cmdObj.Name}` was created " +
+                                              $"less than a minute ago by **{e.Server.GetUser(cmdObj.CreatedBy).Name}**.";
+                                }
+                            }
+                        }
+                        
                         await e.Channel.SendMessage(message);
                     });
             });
