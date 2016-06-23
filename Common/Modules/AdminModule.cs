@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Commands.Permissions;
 using Discord.Modules;
 using Dogey.Common.Models;
 using Dogey.Utility;
@@ -26,6 +27,42 @@ namespace Dogey.Common.Modules
             manager.CreateCommands("", cmd =>
             {
                 cmd.CreateCommand("erase")
+                    .Description("Clear a specific user's messages from the current channel.")
+                    .Parameter("user", ParameterType.Required)
+                    .Parameter("messages", ParameterType.Optional)
+                    .Do(async e =>
+                    {
+                        int MaxDeletion = 25;
+                        User user = e.Server.FindUsers(e.Args[0]).FirstOrDefault();
+
+                        int deletion = MaxDeletion++;
+                        if (!string.IsNullOrEmpty(e.Args[1]))
+                        {
+                            bool isNumeric = Int32.TryParse(e.Args[0], out deletion);
+                        }
+                        if (deletion > MaxDeletion) deletion = MaxDeletion;
+
+                        IEnumerable<Message> msgs;
+                        if (e.Channel.Messages.Count() < deletion)
+                            msgs = await e.Channel.DownloadMessages(deletion);
+                        else
+                            msgs = e.Channel.Messages.OrderByDescending(x => x.Timestamp).Take(deletion);
+
+                        int deletedMessages = 0;
+                        foreach (Message msg in msgs)
+                        {
+                            if (msg.User.Id == user.Id)
+                            {
+                                await msg.Delete();
+                                deletedMessages++;
+                            }
+                        }
+
+                        var message = await e.Channel.SendMessage($"Deleted **{deletedMessages}** message(s) by **{user.Name}**");
+                        await Task.Delay(10000);
+                        await e.Message.Delete();
+                    });
+                cmd.CreateCommand("clean")
                     .Description("Clear a specific user's messages from the current channel.")
                     .Parameter("user", ParameterType.Required)
                     .Parameter("messages", ParameterType.Optional)

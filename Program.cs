@@ -58,12 +58,12 @@ namespace Dogey
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
             _dogey.AddModule<AdminModule>("Admin", ModuleFilter.None);
-
+            
             _dogey.Log.Message += (s, e) =>
             {
                 DogeyConsole.Log(e.Severity, e.Source, e.Message);
             };
-
+            
             _dogey.ExecuteAndWait(async () =>
             {
                 while (true)
