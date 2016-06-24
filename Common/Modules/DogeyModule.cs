@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -128,6 +129,12 @@ namespace Dogey.Common.Modules
                         if (minutes != "1 minute") minutes += "s";
 
                         await e.Channel.SendMessage($"I have been online for {days} {hours} {minutes}.");
+                    });
+                cmd.CreateCommand("version")
+                    .Description("Shows what version Dogey is currently on.")
+                    .Do(async e =>
+                    {
+                        await e.Channel.SendMessage($"I am running version **{Assembly.GetExecutingAssembly().GetName().Version}**.");
                     });
             });
 

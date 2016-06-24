@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.Commands;
 
 namespace Dogey
 {
@@ -18,25 +19,22 @@ namespace Dogey
             if (e.Message.IsMentioningMe()) Console.BackgroundColor = ConsoleColor.DarkBlue;
             if (e.Channel.IsPrivate && e.Server == null)
             {
-                Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                Console.Write("[PM]");
+                DogeyConsole.Append("[PM]", ConsoleColor.DarkMagenta);
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.Write($"[{e.Server.Name} - {e.Channel.Name}]");
+                DogeyConsole.Append($"[{e.Server.Name} - {e.Channel.Name}]", ConsoleColor.DarkYellow);
             }
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write($"[{e.User.Name}]");
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write($" {e.Message.RawText}");
+            DogeyConsole.Append($"[{e.User.Name}]", ConsoleColor.Yellow);
+            DogeyConsole.Append($" {e.Message.RawText}", ConsoleColor.White);
+            
             if (e.Message.Attachments.Count() > 0)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write($" +{e.Message.Attachments.Count()}");
+                DogeyConsole.Append($" +{e.Message.Attachments.Count()}", ConsoleColor.Green);
             }
-            Console.WriteLine();
+
+            DogeyConsole.NewLine();
             Console.BackgroundColor = ConsoleColor.Black;
         }
 
@@ -47,6 +45,11 @@ namespace Dogey
             Directory.CreateDirectory(Path.Combine(serverFolder, "logs"));
 
             DogeyConsole.Log(LogSeverity.Info, e.Server.Name, "Joined new server.");
+        }
+
+        internal static void CommandError(object sender, CommandErrorEventArgs e)
+        {
+            DogeyConsole.Log(Enum.GetName(typeof(CommandErrorType), e.ErrorType), e.Command.Text, e.Exception.Message);
         }
 
         internal static void UserJoined(object sender, UserEventArgs e)

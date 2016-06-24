@@ -75,6 +75,7 @@ namespace Dogey.Common.Modules
                     .Parameter("command", ParameterType.Required)
                     .Do(async e =>
                     {
+                        if (!e.User.ServerPermissions.Administrator) return;
                         string commandFile = $@"servers\{e.Server.Id}\commands\{e.Args[0]}.doge";
 
                         if (File.Exists(commandFile))
@@ -111,7 +112,7 @@ namespace Dogey.Common.Modules
                         await e.Channel.SendMessage($"**Commands:**\n{string.Join(", ", commands)}");
                     });
                 cmd.CreateCommand("*.del")
-                    .Description("Delete an existing custom command.")
+                    .Description("Delete a message from an existing custom command.")
                     .Parameter("Index", ParameterType.Optional)
                     .Do(e => { return; });
                 cmd.CreateCommand("*.add")
