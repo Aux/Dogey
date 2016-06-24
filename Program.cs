@@ -58,19 +58,22 @@ namespace Dogey
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
             _dogey.AddModule<AdminModule>("Admin", ModuleFilter.None);
-            
+
             _dogey.Log.Message += (s, e) =>
             {
                 DogeyConsole.Log(e.Severity, e.Source, e.Message);
             };
-            
+
             _dogey.ExecuteAndWait(async () =>
             {
                 while (true)
                 {
                     try {
                         await _dogey.Connect(config.Token);
-                        if (!string.IsNullOrEmpty(config.Playing)) _dogey.SetGame(config.Playing);
+                        if (!string.IsNullOrEmpty(config.Playing))
+                            _dogey.SetGame(config.Playing);
+                        if (File.Exists("config\\avatar.png"))
+                            await _dogey.CurrentUser.Edit(avatar: File.Open("config\\avatar.png", FileMode.Open), avatarType: ImageType.Png);
                         break;
                     } catch (Exception ex)
                     {

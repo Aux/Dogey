@@ -32,6 +32,7 @@ namespace Dogey.Common.Modules
                     .Parameter("messages", ParameterType.Optional)
                     .Do(async e =>
                     {
+                        if (!e.User.ServerPermissions.Administrator) return;
                         int MaxDeletion = 25;
                         User user = e.Server.FindUsers(e.Args[0]).FirstOrDefault();
 
@@ -68,6 +69,7 @@ namespace Dogey.Common.Modules
                     .Parameter("messages", ParameterType.Optional)
                     .Do(async e =>
                     {
+                        if (!e.User.ServerPermissions.Administrator) return;
                         int MaxDeletion = 25;
                         User user = e.Server.FindUsers(e.Args[0]).FirstOrDefault();
 
