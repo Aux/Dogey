@@ -58,6 +58,7 @@ namespace Dogey
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
             _dogey.AddModule<AdminModule>("Admin", ModuleFilter.None);
+            _dogey.AddModule<SearchModule>("Search", ModuleFilter.None);
 
             _dogey.Log.Message += (s, e) =>
             {
@@ -69,7 +70,7 @@ namespace Dogey
                 while (true)
                 {
                     try {
-                        await _dogey.Connect(config.Token);
+                        await _dogey.Connect(config.DiscordToken);
                         if (!string.IsNullOrEmpty(config.Playing))
                             _dogey.SetGame(config.Playing);
                         if (File.Exists("config\\avatar.png"))

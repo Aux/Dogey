@@ -9,7 +9,8 @@ namespace Dogey.Common
 {
     public class Configuration
     {
-        public string Token { get; set; }
+        public string DiscordToken { get; set; }
+        public string GoogleToken { get; set; }
         public char Prefix { get; set; }
         public string Playing { get; set; }
 
