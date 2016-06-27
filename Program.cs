@@ -31,16 +31,15 @@ namespace Dogey
                 Console.ReadKey();
                 return;
             }
-
+            
             config = new Configuration().FromFile("config\\configuration.json");
             _dogey = new DiscordClient(x =>
             {
                 x.AppName = "Dogey";
                 x.AppUrl = "https://github.com/Auxes/Dogey";
-                x.MessageCacheSize = 0;
                 x.UsePermissionsCache = true;
                 x.EnablePreUpdateEvents = true;
-                x.LogLevel = LogSeverity.Debug;
+                x.LogLevel = LogSeverity.Info;
             })
             .UsingCommands(x =>
             {
@@ -51,19 +50,38 @@ namespace Dogey
             .UsingModules();
 
             _dogey.MessageReceived += Events.OnMessageRecieved;
+<<<<<<< HEAD
+=======
+            _dogey.UserJoined += Events.UserJoined;
+            _dogey.UserLeft += Events.UserLeft;
+            _dogey.UserBanned += Events.UserBannned;
+            _dogey.JoinedServer += Events.JoinedServer;
+>>>>>>> c96b648fc4b4aa0cccc2ff8a0e903281220ed046
 
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
             _dogey.AddModule<AdminModule>("Admin", ModuleFilter.None);
+<<<<<<< HEAD
             _dogey.AddModule<GamesModule>("Games", ModuleFilter.None);
+=======
+            _dogey.AddModule<SearchModule>("Search", ModuleFilter.None);
+
+            _dogey.Log.Message += (s, e) =>
+            {
+                DogeyConsole.Log(e.Severity, e.Source, e.Message);
+            };
+>>>>>>> c96b648fc4b4aa0cccc2ff8a0e903281220ed046
 
             _dogey.ExecuteAndWait(async () =>
             {
                 while (true)
                 {
                     try {
-                        await _dogey.Connect(config.Token);
-                        DogeyConsole.Write("Connected to Discord using bot token.\n");
+                        await _dogey.Connect(config.DiscordToken);
+                        if (!string.IsNullOrEmpty(config.Playing))
+                            _dogey.SetGame(config.Playing);
+                        if (File.Exists("config\\avatar.png"))
+                            await _dogey.CurrentUser.Edit(avatar: File.Open("config\\avatar.png", FileMode.Open), avatarType: ImageType.Png);
                         break;
                     } catch (Exception ex)
                     {

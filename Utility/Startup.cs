@@ -1,4 +1,5 @@
-﻿using Dogey.Common;
+﻿using Discord;
+using Dogey.Common;
 using Dogey.Common.Modules;
 using Newtonsoft.Json;
 using System;
@@ -20,11 +21,11 @@ namespace Dogey.Utility
         {
             string bannerText = $"Dogey v{Assembly.GetEntryAssembly().GetName().Version}";
             
-            DogeyConsole.Write($"┌────{new string('─', bannerText.Count())}────┐", ConsoleColor.Yellow);
-            DogeyConsole.Append("│    ", ConsoleColor.Yellow);
+            DogeyConsole.Write($"┌────────────{new string('─', bannerText.Count())}────────────┐", ConsoleColor.Yellow);
+            DogeyConsole.Append("│            ", ConsoleColor.Yellow);
             DogeyConsole.Append(bannerText);
-            DogeyConsole.Write("    │", ConsoleColor.Yellow);
-            DogeyConsole.Write($"└────{new string('─', bannerText.Count())}────┘\n", ConsoleColor.Yellow);
+            DogeyConsole.Write("            │", ConsoleColor.Yellow);
+            DogeyConsole.Write($"└────────────{new string('─', bannerText.Count())}────────────┘\n", ConsoleColor.Yellow);
         }
 
         /// <summary>
@@ -45,8 +46,7 @@ namespace Dogey.Utility
         /// </summary>
         public static void CreateConfig()
         {
-            DogeyConsole.Append("[Error] ", ConsoleColor.Red);
-            DogeyConsole.Write("Configuration file not found, creating...");
+            DogeyConsole.Log(LogSeverity.Error, "Startup", "Configuration file not found.");
 
             var config = new Configuration()
             {
@@ -58,10 +58,8 @@ namespace Dogey.Utility
             File.Create("config\\configuration.json").Close();
             File.WriteAllText("config\\configuration.json", JsonConvert.SerializeObject(config, Formatting.Indented));
 
-            DogeyConsole.Append("[Error] ", ConsoleColor.Red);
-            DogeyConsole.Append("Configuration created at ");
-            DogeyConsole.Append("\"config\\configuration.json\"", ConsoleColor.Gray);
-            DogeyConsole.Write(". Please fill in the required fields and restart Dogey.");
+            DogeyConsole.Log(LogSeverity.Error, "Startup", "Configuration file created at 'config\\configuration.json', " +
+                "please enter your bot token and restart Dogey.");
         }
         
     }
