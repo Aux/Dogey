@@ -112,6 +112,7 @@ namespace Dogey.Common.Modules
         {
             int servers = 0;
             int commands = 0;
+            if (!Directory.Exists("servers")) Directory.CreateDirectory("servers");
             foreach (string folder in Directory.GetDirectories("servers"))
             {
                 foreach (string file in Directory.GetFiles(Path.Combine(folder, "commands")))
