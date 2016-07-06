@@ -50,28 +50,21 @@ namespace Dogey
             .UsingModules();
 
             _dogey.MessageReceived += Events.OnMessageRecieved;
-<<<<<<< HEAD
-=======
             _dogey.UserJoined += Events.UserJoined;
             _dogey.UserLeft += Events.UserLeft;
             _dogey.UserBanned += Events.UserBannned;
             _dogey.JoinedServer += Events.JoinedServer;
->>>>>>> c96b648fc4b4aa0cccc2ff8a0e903281220ed046
 
             _dogey.AddModule<DogeyModule>("Dogey", ModuleFilter.None);
             _dogey.AddModule<CustomModule>("Custom", ModuleFilter.None);
             _dogey.AddModule<AdminModule>("Admin", ModuleFilter.None);
-<<<<<<< HEAD
             _dogey.AddModule<GamesModule>("Games", ModuleFilter.None);
-=======
             _dogey.AddModule<SearchModule>("Search", ModuleFilter.None);
 
             _dogey.Log.Message += (s, e) =>
             {
                 DogeyConsole.Log(e.Severity, e.Source, e.Message);
             };
->>>>>>> c96b648fc4b4aa0cccc2ff8a0e903281220ed046
-
 
             _dogey.ExecuteAndWait(async () =>
             {
