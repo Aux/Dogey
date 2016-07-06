@@ -54,8 +54,6 @@
       <HintPath>packages\Discord.Net.Modules.0.9.3\lib\net45\Discord.Net.Modules.dll</HintPath>
       <Private>True</Private>
     </Reference>
-<<<<<<< HEAD
-=======
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -92,7 +90,6 @@
       <HintPath>packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
->>>>>>> c96b648fc4b4aa0cccc2ff8a0e903281220ed046
     <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
       <HintPath>packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
       <Private>True</Private>
@@ -156,11 +153,8 @@
     <Compile Include="Common\Modules\AdminModule.cs" />
     <Compile Include="Common\Modules\CustomModule.cs" />
     <Compile Include="Common\Modules\DogeyModule.cs" />
-<<<<<<< HEAD
     <Compile Include="Common\Modules\GamesModule.cs" />
-=======
     <Compile Include="Common\Modules\SearchModule.cs" />
->>>>>>> c96b648fc4b4aa0cccc2ff8a0e903281220ed046
     <Compile Include="Common\Modules\UsageModule.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="Program.cs" />
