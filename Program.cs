@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -74,8 +75,7 @@ namespace Dogey
                         await _dogey.Connect(config.DiscordToken);
                         if (!string.IsNullOrEmpty(config.Playing))
                             _dogey.SetGame(config.Playing);
-                        if (File.Exists("config\\avatar.png"))
-                            await _dogey.CurrentUser.Edit(avatar: File.Open("config\\avatar.png", FileMode.Open), avatarType: ImageType.Png);
+                        await Task.Run(() => Background.RotateAvatars(_dogey, config));
                         break;
                     } catch (Exception ex)
                     {

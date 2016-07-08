@@ -60,7 +60,7 @@ namespace Dogey.Common.Modules
                     });
             });
 
-            DogeyConsole.Write("Games Module loaded.");
+            DogeyConsole.Log(LogSeverity.Info, "GamesModule", "Loaded.");
         }
     }
 }
