@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Common.Modules
 {
-    public class CustomModule : IModule
+    public class CommandModule : IModule
     {
         private ModuleManager _manager;
         private DiscordClient _dogey;
@@ -129,7 +129,7 @@ namespace Dogey.Common.Modules
 
             LoadExistingCommands(manager);
 
-            DogeyConsole.Log(LogSeverity.Info, "CustomModule", "Loaded.");
+            DogeyConsole.Log(LogSeverity.Info, "CommandModule", "Loaded.");
         }
 
         public void LoadExistingCommands(ModuleManager manager)
@@ -149,7 +149,7 @@ namespace Dogey.Common.Modules
                 servers++;
             }
 
-            DogeyConsole.Log(LogSeverity.Info, "CustomModule", $"Loaded {commands} command(s) for {servers} server(s).");
+            DogeyConsole.Log(LogSeverity.Info, "CommandModule", $"Loaded {commands} command(s) for {servers} server(s).");
         }
 
         public void CreateCommand(ModuleManager manager, CustomCommand command)
