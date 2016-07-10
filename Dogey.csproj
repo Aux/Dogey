@@ -151,7 +151,7 @@
     <Compile Include="Common\Models\UsageItem.cs" />
     <Compile Include="Common\Models\UserBans.cs" />
     <Compile Include="Common\Modules\AdminModule.cs" />
-    <Compile Include="Common\Modules\CustomModule.cs" />
+    <Compile Include="Common\Modules\CommandModule.cs" />
     <Compile Include="Common\Modules\DogeyModule.cs" />
     <Compile Include="Common\Modules\GamesModule.cs" />
     <Compile Include="Common\Modules\SearchModule.cs" />
