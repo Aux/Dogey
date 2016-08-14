@@ -1,0 +1,105 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v1.0",
+    "signature": "0261101ee3448cb733751f8325584d8ed723eab6"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v1.0": {
+      "Dogey/1.0.0": {
+        "dependencies": {
+          "Discord.Net": "1.0.0-dev-336",
+          "Discord.Net.Commands": "1.0.0-dev-336"
+        },
+        "runtime": {
+          "Dogey.dll": {}
+        }
+      },
+      "Discord.Net/1.0.0-dev-336": {
+        "dependencies": {
+          "Newtonsoft.Json": "8.0.3",
+          "System.Net.WebSockets.Client": "4.0.0",
+          "System.Runtime.Serialization.Primitives": "4.1.1"
+        },
+        "runtime": {
+          "lib/netstandard1.3/Discord.Net.dll": {}
+        }
+      },
+      "Discord.Net.Commands/1.0.0-dev-336": {
+        "dependencies": {
+          "Discord.Net": "1.0.0-dev-336"
+        },
+        "runtime": {
+          "lib/netstandard1.3/Discord.Net.Commands.dll": {}
+        }
+      },
+      "Newtonsoft.Json/8.0.3": {
+        "runtime": {
+          "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll": {}
+        }
+      },
+      "System.Net.WebSockets/4.0.0": {
+        "runtime": {
+          "lib/netstandard1.3/System.Net.WebSockets.dll": {}
+        }
+      },
+      "System.Net.WebSockets.Client/4.0.0": {
+        "dependencies": {
+          "System.Net.WebSockets": "4.0.0"
+        },
+        "runtimeTargets": {
+          "runtimes/unix/lib/netstandard1.3/System.Net.WebSockets.Client.dll": {
+            "rid": "unix",
+            "assetType": "runtime"
+          },
+          "runtimes/win/lib/netstandard1.3/System.Net.WebSockets.Client.dll": {
+            "rid": "win",
+            "assetType": "runtime"
+          }
+        }
+      },
+      "System.Runtime.Serialization.Primitives/4.1.1": {
+        "runtime": {
+          "lib/netstandard1.3/System.Runtime.Serialization.Primitives.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Dogey/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Discord.Net/1.0.0-dev-336": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zDmKEIeYjDBTKfwpOqsV/i9OLb1ERU2Ukd0ezRI2oHO4z0ZwdAA82MjuErVeziJhyG2qYn8D2JCR6G+8DsCClA=="
+    },
+    "Discord.Net.Commands/1.0.0-dev-336": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Vkbu9nGmXsjE8xJi7NaO6zMBxnBadwBZiv0MaTFRVxYyWmKf4YGF/4Zy80btE6TZNBE7wfSldol69fJOhzBttw=="
+    },
+    "Newtonsoft.Json/8.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-KGsYQdS2zLH+H8x2cZaSI7e+YZ4SFIbyy1YJQYl6GYBWjf5o4H1A68nxyq+WTyVSOJQ4GqS/DiPE+UseUizgMg=="
+    },
+    "System.Net.WebSockets/4.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2KJo8hir6Edi9jnMDAMhiJoI691xRBmKcbNpwjrvpIMOCTYOtBpSsSEGBxBDV7PKbasJNaFp1+PZz1D7xS41Hg=="
+    },
+    "System.Net.WebSockets.Client/4.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GY5h9cn0ZVsG4ORQqMytTldrqxet2RC2CSEsgWGf4XNW5jhL5SxzcUZph03xbZsgn7K3qMr+Rq+gkbJNI+FEXg=="
+    },
+    "System.Runtime.Serialization.Primitives/4.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-HZ6Du5QrTG8MNJbf4e4qMO3JRAkIboGT5Fk804uZtg3Gq516S7hAqTm2UZKUHa7/6HUGdVy3AqMQKbns06G/cg=="
+    }
+  }
+}
