@@ -8,7 +8,6 @@ namespace Dogey.Utilities
 {
     public static class DogeyConsole
     {
-
         public static void TitleCard(string title, string version = null, ConsoleColor? color = null)
         {
             if (color == null)
@@ -26,6 +25,7 @@ namespace Dogey.Utilities
             }
             card.Add($"└{new string('─', 12)}{new string('─', title.Count())}{new string('─', 12)}┘");
 
+            Console.Title = title;
             DogeyConsole.NewLine(string.Join(Environment.NewLine, card));
         }
 
@@ -60,7 +60,15 @@ namespace Dogey.Utilities
             Console.BackgroundColor = (ConsoleColor)background;
             Console.Write(Environment.NewLine + text);
         }
-        
+
+        public static void Log(LogSeverity severity, string source, string message)
+        {
+            DogeyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            DogeyConsole.Append($"[{severity}] ", ConsoleColor.Red);
+            DogeyConsole.Append($"{source}: ", ConsoleColor.DarkGreen);
+            DogeyConsole.Append(message, ConsoleColor.White);
+        }
+
         /// <summary> Reset the console's colors to default. </summary>
         public static void ResetColors()
         {

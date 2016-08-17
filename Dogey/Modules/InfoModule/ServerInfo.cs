@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Modules.InfoModule
+namespace Dogey.Modules.Info
 {
     [Module("serverinfo")]
+    [Description("Info")]
     public class ServerInfo
     {
         private DiscordSocketClient _client;

@@ -12,7 +12,10 @@
     "Discord.Net": "1.0.0-dev-336",
     "Discord.Net.Commands": "1.0.0-dev-336",
     "System.Linq": "4.1.0",
-    "System.Linq.Queryable": "4.0.1" },
+    "System.Linq.Queryable": "4.0.1",
+    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0",
+    "Microsoft.EntityFrameworkCore.Sqlite.Design": "1.0.0",
+    "Microsoft.EntityFrameworkCore": "1.0.0"},
 
   "frameworks": {
     "netcoreapp1.0": {
