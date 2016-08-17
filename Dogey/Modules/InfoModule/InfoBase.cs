@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Modules
+namespace Dogey.Modules.Info
 {
     [Module]
+    [Description("Info")]
     public class InfoBase
     {
         private DiscordSocketClient _client;
@@ -31,14 +32,13 @@ namespace Dogey.Modules
                 $"  Server: {guild.Name}",
                 $"      Id: {guild.Id}",
                 $"  Region: {guild.VoiceRegionId}",
-                $"   Owner: {(await guild.GetOwnerAsync() as IGuildUser) ?? null}",
+                $"   Owner: {(await guild.GetOwnerAsync() as IGuildUser)}",
                 $" Created: {guild.CreatedAt.ToString("ddddd, MMM dd yyyy, hh:mm:ss tt")}",
                 $"   Users: {guild.GetUsers().Count()}",
                 $"Channels: ({guild.GetTextChannels().Count()})text " +
                                   $"({guild.GetVoiceChannels().Count()})voice " +
                                   $"({guild.GetTextChannels().Where(x => x.GetUsers().Count() < guild.GetUsers().Count()).Count()})hidden",
                 $"    Icon: {guild.IconUrl}",
-                $"  Emojis: {string.Join(", ", guild.Emojis)}",
                 $"   Roles: {string.Join(", ", guild.Roles.Where(x => !x.Name.Contains("@")))}",
                 "```"
             });
