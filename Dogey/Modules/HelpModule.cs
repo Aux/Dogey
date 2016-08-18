@@ -39,10 +39,10 @@ namespace Dogey.Modules.Help
                 {
                     if (!string.IsNullOrWhiteSpace(module.Name))
                     {
-                        if (commands.Keys.Contains(module.Description))
-                            commands[module.Description].Add(module.Name + "*");
-                        else
-                            commands.Add(module.Description, new List<string> { module.Name + "*" });
+                        //if (commands.Keys.Contains(module.Description))
+                        //    commands[module.Description].Add(module.Name + "*");
+                        //else
+                        //    commands.Add(module.Description, new List<string> { module.Name + "*" });
                     } else
                     {
                         foreach (var cond in module.Preconditions)

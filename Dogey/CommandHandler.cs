@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Utilities;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -34,11 +35,13 @@ namespace Dogey
                 return;
             
             int argPos = 0;
-            if (msg.HasMentionPrefix(self, ref argPos) || msg.HasCharPrefix('-', ref argPos))
+            if (msg.HasCharPrefix(Globals.Config.Prefix, ref argPos))
             {
                 var result = await commands.Execute(msg, argPos);
                 if (!result.IsSuccess && !result.ErrorReason.Contains("Unknown"))
+                {
                     await msg.Channel.SendMessageAsync(result.ErrorReason);
+                }
             }
         }
     }

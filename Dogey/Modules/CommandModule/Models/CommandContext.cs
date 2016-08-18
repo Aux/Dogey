@@ -10,7 +10,7 @@ namespace Dogey.Modules.Commands
     public class CommandContext : DbContext
     {
         public DbSet<CustomCommand> Commands { get; set; }
-        public DbSet<CustomInfo> CommandInfo { get; set; }
+        public DbSet<CustomInfo> Logs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
