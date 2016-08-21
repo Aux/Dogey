@@ -64,24 +64,36 @@ namespace Dogey.Modules.Info
             await msg.Channel.SendMessageAsync(guild.CreatedAt.ToString("ddddd, MMM dd yyyy, hh:mm:ss tt"));
         }
 
-        [Command("usercount")]
+        [Command("users")]
         [Description("Get the name of this server.")]
-        public async Task UserCount(IMessage msg)
+        public async Task Users(IMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
             await msg.Channel.SendMessageAsync(guild.GetUsers().Count().ToString());
         }
 
-        [Command("channelcount")]
+        [Command("channels")]
         [Description("Get the name of this server.")]
-        public async Task ChannelCount(IMessage msg)
+        public async Task Channels(IMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
+            
+            var textchannels = await guild.GetTextChannelsAsync();
+            var voicechannels = await guild.GetVoiceChannelsAsync();
+            var hiddenchannels = textchannels.Where(x => x.GetUsers().Count() < guild.GetUsers().Count());
 
-            await msg.Channel.SendMessageAsync($"{ guild.GetTextChannels().Count()})text " +
-                                  $"({guild.GetVoiceChannels().Count()})voice " +
-                                  $"({guild.GetTextChannels().Where(x => x.GetUsers().Count() < guild.GetUsers().Count()).Count()})hidden");
+            var helpmsg = new List<string>();
+            helpmsg.AddRange(new string[]
+            {
+                "```xl",
+                $"Text ({textchannels.Count()}): {string.Join(", ", textchannels.Select(x => x.Name))}",
+                $"Voice ({voicechannels.Count()}): {string.Join(", ", voicechannels.Select(x => x.Name))}",
+                $"Hidden ({hiddenchannels.Count()}): {string.Join(", ", hiddenchannels.Select(x => x.Name))}",
+                "```"
+            });
+
+            await msg.Channel.SendMessageAsync(string.Join("\n", helpmsg));
         }
 
         [Command("icon")]

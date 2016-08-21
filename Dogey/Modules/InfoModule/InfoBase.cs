@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.Info
@@ -48,9 +49,26 @@ namespace Dogey.Modules.Info
 
         [Command("userinfo")]
         [Description("Get info about this user.")]
-        public async Task UserInfo(IMessage msg, string user = null)
+        public async Task UserInfo(IMessage msg, IUser u = null)
         {
-            await msg.Channel.SendMessageAsync("Not implemented.");
+            var user = (msg.Author as IGuildUser) ?? (u as IGuildUser);
+
+            var infomsg = new List<string>();
+            infomsg.AddRange(new string[]
+            {
+                "```xl",
+                $"Username: {user}",
+                $"Nickname: {user.Nickname}",
+                $"      Id: {user.Id}",
+                $" Playing: {user.Game?.Name}",
+                $" Created: {user.CreatedAt}",
+                $"  Joined: {user.JoinedAt}",
+                $"  Avatar: {user.AvatarUrl}",
+                $"   Roles: {string.Join(", ", user.Roles.Where(x => x.Name != "@everyone"))}",
+                "```"
+            });
+
+            await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
         }
 
         [Command("botinfo")]
