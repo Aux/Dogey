@@ -64,6 +64,27 @@ namespace Dogey.Modules.Commands
             Messages = new List<string>();
         }
 
+        public CustomCommand FromMsg(IMessage msg)
+        {
+            var channel = (msg.Channel as IGuildChannel) ?? null;
+
+            int index = msg.Content.IndexOf(Globals.Config.Prefix);
+            string cmdtext = (index < 0)
+                ? msg.Content
+                : msg.Content.Remove(index, Globals.Config.Prefix.Length);
+
+            var cmd = cmdtext.Split(' ')[0];
+
+            using (var c = new CommandContext())
+            {
+                var check = c.Commands.Where(x => x.Name == cmd.Split('.')[0] && x.GuildId == channel.Guild.Id);
+                if (check.Count() > 1)
+                    throw new Exception("Multile results found.");
+                else
+                    return check.FirstOrDefault();
+            }
+        }
+
         /// <summary> Save this command to the database. </summary>
         public async Task CreateAsync(IMessage msg)
         {
@@ -110,28 +131,66 @@ namespace Dogey.Modules.Commands
             }
         }
 
-        public string GetMessage(int? index = null)
+        public async Task SendMessageAsync(IMessage msg, int? index = null, bool parseTags = true)
         {
+            string message;
             if (index != null)
+                message = Messages[(int)index];
+            else
+                message = Messages[new Random().Next(0, Messages.Count() - 1)];
+
+            if (parseTags)
+                await msg.Channel.SendMessageAsync(message); // Create tag parser
+            else
+                await msg.Channel.SendMessageAsync(message);
+        }
+
+        public async Task AddMessageAsync(IMessage msg, string content)
+        {
+            using (var c = new CommandContext())
             {
-                return Messages[(int)index];
-            } else
-            {
-                var r = new Random();
-                return Messages[r.Next(0, Messages.Count() - 1)];
+                var cmd = c.Commands.FirstOrDefault(x => x.Id == Id);
+                cmd.Messages.Add(content);
+
+                await c.SaveChangesAsync();
+                await msg.Channel.SendMessageAsync($"Added message number **{cmd.Messages.Count()}** to `{Name}`.");
             }
         }
 
-        public async Task<string> GetMessageRaw(int index)
+        public async Task DelMessageAsync(IMessage msg, int index)
         {
-            await Task.Delay(1);
-            return null;
+            using (var c = new CommandContext())
+            {
+                var cmd = c.Commands.FirstOrDefault(x => x.Id == Id);
+                cmd.Messages.RemoveAt(index);
+
+                await c.SaveChangesAsync();
+                await msg.Channel.SendMessageAsync($"Removed message number **{index}** from `{Name}`.");
+            }
         }
 
-        public async Task<string> GetInfo(int? index = null)
+        public async Task SendInfoAsync(IMessage msg, int? index = null)
         {
-            await Task.Delay(1);
-            return null;
+            var guild = (msg.Channel as IGuildChannel).Guild ?? null;
+            var infomsg = new List<string>();
+
+            using (var c = new CommandContext())
+            {
+                infomsg.AddRange(new string[]
+                {
+                    "```xl",
+                    $"    Command: {Name}",
+                    $"   Messages: {Messages.Count()}",
+                    $"    Created: {c.Logs.Where(x => x.CommandId == Id && x.Action == CommandAction.Created).FirstOrDefault()?.Timestamp}",
+                    $"    Channel: ",
+                    $"      Owner: {await guild.GetUserAsync(OwnerId)}",
+                    $"       Uses: {c.Logs.Where(x => x.CommandId == Id && x.Action == CommandAction.Executed).Count()}",
+                    $"Description: {Description}",
+                    "```"
+                });
+            }
+
+            await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
         }
     }
 }

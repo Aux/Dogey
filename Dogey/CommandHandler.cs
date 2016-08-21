@@ -55,6 +55,7 @@ namespace Dogey
                             GuildId = channel?.Guild?.Id,
                             ChannelId = channel?.Id,
                             UserId = msg.Author.Id,
+                            CommandId = (new CustomCommand().FromMsg(msg))?.Id,
                             CommandText = msg.Content,
                             Action = CommandAction.Executed
                         });
@@ -82,57 +83,42 @@ namespace Dogey
 
         public async Task<IResult> CustomExecute(IMessage msg)
         {
-            var channel = (msg.Channel as IGuildChannel) ?? null;
-
-            int index = msg.Content.IndexOf(Globals.Config.Prefix);
-            string cmdtext = (index < 0)
-                ? msg.Content
-                : msg.Content.Remove(index, Globals.Config.Prefix.Length);
-
-            var cmd = cmdtext.Split(' ')[0].Split('.')[0];
-
-            CustomCommand custom;
-            using (var c = new CommandContext())
+            try
             {
-                var check = c.Commands.Where(x => x.Name == cmd && x.GuildId == channel.Guild.Id);
-                if (check.Count() > 1)
-                    return new CustomResult()
-                    {
-                        IsSuccess = false,
-                        Error = CommandError.MultipleMatches,
-                        ErrorReason = $"The command `{cmd}` returned multiple matches."
-                    };
-                else
-                    custom = check.FirstOrDefault();
+                var channel = (msg.Channel as IGuildChannel) ?? null;
+
+                int index = msg.Content.IndexOf(Globals.Config.Prefix);
+                string cmdtext = (index < 0)
+                    ? msg.Content
+                    : msg.Content.Remove(index, Globals.Config.Prefix.Length);
+
+                var cmd = cmdtext.Split(' ')[0];
+
+                var custom = new CustomCommand().FromMsg(msg);
+
+                if (cmd.EndsWith(".add"))
+                    await custom.AddMessageAsync(msg, cmdtext.Replace(cmd, ""));
+                else if (cmd.EndsWith(".del"))
+                    await custom.DelMessageAsync(msg, int.Parse(cmdtext.Replace(cmd, "")));
+                else if (cmd.EndsWith(".info"))
+                    await custom.SendInfoAsync(msg);
+                else if (cmd.EndsWith(".raw"))
+                    await custom.SendMessageAsync(msg, parseTags: false);
+                else if (cmd == custom.Name)
+                    await custom.SendMessageAsync(msg);
+                
+                return new CustomResult()
+                {
+                    IsSuccess = true
+                };
+            } catch (Exception ex)
+            {
+                return new CustomResult()
+                {
+                    IsSuccess = false,
+                    ErrorReason = ex.ToString()
+                };
             }
-
-            if (cmd == custom.Name)
-            {
-
-            } else
-            if (cmd.EndsWith(".add"))
-            {
-
-            } else
-            if (cmd.EndsWith(".del"))
-            {
-
-            } else
-            if (cmd.EndsWith(".info"))
-            {
-
-            } else
-            if (cmd.EndsWith(".raw"))
-            {
-
-            }
-
-                await Task.Delay(1);
-            return new CustomResult()
-            {
-                IsSuccess = false,
-                ErrorReason = "This is a custom command."
-            };
         }
     }
 }
