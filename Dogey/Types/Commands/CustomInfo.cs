@@ -27,8 +27,11 @@ namespace Dogey.Modules.Commands
         [Required, Column("UserId")]
         public ulong UserId { get; set; }
         
-        [Required, Column("CommandId")]
+        [Column("CommandId")]
         public int CommandId { get; set; }
+
+        [Column("CommandText")]
+        public string CommandText { get; set; }
         
         [Required, Column("Action")]
         public CommandAction Action { get; set; }

@@ -14,18 +14,21 @@ namespace Dogey.Types
         public readonly string appdir = AppContext.BaseDirectory;
 
         /// <summary> The prefix for all commands. </summary>
-        public char Prefix { get; set; }
+        public string Prefix { get; set; }
         /// <summary> The Id of users who have owner command access. </summary>
         public List<ulong> Owner { get; set; }
         /// <summary> The Id of the owner's guild. </summary>
         public ulong OwnerGuild { get; set; }
+        /// <summary> The time in seconds Dogey waits before deleting its messages. </summary>
+        public int AutoCleanDelay { get; set; }
         /// <summary> The bot's oauth token. </summary>
         public Token Token { get; set; }
 
         public Configuration()
         {
-            Prefix = '~';
+            Prefix = "~";
             Owner = new List<ulong>();
+            AutoCleanDelay = 30;
             Token = new Token();
         }
 

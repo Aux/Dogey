@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules.Commands
 {
     [Module]
+    [Group("commands")]
     [Description("Commands")]
     public class CommandBase
     {
@@ -19,7 +20,7 @@ namespace Dogey.Modules.Commands
         {
             _client = client;
         }
-
+        
         [Command("commands")]
         public async Task Commands(IMessage msg)
         {

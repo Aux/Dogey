@@ -35,7 +35,7 @@ namespace Dogey.Modules.Commands
         public string Name { get; set; }
 
         /// <summary> A description of what this command does. </summary>
-        [Required, Column("Description")]
+        [Column("Description")]
         [MaxLength(128, ErrorMessage = "Command description cannot be longer than 128 characters.")]
         public string Description { get; set; }
 
@@ -108,6 +108,30 @@ namespace Dogey.Modules.Commands
 
                 await c.SaveChangesAsync();
             }
+        }
+
+        public string GetMessage(int? index = null)
+        {
+            if (index != null)
+            {
+                return Messages[(int)index];
+            } else
+            {
+                var r = new Random();
+                return Messages[r.Next(0, Messages.Count() - 1)];
+            }
+        }
+
+        public async Task<string> GetMessageRaw(int index)
+        {
+            await Task.Delay(1);
+            return null;
+        }
+
+        public async Task<string> GetInfo(int? index = null)
+        {
+            await Task.Delay(1);
+            return null;
         }
     }
 }
