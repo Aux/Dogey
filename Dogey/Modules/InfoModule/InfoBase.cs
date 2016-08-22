@@ -3,14 +3,16 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.Info
 {
     [Module]
-    [Description("Info")]
+    [Name("Info")]
     public class InfoBase
     {
         private DiscordSocketClient _client;
@@ -75,7 +77,26 @@ namespace Dogey.Modules.Info
         [Description("Get info about Dogey.")]
         public async Task BotInfo(IMessage msg)
         {
-            await msg.Channel.SendMessageAsync("Not implemented.");
+            var infomsg = new List<string>();
+            infomsg.AddRange(new string[]
+            {
+                "```xl",
+                $" Owner(s): ",
+                $"  Library: Discord.Net ({DiscordConfig.Version})",
+                $"  Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}",
+                $"   Uptime: {GetUptime()}",
+                $"Heap Size: {GetHeapSize()} MB",
+                $"   Guilds: {(await _client.GetGuildSummariesAsync()).Count()}",
+                $" Channels: {(await _client.GetGuildsAsync()).Select(async g => await g.GetChannelsAsync()).Count()}",
+                $"    Users: {(await _client.GetGuildsAsync()).Select(async g => await g.GetUsersAsync()).Count()}",
+                "```"
+            });
+
+            await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
         }
+
+        private static string GetUptime()
+            => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
+        private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
     }
 }

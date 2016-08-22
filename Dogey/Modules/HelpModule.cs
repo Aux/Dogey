@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Help
 {
-    [Module]
+    [Module, Name("")]
     public class HelpModule
     {
         private CommandService _commands;
@@ -39,20 +39,20 @@ namespace Dogey.Modules.Help
             {
                 var commands = new Dictionary<string, List<string>>();
 
-                foreach (var module in modules.Where(x => !string.IsNullOrWhiteSpace(x.Description)))
+                foreach (var module in modules.Where(x => !string.IsNullOrWhiteSpace(x.Name)))
                 {
                     if (!string.IsNullOrWhiteSpace(module.Prefix))
                     {
-                        if (commands.Keys.Contains(module.Description))
-                            commands[module.Description].Add(module.Prefix + "*");
+                        if (commands.Keys.Contains(module.Name))
+                            commands[module.Name].Add(module.Prefix + "*");
                         else
-                            commands.Add(module.Description, new List<string> { module.Name + "*" });
+                            commands.Add(module.Name, new List<string> { module.Name + "*" });
                     } else
                     {
-                        if (commands.Keys.Contains(module.Description))
-                            commands[module.Description].AddRange(module.Commands.Select(x => x.Name));
+                        if (commands.Keys.Contains(module.Name))
+                            commands[module.Name].AddRange(module.Commands.Select(x => x.Name));
                         else
-                            commands.Add(module.Description, new List<string>(module.Commands.Select(x => x.Name)));
+                            commands.Add(module.Name, new List<string>(module.Commands.Select(x => x.Name)));
                     }
                 }
 

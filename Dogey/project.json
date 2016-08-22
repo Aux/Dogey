@@ -9,8 +9,8 @@
       "type": "platform",
       "version": "1.0.0"
     },
-    "Discord.Net": "1.0.0-dev-368",
-    "Discord.Net.Commands": "1.0.0-dev-368",
+    "Discord.Net": "1.0.0-dev-380",
+    "Discord.Net.Commands": "1.0.0-dev-380",
     "System.Linq": "4.1.0",
     "System.Linq.Queryable": "4.0.1",
     "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0",
