@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules.Info
 {
     [Module("serverinfo")]
-    [Description("Info")]
+    [Name("")]
     public class ServerInfo
     {
         private DiscordSocketClient _client;

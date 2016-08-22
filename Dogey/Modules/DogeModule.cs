@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Module]
+    [Name("General")]
     public class DogeModule
     {
         private DiscordSocketClient _client;

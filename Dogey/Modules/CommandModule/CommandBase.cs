@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules.Commands
 {
     [Module]
-    [Group("commands")]
-    [Description("Commands")]
+    [Name("Commands")]
     public class CommandBase
     {
         private DiscordSocketClient _client;
