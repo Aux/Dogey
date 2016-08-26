@@ -23,6 +23,9 @@ namespace Dogey.Modules.Help
         [Command("help")]
         public async Task Help(IMessage msg, string cmd = null)
         {
+            if (Globals.Config.IsSelfBot)
+                return;
+
             _commands = new CommandService();
 
             var channel = (msg.Channel as IGuildChannel) ?? null;

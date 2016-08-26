@@ -45,8 +45,46 @@ namespace Dogey.Modules.Info
                 $"   Roles: {string.Join(", ", guild.Roles.Where(x => !x.Name.Contains("@")))}",
                 "```"
             });
-            
-            await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
+
+            if (Globals.Config.IsSelfBot)
+                await msg.ModifyAsync((e) =>
+                {
+                    e.Content = string.Join(Environment.NewLine, infomsg);
+                });
+            else
+                await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
+        }
+
+        [Command("channelinfo")]
+        [Description("Get info about this channel.")]
+        public async Task ChannelInfo(IMessage msg, IChannel chn = null)
+        {
+            var channel = chn as ITextChannel ?? msg.Channel as ITextChannel ?? null;
+
+            if (channel == null)
+            {
+                await msg.Channel.SendMessageAsync($"I could not find a channel like `{chn}`");
+            }
+
+            var infomsg = new List<string>();
+            infomsg.AddRange(new string[]
+            {
+                "```xl",
+                $"       Name: #{channel.Name} ",
+                $"         Id: {channel.Id} ",
+                $"      Topic: {channel.Topic}",
+                $"    Created: {channel.CreatedAt}",
+                $"Cached Msgs: {channel.CachedMessages.Count}",
+                "```"
+            });
+
+            if (Globals.Config.IsSelfBot)
+                await msg.ModifyAsync((e) =>
+                {
+                    e.Content = string.Join(Environment.NewLine, infomsg);
+                });
+            else
+                await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
         }
 
         [Command("userinfo")]
@@ -70,7 +108,13 @@ namespace Dogey.Modules.Info
                 "```"
             });
 
-            await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
+            if (Globals.Config.IsSelfBot)
+                await msg.ModifyAsync((e) =>
+                {
+                    e.Content = string.Join(Environment.NewLine, infomsg);
+                });
+            else
+                await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
         }
 
         [Command("botinfo")]
@@ -92,11 +136,18 @@ namespace Dogey.Modules.Info
                 "```"
             });
 
-            await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
+            if (Globals.Config.IsSelfBot)
+                await msg.ModifyAsync((e) =>
+                {
+                    e.Content = string.Join(Environment.NewLine, infomsg);
+                });
+            else
+                await msg.Channel.SendMessageAsync(string.Join(Environment.NewLine, infomsg));
         }
 
         private static string GetUptime()
             => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
-        private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
+        private static string GetHeapSize() 
+            => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
     }
 }

@@ -19,6 +19,8 @@ namespace Dogey.Types
         public List<ulong> Owner { get; set; }
         /// <summary> The Id of the owner's guild. </summary>
         public ulong OwnerGuild { get; set; }
+        /// <summary> If true, responses are sent by editing the command message. </summary>
+        public bool IsSelfBot { get; set; }
         /// <summary> The time in seconds Dogey waits before deleting its messages. </summary>
         public int AutoCleanDelay { get; set; }
         /// <summary> The bot's oauth token. </summary>
