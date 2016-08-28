@@ -29,7 +29,7 @@ namespace Dogey
             await _commands.LoadAssembly(Assembly.GetEntryAssembly(), map);
         }
 
-        public async Task HandleCommand(IMessage msg)
+        public async Task HandleCommand(IUserMessage msg)
         {
             if (msg.Author.IsBot)
                 return;
@@ -49,6 +49,7 @@ namespace Dogey
                 {
                     using (var c = new CommandContext())
                     {
+                        int prefix = msg.Content.IndexOf(Globals.Config.Prefix);
                         c.Logs.Add(new CustomInfo()
                         {
                             Timestamp = DateTime.UtcNow,
@@ -56,7 +57,7 @@ namespace Dogey
                             ChannelId = channel?.Id,
                             UserId = msg.Author.Id,
                             CommandId = (new CustomCommand().FromMsg(msg))?.Id,
-                            CommandText = msg.Content,
+                            CommandText = msg.Content.Remove(prefix, Globals.Config.Prefix.Count()),
                             Action = CommandAction.Executed
                         });
 
@@ -65,7 +66,8 @@ namespace Dogey
                 }
                 else
                 {
-                    await msg.Channel.SendMessageAsync(result.ErrorReason);
+                    if (result.Error != CommandError.UnknownCommand)
+                        await msg.Channel.SendMessageAsync(result.ErrorReason);
                 }
             }
         }
@@ -81,7 +83,7 @@ namespace Dogey
                 return c.Commands.Any(x => cmdtext.StartsWith(x.Name));
         }
 
-        public async Task<IResult> CustomExecute(IMessage msg)
+        public async Task<IResult> CustomExecute(IUserMessage msg)
         {
             try
             {
@@ -98,8 +100,10 @@ namespace Dogey
 
                 if (cmd.EndsWith(".add"))
                     await custom.AddMessageAsync(msg, cmdtext.Replace(cmd, ""));
+                else if (cmd.EndsWith(".addtag"))
+                    await custom.AddMessageAsync(msg, cmdtext.Replace(cmd, ""));
                 else if (cmd.EndsWith(".del"))
-                    await custom.DelMessageAsync(msg, int.Parse(cmdtext.Replace(cmd, "")));
+                    await custom.DelMessageAsync(msg, cmdtext.Replace(cmd, ""));
                 else if (cmd.EndsWith(".info"))
                     await custom.SendInfoAsync(msg);
                 else if (cmd.EndsWith(".raw"))

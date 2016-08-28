@@ -45,15 +45,15 @@ namespace Dogey.Modules.Commands
         public string MessageString
         {
             get { return JsonConvert.SerializeObject(_messages); }
-            set { _messages = JsonConvert.DeserializeObject<List<string>>(value); }
+            set { _messages = JsonConvert.DeserializeObject<Dictionary<string, string>>(value); }
         }
 
         [NotMapped]
-        private List<string> _messages { get; set; }
+        private Dictionary<string, string> _messages { get; set; }
 
         /// <summary> The command's unique identifier. </summary>
         [NotMapped]
-        public List<string> Messages
+        public Dictionary<string, string> Messages
         {
             get { return _messages; }
             set { _messages = value; }
@@ -61,10 +61,10 @@ namespace Dogey.Modules.Commands
         
         public CustomCommand()
         {
-            Messages = new List<string>();
+            Messages = new Dictionary<string, string>();
         }
 
-        public CustomCommand FromMsg(IMessage msg)
+        public CustomCommand FromMsg(IUserMessage msg)
         {
             var channel = (msg.Channel as IGuildChannel) ?? null;
 
@@ -86,7 +86,7 @@ namespace Dogey.Modules.Commands
         }
 
         /// <summary> Save this command to the database. </summary>
-        public async Task CreateAsync(IMessage msg)
+        public async Task CreateAsync(IUserMessage msg)
         {
             var channel = (msg.Channel as IGuildChannel) ?? null;
 
@@ -109,7 +109,7 @@ namespace Dogey.Modules.Commands
         }
 
         /// <summary> Remove this command from the database. </summary>
-        public async Task DeleteAsync(IMessage msg)
+        public async Task DeleteAsync(IUserMessage msg)
         {
             var channel = (msg.Channel as IGuildChannel) ?? null;
 
@@ -131,58 +131,68 @@ namespace Dogey.Modules.Commands
             }
         }
 
-        public async Task SendMessageAsync(IMessage msg, int? index = null, bool parseTags = true)
+        public async Task SendMessageAsync(IUserMessage msg, string key = null, bool parseTags = true)
         {
-            string message;
-            if (index != null)
-                message = Messages[(int)index];
-            else
-                message = Messages[new Random().Next(0, Messages.Count() - 1)];
+            if (Messages.Count() == 0)
+            {
+                await msg.Channel.SendMessageAsync($"This command contains no messages, please add some with `{Name}.add <message>`.");
+            } else
+            {
+                KeyValuePair<string, string> message;
+                if (!string.IsNullOrWhiteSpace(key))
+                    message = new KeyValuePair<string, string>(key, Messages[key]);
+                else
+                    message = Messages.ElementAtOrDefault(new Random().Next(0, Messages.Count() - 1));
 
-            if (parseTags)
-                await msg.Channel.SendMessageAsync(message); // Create tag parser
-            else
-                await msg.Channel.SendMessageAsync(message);
+                if (parseTags)
+                    await msg.Channel.SendMessageAsync($"{message.Key}. {message.Value}"); // Create tag parser
+                else
+                    await msg.Channel.SendMessageAsync($"{message.Key}. {message.Value}");
+            }
         }
 
-        public async Task AddMessageAsync(IMessage msg, string content)
+        public async Task AddMessageAsync(IUserMessage msg, string content, string key = null)
         {
             using (var c = new CommandContext())
             {
                 var cmd = c.Commands.FirstOrDefault(x => x.Id == Id);
-                cmd.Messages.Add(content);
 
+                if (string.IsNullOrWhiteSpace(key))
+                    cmd.Messages.Add(cmd.Messages.Count().ToString(), content);
+                else
+                    cmd.Messages.Add(key, content);
+                
                 await c.SaveChangesAsync();
                 await msg.Channel.SendMessageAsync($"Added message number **{cmd.Messages.Count()}** to `{Name}`.");
             }
         }
 
-        public async Task DelMessageAsync(IMessage msg, int index)
+        public async Task DelMessageAsync(IUserMessage msg, string key)
         {
             using (var c = new CommandContext())
             {
                 var cmd = c.Commands.FirstOrDefault(x => x.Id == Id);
-                cmd.Messages.RemoveAt(index);
+                cmd.Messages.Remove(key);
 
                 await c.SaveChangesAsync();
-                await msg.Channel.SendMessageAsync($"Removed message number **{index}** from `{Name}`.");
+                await msg.Channel.SendMessageAsync($"Removed message **{key}** from `{Name}`.");
             }
         }
 
-        public async Task SendInfoAsync(IMessage msg, int? index = null)
+        public async Task SendInfoAsync(IUserMessage msg, int? index = null)
         {
             var guild = (msg.Channel as IGuildChannel).Guild ?? null;
             var infomsg = new List<string>();
 
             using (var c = new CommandContext())
             {
+                var timestamp = c.Logs.Where(x => x.CommandId == Id && x.Action == CommandAction.Created).FirstOrDefault()?.Timestamp;
                 infomsg.AddRange(new string[]
                 {
                     "```xl",
                     $"    Command: {Name}",
                     $"   Messages: {Messages.Count()}",
-                    $"    Created: {c.Logs.Where(x => x.CommandId == Id && x.Action == CommandAction.Created).FirstOrDefault()?.Timestamp}",
-                    $"    Channel: ",
+                    $"    Created: {timestamp} ({Math.Round((DateTime.UtcNow - timestamp).Value.TotalDays)} days)",
                     $"      Owner: {await guild.GetUserAsync(OwnerId)}",
                     $"       Uses: {c.Logs.Where(x => x.CommandId == Id && x.Action == CommandAction.Executed).Count()}",
                     $"Description: {Description}",
