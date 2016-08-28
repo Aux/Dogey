@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [Module]
-    [Name("General")]
+    [Module, Name("General")]
     public class DogeModule
     {
         private DiscordSocketClient _client;
@@ -22,31 +21,24 @@ namespace Dogey.Modules
         }
 
         [Command("doge")]
-        public async Task Doge(IUserMessage msg, params string[] phrase)
+        public async Task Doge(IUserMessage msg, [Remainder]string phrase)
         {
             var r = new Random();
-            string dogeFile = $"trash\\{r.Next(10000, 99999)}.png";
+            string dogeFile = Path.Combine(AppContext.BaseDirectory, $"trash\\{r.Next(10000, 99999)}.png");
+            var baseUri = new Uri("http://dogr.io/");
+            string queryUrl = "wow/{0}.png";
 
-            string dogeText = null;
-            foreach (string line in phrase)
-            {
-                if (dogeText == null)
-                    dogeText += line;
-                else
-                    dogeText += "/" + line;
-            }
+            string dogeText = phrase.Replace(' ', '/');
+
+            string q = string.Format(queryUrl, Uri.UnescapeDataString(dogeText));
 
             using (var client = new HttpClient())
             {
-                Uri doge;
-                Uri.TryCreate($"http://dogr.io/wow/{Uri.UnescapeDataString(dogeText)}.png", UriKind.Absolute, out doge);
+                client.BaseAddress = baseUri;
+                var response = await client.GetAsync(q);
+                response.EnsureSuccessStatusCode();
 
-                client.BaseAddress = doge;
-                using (var response = await client.GetAsync(doge))
-                {
-                    response.EnsureSuccessStatusCode();
-                    File.WriteAllBytes(dogeFile, await response.Content.ReadAsByteArrayAsync());
-                }
+                File.WriteAllBytes(dogeFile, await response.Content.ReadAsByteArrayAsync());
             }
 
             await msg.Channel.SendFileAsync(dogeFile);
