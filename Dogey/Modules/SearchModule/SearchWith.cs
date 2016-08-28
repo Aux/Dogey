@@ -42,7 +42,7 @@ namespace Dogey.Modules.SearchModule
         public static async Task<string> StackExchange(string site, string tag, string query)
         {
             var baseUri = new Uri("http://api.stackexchange.com/");
-            string queryUrl = "2.2/search/advanced?page=1&pagesize=1&order=desc&sort=relevance&q={0}&answers=1&tagged={1}&site={2}";
+            string queryUrl = "2.2/search/advanced?page=1&pagesize=1&order=desc&sort=votes&q={0}&answers=1&tagged={1}&site={2}";
             
             string q = string.Format(queryUrl, 
                 Uri.EscapeDataString(query), 

@@ -66,9 +66,9 @@ namespace Dogey.Modules.Help
                 } else
                 {
                     if (!helpmsg.Keys.Contains(c.Module.Name))
-                        helpmsg.Add(c.Module.Name, c.Name.ToLower());
+                        helpmsg.Add(c.Module.Name, c.Text.ToLower());
                     else
-                        helpmsg[c.Module.Name] += $", {c.Name.ToLower()}";
+                        helpmsg[c.Module.Name] += $", {c.Text.ToLower()}";
                 }
             }
             
