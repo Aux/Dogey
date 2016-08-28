@@ -8,20 +8,19 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Info
 {
-    [Module("serverinfo")]
-    [Name("")]
-    public class ServerInfo
+    [Module("serverinfo"), Name("")]
+    public class ServerInfoGroup
     {
         private DiscordSocketClient _client;
 
-        public ServerInfo(DiscordSocketClient client)
+        public ServerInfoGroup(DiscordSocketClient client)
         {
             _client = client;
         }
 
         [Command("name")]
         [Description("Get the name of this server.")]
-        public async Task Name(IMessage msg)
+        public async Task Name(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
@@ -30,7 +29,7 @@ namespace Dogey.Modules.Info
 
         [Command("id")]
         [Description("Get the name of this server.")]
-        public async Task Id(IMessage msg)
+        public async Task Id(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
@@ -39,7 +38,7 @@ namespace Dogey.Modules.Info
 
         [Command("region")]
         [Description("Get the name of this server.")]
-        public async Task Region(IMessage msg)
+        public async Task Region(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
@@ -48,7 +47,7 @@ namespace Dogey.Modules.Info
 
         [Command("owner")]
         [Description("Get the name of this server.")]
-        public async Task Owner(IMessage msg)
+        public async Task Owner(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
@@ -57,7 +56,7 @@ namespace Dogey.Modules.Info
 
         [Command("created")]
         [Description("Get the name of this server.")]
-        public async Task Created(IMessage msg)
+        public async Task Created(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
@@ -66,7 +65,7 @@ namespace Dogey.Modules.Info
 
         [Command("users")]
         [Description("Get the name of this server.")]
-        public async Task Users(IMessage msg)
+        public async Task Users(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
@@ -75,7 +74,7 @@ namespace Dogey.Modules.Info
 
         [Command("channels")]
         [Description("Get the name of this server.")]
-        public async Task Channels(IMessage msg)
+        public async Task Channels(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
             
@@ -98,7 +97,7 @@ namespace Dogey.Modules.Info
 
         [Command("icon")]
         [Description("Get the name of this server.")]
-        public async Task Icon(IMessage msg)
+        public async Task Icon(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
@@ -107,7 +106,7 @@ namespace Dogey.Modules.Info
         
         [Command("emojis")]
         [Description("Get a list of this server's custom emojis.")]
-        public async Task Emojis(IMessage msg)
+        public async Task Emojis(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
         
@@ -116,7 +115,7 @@ namespace Dogey.Modules.Info
 
         [Command("roles")]
         [Description("Get the name of this server.")]
-        public async Task Roles(IMessage msg)
+        public async Task Roles(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
             

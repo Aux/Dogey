@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using Dogey.Types;
 using Dogey.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -31,7 +32,7 @@ namespace Dogey
 
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Verbose
+                LogLevel = LogSeverity.Info
             });
             _cmds = new CommandHandler();
 
@@ -47,19 +48,24 @@ namespace Dogey
 
         private async Task MessageReceived(IMessage m)
         {
-            var guild = (m.Channel as IGuildChannel)?.Guild ?? null;
-            var channel = (m.Channel as ITextChannel) ?? null;
+            var msg = (m as IUserMessage) ?? null;
 
-            DogeyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
+            if (msg != null)
+            {
+                var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
+                var channel = (msg.Channel as ITextChannel) ?? null;
 
-            if (guild == null)
-                DogeyConsole.Append($"[PM] ", ConsoleColor.Magenta);
-            else
-                DogeyConsole.Append($"[{guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
+                DogeyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
 
-            DogeyConsole.Append($"{m.Author}: ", ConsoleColor.Green);
-            DogeyConsole.Append(m.Content, ConsoleColor.White);
-            await _cmds.HandleCommand(m);
+                if (guild == null)
+                    DogeyConsole.Append($"[PM] ", ConsoleColor.Magenta);
+                else
+                    DogeyConsole.Append($"[{guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
+
+                DogeyConsole.Append($"{msg.Author}: ", ConsoleColor.Green);
+                DogeyConsole.Append(msg.Content, ConsoleColor.White);
+                await _cmds.HandleCommand(msg);
+            }
         }
     }
 }

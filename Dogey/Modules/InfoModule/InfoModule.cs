@@ -11,20 +11,20 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Info
 {
-    [Module]
-    [Name("Info")]
-    public class InfoBase
+    [Module, Name("Info")]
+    [RequireContext(ContextType.Guild)]
+    public class InfoModule
     {
         private DiscordSocketClient _client;
 
-        public InfoBase(DiscordSocketClient client)
+        public InfoModule(DiscordSocketClient client)
         {
             _client = client;
         }
 
         [Command("serverinfo")]
         [Description("Get info about this server.")]
-        public async Task ServerInfo(IMessage msg)
+        public async Task ServerInfo(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
 
@@ -57,7 +57,7 @@ namespace Dogey.Modules.Info
 
         [Command("channelinfo")]
         [Description("Get info about this channel.")]
-        public async Task ChannelInfo(IMessage msg, IChannel chn = null)
+        public async Task ChannelInfo(IUserMessage msg, IChannel chn = null)
         {
             var channel = chn as ITextChannel ?? msg.Channel as ITextChannel ?? null;
 
@@ -89,7 +89,7 @@ namespace Dogey.Modules.Info
 
         [Command("userinfo")]
         [Description("Get info about this user.")]
-        public async Task UserInfo(IMessage msg, IUser u = null)
+        public async Task UserInfo(IUserMessage msg, IUser u = null)
         {
             var user = (msg.Author as IGuildUser) ?? (u as IGuildUser);
 
@@ -119,7 +119,7 @@ namespace Dogey.Modules.Info
 
         [Command("botinfo")]
         [Description("Get info about Dogey.")]
-        public async Task BotInfo(IMessage msg)
+        public async Task BotInfo(IUserMessage msg)
         {
             var infomsg = new List<string>();
             infomsg.AddRange(new string[]

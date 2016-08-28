@@ -21,116 +21,71 @@ namespace Dogey.Modules.Help
         }
 
         [Command("help")]
-        public async Task Help(IMessage msg, string cmd = null)
+        public async Task Help(IUserMessage msg, [Remainder]string cmd = null)
         {
-            if (Globals.Config.IsSelfBot)
-                return;
-
-            _commands = new CommandService();
-
-            var channel = (msg.Channel as IGuildChannel) ?? null;
-            var user = msg.Author as IGuildUser;
-
+            if (Globals.Config.IsSelfBot) return;
+            
+            var service = new CommandService();
             var map = new DependencyMap();
             map.Add(_client);
-            map.Add(user);
-
-            var helpmsg = new List<string>();
-            var modules = await _commands.LoadAssembly(System.Reflection.Assembly.GetEntryAssembly(), map);
-
+            
+            var modules = await service.LoadAssembly(System.Reflection.Assembly.GetEntryAssembly(), map);
+            var commands = modules.SelectMany(x => x.Commands);
+            
+            string helpmsg;
             if (string.IsNullOrWhiteSpace(cmd))
-            {
-                var commands = new Dictionary<string, List<string>>();
-
-                foreach (var module in modules.Where(x => !string.IsNullOrWhiteSpace(x.Name)))
-                {
-                    if (!string.IsNullOrWhiteSpace(module.Prefix))
-                    {
-                        if (commands.Keys.Contains(module.Name))
-                            commands[module.Name].Add(module.Prefix + "*");
-                        else
-                            commands.Add(module.Name, new List<string> { module.Name + "*" });
-                    } else
-                    {
-                        if (commands.Keys.Contains(module.Name))
-                            commands[module.Name].AddRange(module.Commands.Select(x => x.Name));
-                        else
-                            commands.Add(module.Name, new List<string>(module.Commands.Select(x => x.Name)));
-                    }
-                }
-
-                using (var c = new CommandContext())
-                {
-                    commands.Add("Custom", c.Commands.Where(x => x.GuildId == channel.Guild.Id).Select(x => x.Name).ToList());
-                }
-
-                foreach (var item in commands)
-                {
-                    helpmsg.Add($"{item.Key}: {string.Join(", ", item.Value.Select(x => x.ToLower()))}");
-                }
-
-                await msg.Channel.SendMessageAsync($"These are the commands you can use.\n```xl\n{string.Join("\n", helpmsg)}```");
-            }
+                helpmsg = GetAllHelp(msg, commands);
             else
-            {
-                foreach(var module in modules.Where(x => x.Prefix == cmd))
-                    foreach (var subcmd in module.Commands)
-                    {
-                        helpmsg.Add(subcmd.Name.ToLower());
-                    }
+                helpmsg = GetCmdHelp(msg, commands, cmd);
+            
+            await msg.Channel.SendMessageAsync($"These are the commands you can use.```xl\n{helpmsg}```");
+        }
 
-                if (helpmsg.Count() > 1)
+        private string GetAllHelp(IUserMessage msg, IEnumerable<Command> commands)
+        {
+            var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
+            var helpmsg = new Dictionary<string, string>();
+            
+            foreach(var c in commands)
+            {
+                if (!c.CheckPreconditions(msg).Result.IsSuccess)
+                    continue;
+                
+                if (string.IsNullOrEmpty(c.Module.Name))
+                    continue;
+                
+                if (!string.IsNullOrWhiteSpace(c.Module.Prefix))
                 {
-                    await msg.Channel.SendMessageAsync($"These are the sub-commands for **{cmd}**.\n```xl\n{string.Join(", ", helpmsg)}```");
+                    if (helpmsg.Values.Contains($"{c.Module.Prefix.ToLower()}*"))
+                        continue;
+                    
+                    if (!helpmsg.Keys.Contains(c.Module.Name))
+                        helpmsg.Add(c.Module.Name, c.Module.Prefix.ToLower() + "*");
+                    else
+                        helpmsg[c.Module.Name] += $", {c.Module.Prefix.ToLower()}*";
                 } else
                 {
-                    var command = FindCommand(modules, cmd);
-
-                    if (command != null)
-                        await msg.Channel.SendMessageAsync(FormatCommand(command));
+                    if (!helpmsg.Keys.Contains(c.Module.Name))
+                        helpmsg.Add(c.Module.Name, c.Name.ToLower());
+                    else
+                        helpmsg[c.Module.Name] += $", {c.Name.ToLower()}";
                 }
             }
-        }
-
-        public Command FindCommand(IEnumerable<Module> modules, string cmd)
-        {
-            Command command = null;
-            foreach (var module in modules)
-            {
-                command = module.Commands.FirstOrDefault(x => x.Name.ToLower() == cmd);
-
-                if (command != null)
-                    break;
-            }
-
-            return command;
-        }
-
-        public string FormatCommand(Command cmd)
-        {
-            string helpmsg = $"`{cmd.Name.ToLower()}` ";
             
-            foreach (var parameter in cmd.Parameters)
-            {
-                string pname = parameter.Name.ToLower();
+            if (guild != null)
+            using (var c = new CommandContext())
+                helpmsg.Add("Custom", string.Join(", ", c.Commands.Where(x => x.GuildId == guild.Id).Select(x => x.Name)));
+            
+            return string.Join("\n", helpmsg.Select(x => $"{x.Key}: {x.Value}"));
+        }
 
-                if (parameter.IsOptional)
-                {
-                    if (parameter.IsMultiple)
-                        helpmsg += $"`[{pname}...]`";
-                    else
-                        helpmsg += $"`[{pname}]`";
-                }
-                else
-                {
-                    if (parameter.IsMultiple)
-                        helpmsg += $"`<{pname}...>`";
-                    else
-                        helpmsg += $"`<{pname}>`";
-                }
-            }
+        private string GetCmdHelp(IUserMessage msg, IEnumerable<Command> commands, string cmd)
+        {
+            var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
+            var helpmsg = new Dictionary<string, string>();
 
-            return $"{helpmsg}\n{cmd.Description}";
+            var command = commands.FirstOrDefault();
+            return "";
         }
     }
 }

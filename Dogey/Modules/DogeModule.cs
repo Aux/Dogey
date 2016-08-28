@@ -22,7 +22,7 @@ namespace Dogey.Modules
         }
 
         [Command("doge")]
-        public async Task Doge(IMessage msg, params string[] phrase)
+        public async Task Doge(IUserMessage msg, params string[] phrase)
         {
             var r = new Random();
             string dogeFile = $"trash\\{r.Next(10000, 99999)}.png";
