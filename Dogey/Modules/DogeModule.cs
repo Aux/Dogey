@@ -44,5 +44,31 @@ namespace Dogey.Modules
             await msg.Channel.SendFileAsync(dogeFile);
             File.Delete(dogeFile);
         }
+        
+        [Command("archive")]
+        public async Task Archive(IUserMessage msg, int count)
+        {
+            var messages = await msg.Channel.GetMessagesAsync(count);
+
+            if (messages.Count() > 0)
+            {
+                var archive = new List<string>();
+
+                archive.Add("Timestamp, ChannelId, AuthorId, AuthorName, Message, Pinned, TTS, Attachments");
+                foreach (var m in messages)
+                    archive.Add($"\"{m.Timestamp}\", \"{m.Channel.Id}\", \"{m.Author.Id}\", \"{m.Author.Username}\", \"{m.Content}\", \"{m.IsPinned}\", \"{m.IsTTS}\", \"{m.Attachments.Count()}\"");
+
+                using (var stream = new StreamWriter(new MemoryStream()))
+                {
+                    stream.Write(string.Join("\n", archive));
+                    await msg.Channel.SendFileAsync(stream.BaseStream, $"Archive {(msg.Channel as IGuildChannel).Name}.csv");
+                    await Task.Delay(10000);
+                }
+            }
+            else
+            {
+                var m = await msg.Channel.SendMessageAsync("I could not find any messages to archive.");
+            }
+        }
     }
 }
