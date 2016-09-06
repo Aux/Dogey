@@ -1,32 +1,30 @@
-﻿using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-using Dogey.Modules.Commands;
-using Dogey.Utilities;
-using System;
-using System.Linq;
-using System.Reflection;
+﻿using System;
 using System.Threading.Tasks;
+using Discord.WebSocket;
+using Discord.Commands;
+using System.Reflection;
+using Discord;
+using Dogey.Models;
+using System.Linq;
+using Dogey.Tools;
 
 namespace Dogey
 {
     public class CommandHandler
     {
-        private CommandService _commands;
         private DiscordSocketClient _client;
-        private ISelfUser _self;
+        private CommandService _cmds;
 
         public async Task Install(DiscordSocketClient c)
         {
             _client = c;
-            _commands = new CommandService();
-            _self = await _client.GetCurrentUserAsync();
-            
+            _cmds = new CommandService();
+
             var map = new DependencyMap();
             map.Add(_client);
-            map.Add(_self);
             
-            await _commands.LoadAssembly(Assembly.GetEntryAssembly(), map);
+            await _cmds.LoadAssembly(Assembly.GetEntryAssembly(), map);
+            Globals.CommandService = _cmds;
         }
 
         public async Task HandleCommand(IUserMessage msg)
@@ -34,94 +32,50 @@ namespace Dogey
             if (msg.Author.IsBot)
                 return;
 
-            int argPos = 0;
-            var channel = (msg.Channel as IGuildChannel) ?? null;
-
-            if (msg.HasStringPrefix(Globals.Config.Prefix, ref argPos))
+            if (msg != null)
             {
-                IResult result = null;
-                if (IsCustomCommand(msg.Content))
-                    result = await CustomExecute(msg);
-                else
-                    result = await _commands.Execute(msg, argPos);
-
-                if (result.IsSuccess)
+                var channel = (msg.Channel as IGuildChannel);
+                
+                string prefix;
+                if (channel?.Guild != null)
                 {
-                    using (var c = new CommandContext())
+                    using (var db = new DataContext())
                     {
-                        int prefix = msg.Content.IndexOf(Globals.Config.Prefix);
-                        c.Logs.Add(new CustomInfo()
+                        var settings = db.Settings.Where(x => x.GuildId == channel.Guild.Id).FirstOrDefault();
+                        if (settings == null)
                         {
-                            Timestamp = DateTime.UtcNow,
-                            GuildId = channel?.Guild?.Id,
-                            ChannelId = channel?.Id,
-                            UserId = msg.Author.Id,
-                            CommandId = (new CustomCommand().FromMsg(msg))?.Id,
-                            CommandText = msg.Content.Remove(prefix, Globals.Config.Prefix.Count()),
-                            Action = CommandAction.Executed
-                        });
+                            settings = new GuildSettings(msg);
+                            db.Settings.Add(settings);
+                            await db.SaveChangesAsync();
+                        }
+                        prefix = settings.Prefix;
+                    }
+                } else
+                {
+                    prefix = Globals.Config.DefaultPrefix;
+                }
 
-                        await c.SaveChangesAsync();
+                int argPos = 0;
+                if (msg.HasStringPrefix(prefix, ref argPos))
+                {
+                    var result = await _cmds.Execute(msg, argPos);
+
+                    if (!result.IsSuccess)
+                    {
+                        if (result.Error != CommandError.UnknownCommand)
+                            await msg.Channel.SendMessageAsync(result.ErrorReason);
+                    } else {
+                        DogeyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
+
+                        if (channel?.Guild == null)
+                            DogeyConsole.Append($"[PM] ", ConsoleColor.Magenta);
+                        else
+                            DogeyConsole.Append($"[{channel.Guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
+
+                        DogeyConsole.Append($"{msg.Author}: ", ConsoleColor.Green);
+                        DogeyConsole.Append(msg.Content, ConsoleColor.White);
                     }
                 }
-                else
-                {
-                    if (result.Error != CommandError.UnknownCommand)
-                        await msg.Channel.SendMessageAsync(result.ErrorReason);
-                }
-            }
-        }
-        
-        public bool IsCustomCommand(string msgContent)
-        {
-            int index = msgContent.IndexOf(Globals.Config.Prefix);
-            string cmdtext = (index < 0)
-                ? msgContent
-                : msgContent.Remove(index, Globals.Config.Prefix.Length);
-            
-            using (var c = new CommandContext())
-                return c.Commands.Any(x => cmdtext.StartsWith(x.Name));
-        }
-
-        public async Task<IResult> CustomExecute(IUserMessage msg)
-        {
-            try
-            {
-                var channel = (msg.Channel as IGuildChannel) ?? null;
-
-                int index = msg.Content.IndexOf(Globals.Config.Prefix);
-                string cmdtext = (index < 0)
-                    ? msg.Content
-                    : msg.Content.Remove(index, Globals.Config.Prefix.Length);
-
-                var cmd = cmdtext.Split(' ')[0];
-
-                var custom = new CustomCommand().FromMsg(msg);
-
-                if (cmd.EndsWith(".add"))
-                    await custom.AddMessageAsync(msg, cmdtext.Replace(cmd, ""));
-                else if (cmd.EndsWith(".addtag"))
-                    await custom.AddMessageAsync(msg, cmdtext.Replace(cmd, ""));
-                else if (cmd.EndsWith(".del"))
-                    await custom.DelMessageAsync(msg, cmdtext.Replace(cmd, ""));
-                else if (cmd.EndsWith(".info"))
-                    await custom.SendInfoAsync(msg);
-                else if (cmd.EndsWith(".raw"))
-                    await custom.SendMessageAsync(msg, parseTags: false);
-                else if (cmd == custom.Name)
-                    await custom.SendMessageAsync(msg);
-                
-                return new CustomResult()
-                {
-                    IsSuccess = true
-                };
-            } catch (Exception ex)
-            {
-                return new CustomResult()
-                {
-                    IsSuccess = false,
-                    ErrorReason = ex.ToString()
-                };
             }
         }
     }

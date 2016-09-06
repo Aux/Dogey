@@ -9,47 +9,36 @@ namespace Dogey.Types
 {
     public class Configuration
     {
-        /// <summary> Path to the dll's root directory. </summary>
         [JsonIgnore]
-        public readonly string appdir = AppContext.BaseDirectory;
+        public static readonly string appdir = AppContext.BaseDirectory;
 
-        /// <summary> The prefix for all commands. </summary>
-        public string Prefix { get; set; }
-        /// <summary> The Id of users who have owner command access. </summary>
-        public List<ulong> Owner { get; set; }
-        /// <summary> The Id of the owner's guild. </summary>
-        public ulong OwnerGuild { get; set; }
-        /// <summary> If true, responses are sent by editing the command message. </summary>
-        public bool IsSelfBot { get; set; }
-        /// <summary> The time in seconds Dogey waits before deleting its messages. </summary>
-        public int AutoCleanDelay { get; set; }
-        /// <summary> The bot's oauth token. </summary>
-        public Token Token { get; set; }
+        public string DefaultPrefix { get; set; } = "~";
+        public bool IsSelfbot { get; set; }
+        public List<ulong> Owners { get; set; } = new List<ulong>();
+        public Tokens Token { get; set; } = new Tokens();
 
-        public Configuration()
-        {
-            Prefix = "~";
-            Owner = new List<ulong>();
-            AutoCleanDelay = 30;
-            Token = new Token();
-        }
-
-        public Configuration FromFile(string file)
-        {
-            string loc = Path.Combine(appdir, file);
-            return JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(loc));
-        }
-
-        public void Save(string file)
+        public void SaveFile(string file)
         {
             string loc = Path.Combine(appdir, file);
             string json = ToJson();
             File.WriteAllText(loc, json);
         }
 
+        public static Configuration LoadFile(string file)
+        {
+            string loc = Path.Combine(appdir, file);
+            return JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(loc));
+        }
+
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
+    }
+
+    public class Tokens
+    {
+        public string Discord { get; set; } = "";
+        public string Google { get; set; } = "";
     }
 }
