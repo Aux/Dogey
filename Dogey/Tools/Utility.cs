@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Utilities
+namespace Dogey.Tools
 {
-    public static class DogeyTool
+    public static class Utility
     {
-        public static async Task AutoDeleteMsg(IUserMessage msg, int delay)
+        public static async Task AutoDeleteMsg(IUserMessage msg, int delay = 5000)
         {
-            await Task.Delay(delay);
+            await Task.Delay(5000);
             await msg.DeleteAsync();
         }
     }

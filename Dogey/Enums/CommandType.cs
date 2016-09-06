@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Modules
+namespace Dogey.Enums
 {
-    public class DogeModule
+    public enum CommandType
     {
+        Help,
+        Single,
+        Random
     }
 }

@@ -1,9 +1,5 @@
-﻿//
-// Discord Sample Bot for Discord.Net 1.0
-// by foxbot
-// Licensed under WTFPL
-//
-using System.Reflection;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -11,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DiscordExampleBot")]
+[assembly: AssemblyProduct("Dogey")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -20,4 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("151b586f-c378-4baa-be2b-4b8204d2d1dd")]
+[assembly: Guid("f1ee5e6b-98c0-4aa3-a38b-3f3411d058a3")]

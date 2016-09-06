@@ -1,91 +1,70 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Dogey.Modules.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Modules.Help
+namespace Dogey.Modules
 {
     [Module, Name("")]
     public class HelpModule
     {
-        private CommandService _commands;
         private DiscordSocketClient _client;
 
         public HelpModule(DiscordSocketClient client)
         {
             _client = client;
         }
-
+        
         [Command("help")]
-        public async Task Help(IUserMessage msg, [Remainder]string cmd = null)
+        public async Task Help(IUserMessage msg)
         {
-            if (Globals.Config.IsSelfBot) return;
-            
-            var service = new CommandService();
-            var map = new DependencyMap();
-            map.Add(_client);
-            
-            var modules = await service.LoadAssembly(System.Reflection.Assembly.GetEntryAssembly(), map);
-            var commands = modules.SelectMany(x => x.Commands);
-            
-            string helpmsg;
-            if (string.IsNullOrWhiteSpace(cmd))
-                helpmsg = GetAllHelp(msg, commands);
-            else
-                helpmsg = GetCmdHelp(msg, commands, cmd);
-            
-            await msg.Channel.SendMessageAsync($"These are the commands you can use.```xl\n{helpmsg}```");
-        }
+            if (Globals.Config.IsSelfbot) return;
 
-        private string GetAllHelp(IUserMessage msg, IEnumerable<Command> commands)
-        {
-            var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
-            var helpmsg = new Dictionary<string, string>();
-            
-            foreach(var c in commands)
+            var modules = Globals.CommandService.Modules;
+            var commands = Globals.CommandService.Commands;
+
+            var helpmsg = new Dictionary<string, List<string>>();
+            foreach (var c in commands)
             {
                 if (!c.CheckPreconditions(msg).Result.IsSuccess)
                     continue;
-                
+
                 if (string.IsNullOrEmpty(c.Module.Name))
                     continue;
                 
-                if (!string.IsNullOrWhiteSpace(c.Module.Prefix))
+                if (string.IsNullOrEmpty(c.Module.Prefix))      // Root command
                 {
-                    if (helpmsg.Values.Contains($"{c.Module.Prefix.ToLower()}*"))
-                        continue;
-                    
-                    if (!helpmsg.Keys.Contains(c.Module.Name))
-                        helpmsg.Add(c.Module.Name, c.Module.Prefix.ToLower() + "*");
+                    if (helpmsg.Keys.Contains(c.Module.Name))
+                        helpmsg[c.Module.Name].Add(c.Text);
                     else
-                        helpmsg[c.Module.Name] += $", {c.Module.Prefix.ToLower()}*";
-                } else
+                        helpmsg.Add(c.Module.Name, new List<string> { c.Text });
+                }
+                else                                            // Sub command
                 {
-                    if (!helpmsg.Keys.Contains(c.Module.Name))
-                        helpmsg.Add(c.Module.Name, c.Text.ToLower());
-                    else
-                        helpmsg[c.Module.Name] += $", {c.Text.ToLower()}";
+                    if (helpmsg.Keys.Contains(c.Module.Name))
+                    {
+                        int index = helpmsg[c.Module.Name].IndexOf(c.Module.Prefix);
+                        if (index >= 0)
+                        {
+                            if (!helpmsg[c.Module.Name][index].EndsWith("*"))
+                                helpmsg[c.Module.Name][index] += "*";
+                        }
+                    } else
+                    {
+                        helpmsg.Add(c.Module.Name, new List<string> { c.Module.Prefix });
+                    }
                 }
             }
-            
-            if (guild != null)
-            using (var c = new CommandContext())
-                helpmsg.Add("Custom", string.Join(", ", c.Commands.Where(x => x.GuildId == guild.Id).Select(x => x.Name)));
-            
-            return string.Join("\n", helpmsg.Select(x => $"{x.Key}: {x.Value}"));
-        }
 
-        private string GetCmdHelp(IUserMessage msg, IEnumerable<Command> commands, string cmd)
-        {
-            var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
-            var helpmsg = new Dictionary<string, string>();
+            string content = string.Join("\n", helpmsg.Select(x => $"{x.Key}: {string.Join(", ", x.Value)}"));
 
-            var command = commands.FirstOrDefault();
-            return "";
+            if (string.IsNullOrWhiteSpace(content))
+                await msg.Channel.SendMessageAsync("There are no commands available.");
+            else
+                await msg.Channel.SendMessageAsync($"```xl\n{content}```");
         }
     }
 }

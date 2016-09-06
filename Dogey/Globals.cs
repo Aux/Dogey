@@ -1,6 +1,7 @@
 ﻿using Discord;
+using Discord.Commands;
+using Dogey.Tools;
 using Dogey.Types;
-using Dogey.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,7 @@ namespace Dogey
     public static class Globals
     {
         public static Configuration Config { get; set; }
+        public static CommandService CommandService { get; set; }
 
         public static bool ConfigExists()
         {
@@ -28,13 +30,21 @@ namespace Dogey
             string loc = Path.Combine(AppContext.BaseDirectory, @"data\configuration.json");
 
             Config = new Configuration();
-            Config.Save(loc);
+            Config.SaveFile(loc);
 
             DogeyConsole.Log(LogSeverity.Error,
                 "[Startup]",
                 "The configuration file has been created at 'data\\configuration.json', " +
                 "please\n enter your information and restart Dogey.");
             DogeyConsole.NewLine("Press any key to continue...");
+
+            Console.ReadKey();
+            Environment.Exit(0);
+        }
+
+        public static void LoadConfig()
+        {
+            Config = Configuration.LoadFile(@"data\configuration.json");
         }
     }
 }

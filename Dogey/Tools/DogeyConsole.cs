@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Utilities
+namespace Dogey.Tools
 {
     public static class DogeyConsole
     {

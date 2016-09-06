@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Modules
+namespace Dogey.Modules.StatsModule
 {
-    public class DogeModule
+    public class CommandGroup
     {
     }
 }
