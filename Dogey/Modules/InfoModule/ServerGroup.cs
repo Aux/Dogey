@@ -26,7 +26,7 @@ namespace Dogey.Modules.InfoModule
             var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
             var owner = await guild.GetOwnerAsync() as IGuildUser;
             var channels = await guild.GetChannelsAsync();
-
+            
             var infomsg = new List<string>
             {
                 "```xl",
