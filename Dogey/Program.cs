@@ -31,7 +31,7 @@ namespace Dogey
             {
                 LogLevel = LogSeverity.Info
             });
-
+            
             _client.MessageReceived += OnMessageReceived;
             _client.Log += (l)
                 => Task.Run(()

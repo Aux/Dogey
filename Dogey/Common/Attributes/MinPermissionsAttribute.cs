@@ -39,6 +39,18 @@ namespace Dogey.Attributes
             if (Globals.Config.Owners.Contains(msg.Author.Id))
                 return AccessLevel.Owner;
 
+            var user = msg.Author as IGuildUser;
+            if (user != null)
+            {
+                if (user.GuildPermissions.Administrator)
+                    return AccessLevel.ServerAdmin;
+
+                if (user.GuildPermissions.ManageMessages ||
+                    user.GuildPermissions.BanMembers || 
+                    user.GuildPermissions.KickMembers)
+                    return AccessLevel.ServerMod;
+            }
+
             return AccessLevel.User;
         }
     }

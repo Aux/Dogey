@@ -40,8 +40,8 @@ namespace Dogey.Modules.AdminModule
         }
 
         [Module("clear"), Name("Moderator")]
-        [RequirePermission(GuildPermission.ManageMessages)]
         [RequireContext(ContextType.Guild)]
+        [RequirePermission(ChannelPermission.ManageMessages)]
         public class SubCommands
         {
             [Command("all")]

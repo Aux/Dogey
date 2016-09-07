@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Dogey.Models;
 using Dogey.Tools;
 using Dogey.Types;
 using System;
