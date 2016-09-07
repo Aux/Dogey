@@ -30,8 +30,7 @@ namespace Dogey.Modules.InfoModule
             var infomsg = new List<string>
             {
                 "```xl",
-                $"      Id: {guild.Id}",
-                $"    Name: {guild.Name}",
+                $"    Name: {guild.Name} ({guild.Id})",
                 $"   Owner: {owner} ({owner.Id})",
                 $" Created: {guild.CreatedAt.ToString("ddddd, MMM dd yyyy, hh:mm:ss tt")}",
                 $"  Region: {guild.VoiceRegionId}",

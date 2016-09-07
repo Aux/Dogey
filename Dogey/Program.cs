@@ -46,13 +46,13 @@ namespace Dogey
 
         private async Task OnMessageReceived(IMessage arg)
         {
-            var msg = (arg as IUserMessage);
+            var msg = arg as IUserMessage;
 
             if (msg != null)
             {
                 await _cmds.HandleCommand(msg);
 
-                var channel = (msg.Channel as ITextChannel);
+                var channel = msg.Channel as ITextChannel;
                 if (msg.Author.Id == (await _client.GetCurrentUserAsync()).Id)
                 {
                     DogeyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
