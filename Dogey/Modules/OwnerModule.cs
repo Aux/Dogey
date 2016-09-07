@@ -29,6 +29,12 @@ namespace Dogey.Modules
             await msg.Channel.SendMessageAsync(text);
         }
 
+        [Command("set")]
+        public async Task Set(IUserMessage msg)
+        {
+            await Task.Delay(1);
+        }
+
         [Module("set"), Name("Owner")]
         [MinPermissions(AccessLevel.Owner)]
         public class SubCommands
