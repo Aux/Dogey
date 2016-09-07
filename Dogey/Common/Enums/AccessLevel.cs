@@ -9,6 +9,10 @@ namespace Dogey.Enums
     {
         Blocked,
         User,
+        ChannelMod,
+        ChannelAdmin,
+        ServerMod,
+        ServerAdmin,
         Owner
     }
 }

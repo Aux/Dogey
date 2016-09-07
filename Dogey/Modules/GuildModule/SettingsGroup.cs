@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Attributes;
+using Dogey.Enums;
 using Dogey.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules.GuildModule
 {
     [Module, Name("Guild")]
+    [MinPermissions(AccessLevel.ServerAdmin)]
     [RequireContext(ContextType.Guild)]
     public class SettingsGroup
     {
@@ -26,7 +29,7 @@ namespace Dogey.Modules.GuildModule
         {
             if (prefix.Count() > 10 && !string.IsNullOrWhiteSpace(prefix))
             {
-                await msg.Channel.SendMessageAsync($"The command prefix cannot be greater than 10 characters.");
+                await msg.Channel.SendMessageAsync($"The command prefix cannot be greater than 10 characters or empty.");
                 return;
             }
 

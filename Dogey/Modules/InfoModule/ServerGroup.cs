@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,8 @@ namespace Dogey.Modules.InfoModule
         [Description("Get information about this server.")]
         public async Task Serverinfo(IUserMessage msg)
         {
-            var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
             var owner = await guild.GetOwnerAsync() as IGuildUser;
-            var channels = await guild.GetChannelsAsync();
             
             var infomsg = new List<string>
             {
@@ -44,84 +44,109 @@ namespace Dogey.Modules.InfoModule
                 "```"
             };
 
-            if (Globals.Config.IsSelfbot)
-                await msg.ModifyAsync((e) => e.Content = string.Join("\n", infomsg));
-            else
-                await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
+            await Utility.SendMessage(msg, string.Join("\n", infomsg));
         }
 
         [Module("serverinfo"), Name("Info")]
         [RequireContext(ContextType.Guild)]
         public class SubCommands
         {
-            [Command("id")]
-            [Description("Get information about this server.")]
-            public async Task Id(IUserMessage msg)
-            {
-                await Task.Delay(1);
-            }
-
             [Command("name")]
-            [Description("Get information about this server.")]
+            [Description("Get this server's name and id.")]
             public async Task Name(IUserMessage msg)
             {
-                await Task.Delay(1);
+                var guild = (msg.Channel as IGuildChannel)?.Guild;
+                await Utility.SendMessage(msg, $"{guild.Name} ({guild.Id})");
             }
 
             [Command("region")]
-            [Description("Get information about this server.")]
+            [Description("Get this server's voice region.")]
             public async Task Region(IUserMessage msg)
             {
-                await Task.Delay(1);
+                var guild = (msg.Channel as IGuildChannel)?.Guild;
+                await Utility.SendMessage(msg, $"Voice for this guild is hosted in **{guild.VoiceRegionId}**.");
             }
 
             [Command("owner")]
-            [Description("Get information about this server.")]
+            [Description("Get this server's owner.")]
             public async Task Owner(IUserMessage msg)
             {
-                await Task.Delay(1);
+                var guild = (msg.Channel as IGuildChannel)?.Guild;
+                var owner = await guild.GetOwnerAsync() as IGuildUser;
+                await Utility.SendMessage(msg, $"This guild's owner is **{owner}** ({owner.Id}).");
             }
 
             [Command("created")]
-            [Description("Get information about this server.")]
+            [Description("Get the date and time this server was created.")]
             public async Task Created(IUserMessage msg)
             {
-                await Task.Delay(1);
+                var guild = (msg.Channel as IGuildChannel)?.Guild;
+                await Utility.SendMessage(msg, $"This guild was created **{guild.CreatedAt.ToString("ddddd, MMM dd yyyy '**at**' hh:mm:ss tt")}**.");
             }
 
             [Command("users")]
-            [Description("Get information about this server.")]
+            [Description("Get the total number of users in this server.")]
             public async Task Users(IUserMessage msg)
             {
-                await Task.Delay(1);
+                var guild = (msg.Channel as IGuildChannel)?.Guild;
+                var users = await guild.GetUsersAsync();
+
+                var infomsg = new List<string>
+                {
+                    "```xl",
+                    $"  Total: {users.Count()}",
+                    $" Online: {users.Count(x => x.Status == UserStatus.Online)}",
+                    $"   Idle: {users.Count(x => x.Status == UserStatus.Idle)}",
+                    $"Offline: {users.Count(x => x.Status == UserStatus.Offline)}",
+                    "```"
+                };
+
+                await Utility.SendMessage(msg, string.Join("\n", infomsg));
             }
 
             [Command("channels")]
-            [Description("Get information about this server.")]
+            [Description("Get a list of all channels in this server.")]
             public async Task Channels(IUserMessage msg)
             {
-                await Task.Delay(1);
+                var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
+
+                var textchannels = await guild.GetTextChannelsAsync();
+                var voicechannels = await guild.GetVoiceChannelsAsync();
+                var hiddenchannels = textchannels.Where(x => x.GetUsers().Count() < guild.GetUsers().Count());
+
+                var infomsg = new List<string>
+                {
+                "```xl",
+                $"Text ({textchannels.Count()}): {string.Join(", ", textchannels.Select(x => x.Name))}",
+                $"Voice ({voicechannels.Count()}): {string.Join(", ", voicechannels.Select(x => x.Name))}",
+                $"Hidden ({hiddenchannels.Count()}): {string.Join(", ", hiddenchannels.Select(x => x.Name))}",
+                "```"
+                };
+
+                await Utility.SendMessage(msg, string.Join("\n", infomsg));
             }
 
             [Command("roles")]
-            [Description("Get information about this server.")]
-            public async Task Roles(IUserMessage msg)
+            [Description("Get a list of all roles in this server.")]
+            public async Task Roles(IUserMessage msg, int page = 1)
             {
                 await Task.Delay(1);
             }
 
             [Command("icon")]
-            [Description("Get information about this server.")]
+            [Description("Get this server's icon.")]
             public async Task Icon(IUserMessage msg)
             {
-                await Task.Delay(1);
+                var guild = (msg.Channel as IGuildChannel)?.Guild;
+                await Utility.SendMessage(msg, guild.IconUrl);
             }
 
             [Command("emojis")]
-            [Description("Get information about this server.")]
+            [Description("Get a list of custom emojis in this server.")]
             public async Task Emojis(IUserMessage msg)
             {
-                await Task.Delay(1);
+                var guild = (msg.Channel as IGuildChannel)?.Guild;
+                await Utility.SendMessage(msg, string.Join(" ", guild.Emojis.Select(x => $"<:{x.Name}:{x.Id}>")));
             }
         }
     }

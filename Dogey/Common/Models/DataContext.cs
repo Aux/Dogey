@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using Microsoft.Data.Sqlite;
 
 namespace Dogey.Models
 {
@@ -16,8 +17,14 @@ namespace Dogey.Models
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            Database.EnsureCreated();
             string datadir = Path.Combine(AppContext.BaseDirectory, @"data\commands.doge");
             optionsBuilder.UseSqlite($"Filename={datadir}");
+        }
+
+        public void CreateDatabase()
+        {
+            
         }
     }
 }
