@@ -44,7 +44,7 @@ namespace Dogey.Modules
                 }
                 else                                            // Sub command
                 {
-                    if (helpmsg.Keys.Contains(c.Module.Name))
+                    if (helpmsg.Keys.Contains(c.Module.Name) || helpmsg.Keys.Contains(c.Module.Name + "*"))
                     {
                         int index = helpmsg[c.Module.Name].IndexOf(c.Module.Prefix);
                         if (index >= 0)

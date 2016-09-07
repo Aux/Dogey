@@ -43,7 +43,7 @@ namespace Dogey.Modules.InfoModule
                 prefix = Globals.Config.DefaultPrefix;
             }
             
-            string message = $"Hello! I'm {self}.\nYou can get information about my commands by using `{prefix}help`. " +
+            string message = $"Hello! I'm {self}. You can get information about my commands by using `{prefix}help`. " +
                 "To report bugs or request features you can join my guild here: https://discord.gg/0sjlWZiGRvRNZAqx";
 
             await msg.Channel.SendMessageAsync(message);
@@ -58,11 +58,11 @@ namespace Dogey.Modules.InfoModule
             var infomsg = new List<string>
             {
                 "```xl",
-                $" Owner(s): Auxesis#8522",
+                $" Owner(s): Auxesis#8522 (158056840402436096)",
                 $"  Library: Discord.Net ({DiscordConfig.Version})",
                 $"  Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}",
-                $"   Uptime: {(DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"d'd' hh'h' m'm' s's'")}",
-                $"Heap Size: {Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)}",
+                $"   Uptime: {(DateTime.Now - Process.GetCurrentProcess().StartTime)}",
+                $"Heap Size: {Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString()}",
                 $"   Guilds: {(await _client.GetGuildSummariesAsync()).Count()}",
                 $" Channels: {(await _client.GetGuildsAsync()).Select(async g => await g.GetChannelsAsync()).Count()}",
                 $"    Users: {(await _client.GetGuildsAsync()).Select(async g => await g.GetUsersAsync()).Count()}",
@@ -78,7 +78,11 @@ namespace Dogey.Modules.InfoModule
         [Module("botinfo"), Name("Info")]
         public class SubCommands
         {
-
+            [Command("owner")]
+            public async Task Owner(IUserMessage msg)
+            {
+                await Task.Delay(1);
+            }
         }
     }
 }
