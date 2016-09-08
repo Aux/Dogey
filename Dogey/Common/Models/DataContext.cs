@@ -10,7 +10,7 @@ namespace Dogey.Models
 {
     public class DataContext : DbContext
     {
-        //public DbSet<CustomCommand> Commands { get; set; }
+        public DbSet<CustomCommand> Commands { get; set; }
         //public DbSet<CommandLog> CommandLogs { get; set; }
         public DbSet<GuildSettings> Settings { get; set; }
         //public DbSet<GuildLog> GuildLogs { get; set; }

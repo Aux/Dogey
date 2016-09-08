@@ -7,6 +7,7 @@ using Discord;
 using Dogey.Models;
 using System.Linq;
 using Dogey.Tools;
+using Dogey.Common.Extensions;
 
 namespace Dogey
 {
@@ -38,23 +39,10 @@ namespace Dogey
                 
                 string prefix;
                 if (channel?.Guild != null)
-                {
-                    using (var db = new DataContext())
-                    {
-                        var settings = db.Settings.Where(x => x.GuildId == channel.Guild.Id).FirstOrDefault();
-                        if (settings == null)
-                        {
-                            settings = new GuildSettings(msg);
-                            db.Settings.Add(settings);
-                            await db.SaveChangesAsync();
-                        }
-                        prefix = settings.Prefix;
-                    }
-                } else
-                {
+                    prefix = await channel.Guild.GetCustomPrefixAsync();
+                else
                     prefix = Globals.Config.DefaultPrefix;
-                }
-
+                
                 int argPos = 0;
                 if (msg.HasStringPrefix(prefix, ref argPos))
                 {
