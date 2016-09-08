@@ -24,29 +24,10 @@ namespace Dogey.Models
         public ulong StarChannelId { get; set; }
 
         public GuildSettings() { }
-        public GuildSettings(IMessage msg)
+        public GuildSettings(ulong id)
         {
-            var guild = (msg.Channel as IGuildChannel)?.Guild;
-            GuildId = guild.Id;
+            GuildId = id;
             Prefix = "~";
-        }
-        
-        public async Task<ITextChannel> LogChannel(IMessage msg)
-        {
-            var guild = (msg.Channel as IGuildChannel)?.Guild;
-            if (guild != null)
-                return await guild.GetTextChannelAsync(LogChannelId);
-            else
-                return null;
-        }
-
-        public async Task<ITextChannel> StarChannel(IMessage msg)
-        {
-            var guild = (msg.Channel as IGuildChannel)?.Guild;
-            if (guild != null)
-                return await guild.GetTextChannelAsync(StarChannelId);
-            else
-                return null;
         }
     }
 }
