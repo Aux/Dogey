@@ -28,6 +28,16 @@ namespace Dogey.Modules
         {
             await msg.Channel.SendMessageAsync(text);
         }
+        
+        [Command("leave")]
+        [Description("Make Dogey leave a server.")]
+        public async Task Set(IUserMessage msg, ulong guildId)
+        {
+            var guild = await _client.GetGuildAsync(guildId);
+
+            await guild.LeaveAsync();
+            await msg.Channel.SendMessageAsync($"I left the guild **{guild.Name}** ({guild.Id}).");
+        }
 
         [Command("set")]
         public async Task Set(IUserMessage msg)
