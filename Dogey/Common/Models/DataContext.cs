@@ -13,7 +13,7 @@ namespace Dogey.Models
         public DbSet<CustomCommand> Commands { get; set; }
         //public DbSet<CommandLog> CommandLogs { get; set; }
         public DbSet<GuildSettings> Settings { get; set; }
-        //public DbSet<GuildLog> GuildLogs { get; set; }
+        public DbSet<GuildLog> GuildLogs { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

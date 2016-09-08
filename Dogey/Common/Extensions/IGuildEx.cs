@@ -60,5 +60,14 @@ namespace Dogey.Extensions
             using (var db = new DataContext())
                 return db.Commands.Where(x => x.GuildId == guild.Id);
         }
+
+        public static async Task AddGuildLog(this IGuild guild, GuildLog log)
+        {
+            using (var db = new DataContext())
+            {
+                db.GuildLogs.Add(log);
+                await db.SaveChangesAsync();
+            }
+        }
     }
 }

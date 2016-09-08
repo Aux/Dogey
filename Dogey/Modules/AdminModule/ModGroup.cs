@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Dogey.Attributes;
 using Dogey.Enums;
+using Dogey.Extensions;
 using Dogey.Tools;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,24 @@ namespace Dogey.Modules.AdminModule
             _client.UserUnbanned += OnUserUnbanned;
         }
 
-        private Task OnUserUnbanned(IUser u, IGuild g)
+        private async Task OnUserUnbanned(IUser u, IGuild g)
         {
-            throw new NotImplementedException();
+            var log = await g.GetLogChannelAsync();
+
+            if (log != null)
+            {
+
+            }
         }
 
-        private Task OnUserBanned(IUser u, IGuild g)
+        private async Task OnUserBanned(IUser u, IGuild g)
         {
-            throw new NotImplementedException();
+            var log = await g.GetLogChannelAsync();
+
+            if (log != null)
+            {
+
+            }
         }
 
         [Command("reason")]
