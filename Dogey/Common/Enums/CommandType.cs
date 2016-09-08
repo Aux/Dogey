@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 
 namespace Dogey.Enums
 {
+    /// <summary>
+    /// Define the action taken when root command is executed.
+    /// </summary>
     public enum CommandType
     {
-        Help,
-        Single,
-        Random
+        Single,     // Execute the only subcommand
+        List,       // List all subcommands
+        Random      // Execute a random subcommand
     }
 }
