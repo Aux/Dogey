@@ -3,20 +3,38 @@ using Dogey.Enums;
 using Dogey.Extensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dogey.Models
 {
+    [Table("guildlogs")]
     public class GuildLog
     {
+        [Key, Required, Column("Id")]
         public int Id { get; set; }
-        public DateTime Timestamp { get; set; }
+
+        [Required, Column("Timestamp")]
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
+        [Column("GuildId")]
         public ulong? GuildId { get; set; }
+
+        [Column("UserId")]
         public ulong? UserId { get; set; }
+
+        [Column("MsgId")]
         public ulong? MsgId { get; set; }
+
+        [Column("Action")]
         public ModAction Action { get; set; }
+
+        [Column("CaseNum")]
         public int CaseNum { get; set; }
+
+        [Column("Reason")]
         public string Reason { get; set; }
         
         public async Task<IGuildUser> User(IMessage msg)

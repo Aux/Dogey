@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Attributes;
+using Dogey.Enums;
 using Dogey.Models;
 using System;
 using System.Collections.Generic;
@@ -48,6 +50,7 @@ namespace Dogey.Modules
         }
 
         [Command("pat")]
+        [Ratelimit(30, RateMeasure.Minutes)]
         public async Task Pat(IUserMessage msg, IUser user = null)
         {
             var g = (msg.Channel as IGuildChannel).Guild;
@@ -66,6 +69,9 @@ namespace Dogey.Modules
                 }
                 else
                 {
+                    pat.Count++;
+                    db.Pat.Update(pat);
+                    await db.SaveChangesAsync();
                     count = pat.Count;
                 }
             }
