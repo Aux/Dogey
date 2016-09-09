@@ -17,7 +17,7 @@ namespace Dogey.Models
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
             string datadir = Path.Combine(AppContext.BaseDirectory, @"data\commands.doge");
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }

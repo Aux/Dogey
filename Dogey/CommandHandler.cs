@@ -7,7 +7,7 @@ using Discord;
 using Dogey.Models;
 using System.Linq;
 using Dogey.Tools;
-using Dogey.Common.Extensions;
+using Dogey.Extensions;
 
 namespace Dogey
 {
