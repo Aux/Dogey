@@ -8,8 +8,8 @@ namespace Dogey.Enums
     public enum ModAction
     {
         Kick,
-        Unban,
+        Ban,
         Softban,
-        Permaban
+        Unban,
     }
 }
