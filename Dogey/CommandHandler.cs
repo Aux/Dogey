@@ -35,11 +35,11 @@ namespace Dogey
 
             if (msg != null)
             {
-                var channel = (msg.Channel as IGuildChannel);
+                var g = (msg.Channel as IGuildChannel)?.Guild;
                 
                 string prefix;
-                if (channel?.Guild != null)
-                    prefix = await channel.Guild.GetCustomPrefixAsync();
+                if (g != null)
+                    prefix = await g.GetCustomPrefixAsync();
                 else
                     prefix = Globals.Config.DefaultPrefix;
                 
@@ -53,15 +53,7 @@ namespace Dogey
                         if (result.Error != CommandError.UnknownCommand)
                             await msg.Channel.SendMessageAsync(result.ErrorReason);
                     } else {
-                        DogeyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
-
-                        if (channel?.Guild == null)
-                            DogeyConsole.Append($"[PM] ", ConsoleColor.Magenta);
-                        else
-                            DogeyConsole.Append($"[{channel.Guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
-
-                        DogeyConsole.Append($"{msg.Author}: ", ConsoleColor.Green);
-                        DogeyConsole.Append(msg.Content, ConsoleColor.White);
+                        DogeyConsole.Log(msg);
                     }
                 }
             }

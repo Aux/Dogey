@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Module, Name("General")]
+    [RequireContext(ContextType.Guild)]
     public class DogeModule
     {
         private DiscordSocketClient _client;
@@ -43,6 +45,32 @@ namespace Dogey.Modules
 
             await msg.Channel.SendFileAsync(dogeFile);
             File.Delete(dogeFile);
+        }
+
+        [Command("pat")]
+        public async Task Pat(IUserMessage msg, IUser user = null)
+        {
+            var g = (msg.Channel as IGuildChannel).Guild;
+            var u = user as IGuildUser ?? await g.GetCurrentUserAsync();
+            
+            int count;
+            using (var db = new DataContext())
+            {
+                var pat = db.Pat.Where(x => x.UserId == u.Id).FirstOrDefault();
+
+                if (pat == null)
+                {
+                    db.Pat.Add(new Pats() { UserId = u.Id });
+                    await db.SaveChangesAsync();
+                    count = 1;
+                }
+                else
+                {
+                    count = pat.Count;
+                }
+            }
+
+            await msg.Channel.SendMessageAsync($"{u.Username} has been pet {count} times <:auxHappy:213686501089738752>");
         }
     }
 }
