@@ -25,7 +25,7 @@ namespace Dogey.Modules.GuildModule
 
         [Command("setprefix")]
         [Description("Change the prefix for this guild.")]
-        public async Task Botinfo(IUserMessage msg, string prefix)
+        public async Task SetPrefix(IUserMessage msg, string prefix)
         {
             if (prefix.Count() > 10 && !string.IsNullOrWhiteSpace(prefix))
             {
@@ -44,6 +44,22 @@ namespace Dogey.Modules.GuildModule
                 }
             }
             await msg.Channel.SendMessageAsync($"The command prefix for this guild is now `{prefix}`.");
+        }
+
+        [Command("setmodlog")]
+        [Description("Set the channel moderator actions are logged to.")]
+        public async Task SetLogChannel(IUserMessage msg, ITextChannel channel)
+        {
+            using (var db = new DataContext())
+            {
+                var settings = db.Settings.Where(x => x.GuildId == channel.Guild.Id).FirstOrDefault();
+                if (settings != null)
+                {
+                    settings.LogChannelId = channel.Id;
+                    await db.SaveChangesAsync();
+                }
+            }
+            await msg.Channel.SendMessageAsync($"The modlog for this guild is now {channel.Mention}.");
         }
     }
 }

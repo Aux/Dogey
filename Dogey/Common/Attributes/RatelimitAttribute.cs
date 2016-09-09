@@ -17,7 +17,13 @@ namespace Dogey.Attributes
     {
         public double Time;
         public RateMeasure Mode;
-        
+
+        public RatelimitAttribute(double time, RateMeasure mode)
+        {
+            Time = time;
+            Mode = mode;
+        }
+
         public override Task<PreconditionResult> CheckPermissions(IUserMessage msg, Command cmd, object mod)
         {
             using (var db = new DataContext())
