@@ -69,6 +69,20 @@ namespace Dogey.Tools
             DogeyConsole.Append(message, ConsoleColor.White);
         }
 
+        public static void Log(IUserMessage msg)
+        {
+            var channel = (msg.Channel as IGuildChannel);
+            DogeyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
+
+            if (channel?.Guild == null)
+                DogeyConsole.Append($"[PM] ", ConsoleColor.Magenta);
+            else
+                DogeyConsole.Append($"[{channel.Guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
+
+            DogeyConsole.Append($"{msg.Author}: ", ConsoleColor.Green);
+            DogeyConsole.Append(msg.Content, ConsoleColor.White);
+        }
+
         /// <summary> Reset the console's colors to default. </summary>
         public static void ResetColors()
         {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Dogey.Enums;
+using Dogey.Extensions;
 
 namespace Dogey.Attributes
 {
