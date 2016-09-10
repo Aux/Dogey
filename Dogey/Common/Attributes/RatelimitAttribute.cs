@@ -35,14 +35,43 @@ namespace Dogey.Attributes
 
                 if (limit == null)
                 {
+                    limit = new Ratelimit()
+                    {
+                        UserId = msg.Author.Id,
+                        Module = cmd.Module.Name,
+                        Command = cmd.Name,
+                    };
+
+                    switch (Mode)
+                    {
+                        case RateMeasure.Seconds:
+                            limit.End = DateTime.UtcNow + TimeSpan.FromSeconds(Time);
+                            break;
+                        case RateMeasure.Minutes:
+                            limit.End = DateTime.UtcNow + TimeSpan.FromMinutes(Time);
+                            break;
+                        case RateMeasure.Hours:
+                            limit.End = DateTime.UtcNow + TimeSpan.FromHours(Time);
+                            break;
+                    }
+
+                    db.LimitedUsers.Add(limit);
+                    db.SaveChanges();
                     return Task.FromResult(PreconditionResult.FromSuccess());
                 }
                 else
                 {
-                    var remaining = DateTime.Now - limit.End;
-
-                    string m = $"{remaining.Days}d {remaining.Hours}h {remaining.Minutes}m {remaining.Seconds}s";
-                    return Task.FromResult(PreconditionResult.FromError($"You are ratelimited for another {m}."));
+                    var remaining = limit.End - DateTime.UtcNow;
+                    
+                    if (remaining < TimeSpan.FromSeconds(0))
+                    {
+                        db.LimitedUsers.Remove(limit);
+                        return Task.FromResult(PreconditionResult.FromSuccess());
+                    } else
+                    {
+                        string m = $"{remaining.Days}d {remaining.Hours}h {remaining.Minutes}m {remaining.Seconds}s";
+                        return Task.FromResult(PreconditionResult.FromError($"You can use this command again in {m}."));
+                    }
                 }
             }
         }

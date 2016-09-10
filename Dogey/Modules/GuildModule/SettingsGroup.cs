@@ -61,5 +61,21 @@ namespace Dogey.Modules.GuildModule
             }
             await msg.Channel.SendMessageAsync($"The modlog for this guild is now {channel.Mention}.");
         }
+
+        [Command("setstar")]
+        [Description("Set the starred messages are logged to.")]
+        public async Task SetStarChannel(IUserMessage msg, ITextChannel channel)
+        {
+            using (var db = new DataContext())
+            {
+                var settings = db.Settings.Where(x => x.GuildId == channel.Guild.Id).FirstOrDefault();
+                if (settings != null)
+                {
+                    settings.StarChannelId = channel.Id;
+                    await db.SaveChangesAsync();
+                }
+            }
+            await msg.Channel.SendMessageAsync($"The modlog for this guild is now {channel.Mention}.");
+        }
     }
 }

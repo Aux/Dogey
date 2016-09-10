@@ -55,6 +55,9 @@ namespace Dogey
                     } else {
                         DogeyConsole.Log(msg);
                     }
+                } else
+                {
+                    await msg.SaveMessage();
                 }
             }
         }

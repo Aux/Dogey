@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Models;
 using Dogey.Tools;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,11 @@ namespace Dogey.Modules.InfoModule
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild;
             var owner = await guild.GetOwnerAsync() as IGuildUser;
-            
+
+            int msgcount;
+            using (var db = new DataContext())
+                msgcount = db.MessageLogs.Where(x => x.GuildId == guild.Id).Count();
+
             var infomsg = new List<string>
             {
                 "```xl",
@@ -36,6 +41,7 @@ namespace Dogey.Modules.InfoModule
                 $"  Region: {guild.VoiceRegionId}",
                 $"   Users: {(await guild.GetUsersAsync()).Count()}",
                 $"   Roles: {guild.Roles.Count()}",
+                $"    Msgs: {msgcount}",
                 $"Channels: ({(await guild.GetTextChannelsAsync()).Count()})text " +
                           $"({(await guild.GetVoiceChannelsAsync()).Count()})voice " +
                           $"({(await guild.GetTextChannelsAsync()).Count(x => x.GetUsersAsync().Result.Count() < guild.GetUsersAsync().Result.Count())})hidden",

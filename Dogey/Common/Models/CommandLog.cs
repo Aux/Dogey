@@ -11,8 +11,11 @@ namespace Dogey.Models
     [Table("commandlogs")]
     public class CommandLog
     {
-        [Key, Required, Column("Timestamp")]
-        public DateTime Timestamp { get; set; }
+        [Key, Required, Column("Id")]
+        public int Id { get; set; }
+
+        [Required, Column("Timestamp")]
+        public DateTime Timestamp { get; set; } = DateTime.Now;
 
         [Column("GuildId")]
         public ulong? GuildId { get; set; }
@@ -22,10 +25,7 @@ namespace Dogey.Models
 
         [Column("UserId")]
         public ulong UserId { get; set; }
-
-        [Column("Id")]
-        public int? Id { get; set; }
-
+        
         [Column("Text")]
         public ulong Text { get; set; }
 

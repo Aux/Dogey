@@ -10,7 +10,10 @@ namespace Dogey.Models
     [Table("ratelimits")]
     public class Ratelimit
     {
-        [Key, Required, Column("UserId")]
+        [Key, Required, Column("Id")]
+        public int Id { get; set; }
+
+        [Required, Column("UserId")]
         public ulong UserId { get; set; }
 
         [Required, Column("Module")]

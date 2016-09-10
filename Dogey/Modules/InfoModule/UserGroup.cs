@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Models;
 using Dogey.Tools;
 using System;
 using System.Collections.Generic;
@@ -27,17 +28,21 @@ namespace Dogey.Modules.InfoModule
             var guild = (msg.Channel as IGuildChannel)?.Guild;
             var u = user as IGuildUser ?? msg.Author as IGuildUser;
 
+            int msgcount;
+            using (var db = new DataContext())
+                msgcount = db.MessageLogs.Where(x => x.AuthorId == u.Id && x.GuildId == guild.Id).Count();
+            
             var infomsg = new List<string>
             {
                 "```xl",
                 $"   Name: {u} ({u.Id})",
-                $"   Nick: {u.Nickname}",
+                $" Status: {Enum.GetName(typeof(UserStatus), u.Status)}",
                 $"Created: {u.CreatedAt}",
                 $" Joined: {u.JoinedAt}",
-                $"Playing: {u.Game.Name}",
+                $"Playing: {u.Game?.Name}",
                 $" Avatar: {u.AvatarUrl}",
                 $"  Roles: {u.Roles.Count()}",
-                $"  Roles: {Enum.GetName(typeof(UserStatus), u.Status)}",
+                $"   Msgs: {msgcount}",
                 "```"
             };
 
@@ -63,6 +68,8 @@ namespace Dogey.Modules.InfoModule
 
                 await Utility.SendMessage(msg, string.Join("\n", infomsg));
             }
+
+
         }
     }
 }

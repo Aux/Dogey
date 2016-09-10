@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +29,7 @@ namespace Dogey.Modules.InfoModule
             var infomsg = new List<string>
             {
                 "```xl",
-                $"     Id: {role.Id}",
-                $"   Name: {role.Name}",
+                $"   Name: {role.Name} ({role.Id})",
                 $"Created: {role.CreatedAt.ToString("ddddd, MMM dd yyyy, hh:mm:ss tt")}",
                 $"  Color: {role.Color}",
                 $"Hoisted: {role.IsHoisted}",
@@ -47,7 +47,21 @@ namespace Dogey.Modules.InfoModule
         [Module("roleinfo"), Name("Info")]
         public class SubCommands
         {
+            [Command("permissions")]
+            [Description("Get this role's permissions.")]
+            public async Task Permissions(IUserMessage msg, IRole role = null)
+            {
+                var r = role.Permissions;
 
+                var infomsg = new List<string>
+                {
+                    "```xl",
+                    $"  Administrator: {Convert.ToInt32(r.Administrator)}",
+                    "```"
+                };
+
+                await Utility.SendMessage(msg, string.Join("\n", infomsg));
+            }
         }
     }
 }
