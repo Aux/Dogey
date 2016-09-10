@@ -60,11 +60,82 @@ namespace Dogey.Modules.InfoModule
                 $"  Latency: {_client.Latency} MS",
                 $"   Guilds: {(await _client.GetGuildSummariesAsync()).Count()}",
                 $" Channels: {(await _client.GetGuildsAsync()).Sum(g => g.GetChannels().Count())}",
-                $"    Users: {(await _client.GetGuildsAsync()).Sum(g => g.GetUsers().Count())}",
-                "```"
+                $"    Users: {(await _client.GetGuildsAsync()).Sum(g => g.GetUsers().Count())}"
             };
+            
+            using (var db = new DataContext())
+            {
+                infomsg.Add($" Messages: {db.MessageLogs.Count(x => x.GuildId == guild.Id)} of {db.MessageLogs.Count()}");
+            }
 
+            infomsg.Add("```");
             await Utility.SendMessage(msg, string.Join("\n", infomsg));
+        }
+
+        [Module("botinfo"), Name("Info")]
+        public class SubCommands
+        {
+            private DiscordSocketClient _client;
+
+            public SubCommands(DiscordSocketClient client)
+            {
+                _client = client;
+            }
+
+            [Command("owner")]
+            public async Task Owner(IUserMessage msg)
+            {
+                await Utility.SendMessage(msg, "Auxesis#8522 (158056840402436096)");
+            }
+
+            [Command("library")]
+            [Alias("runtime", "lib")]
+            public async Task Library(IUserMessage msg)
+            {
+                await Utility.SendMessage(msg, $"Discord.Net ({DiscordConfig.Version}) on {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}");
+            }
+
+            [Command("uptime")]
+            [Alias("online", "up")]
+            public async Task Uptime(IUserMessage msg)
+            {
+                await Utility.SendMessage(msg, (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString());
+            }
+
+            [Command("heap")]
+            [Alias("memory", "mem")]
+            public async Task Heap(IUserMessage msg)
+            {
+                await Utility.SendMessage(msg, $"{Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)} MB");
+            }
+
+            [Command("latency")]
+            [Alias("ping", "lag")]
+            public async Task Latency(IUserMessage msg)
+            {
+                await Utility.SendMessage(msg, $"{_client.Latency} MS");
+            }
+
+            [Command("guilds")]
+            [Alias("servers")]
+            public async Task Guilds(IUserMessage msg)
+            {
+                await Task.Delay(1);
+            }
+
+            [Command("messages")]
+            [Alias("msgs")]
+            public async Task Messages(IUserMessage msg)
+            {
+                await Task.Delay(1);
+            }
+
+            [Command("commands")]
+            [Alias("cmds")]
+            public async Task Commands(IUserMessage msg)
+            {
+                await Task.Delay(1);
+            }
         }
     }
 }

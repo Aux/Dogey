@@ -51,7 +51,7 @@ namespace Dogey.Modules
 
         [Command("pat")]
         [Ratelimit(30, RateMeasure.Minutes)]
-        public async Task Pat(IUserMessage msg, IUser user = null)
+        public async Task Pat(IUserMessage msg, [Remainder]IUser user = null)
         {
             var g = (msg.Channel as IGuildChannel).Guild;
             var u = user as IGuildUser ?? await g.GetCurrentUserAsync();
@@ -83,6 +83,22 @@ namespace Dogey.Modules
             }
 
             await msg.Channel.SendMessageAsync($"{u.Username} has been pet {count} times <:auxHappy:213686501089738752>");
+        }
+
+        [Command("pats")]
+        public async Task Pats(IUserMessage msg, [Remainder]IUser user = null)
+        {
+            var g = (msg.Channel as IGuildChannel).Guild;
+            var u = user as IGuildUser ?? await g.GetCurrentUserAsync();
+            
+            using (var db = new DataContext())
+            {
+                int? pats = db.Pat.Where(x => x.UserId == u.Id).FirstOrDefault()?.Count;
+                if (pats != null)
+                    await msg.Channel.SendMessageAsync($"{u.Username} has been pet {pats} times <:auxHappy:213686501089738752>");
+                else
+                    await msg.Channel.SendMessageAsync($"{u.Username} has been pet 0 times <:auxSad:224050369439727616>");
+            }
         }
     }
 }
