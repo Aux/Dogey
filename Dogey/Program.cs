@@ -55,15 +55,7 @@ namespace Dogey
                 var channel = msg.Channel as ITextChannel;
                 if (msg.Author.Id == (await _client.GetCurrentUserAsync()).Id)
                 {
-                    DogeyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.Gray);
-
-                    if (channel?.Guild == null)
-                        DogeyConsole.Append($"[PM] ", ConsoleColor.Magenta);
-                    else
-                        DogeyConsole.Append($"[{channel.Guild.Name} #{channel.Name}] ", ConsoleColor.DarkGreen);
-
-                    DogeyConsole.Append($"{msg.Author}: ", ConsoleColor.Green);
-                    DogeyConsole.Append(msg.Content, ConsoleColor.White);
+                    DogeyConsole.Log(msg);
                 }
             }
         }

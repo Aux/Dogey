@@ -47,7 +47,7 @@ namespace Dogey.Modules.InfoModule
         [Description("Get information about Dogey.")]
         public async Task Botinfo(IUserMessage msg)
         {
-            var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
             
             var infomsg = new List<string>
             {

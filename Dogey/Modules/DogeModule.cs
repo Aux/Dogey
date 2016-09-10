@@ -55,6 +55,12 @@ namespace Dogey.Modules
         {
             var g = (msg.Channel as IGuildChannel).Guild;
             var u = user as IGuildUser ?? await g.GetCurrentUserAsync();
+
+            if (msg.Author.Id == u.Id)
+            {
+                await msg.Channel.SendMessageAsync("You can't pat yourself <:auxSad:224050369439727616>");
+                return;
+            }
             
             int count;
             using (var db = new DataContext())
