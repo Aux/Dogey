@@ -33,6 +33,16 @@ namespace Dogey
             if (msg.Author.IsBot)
                 return;
 
+            var self = await (msg.Channel as IGuildChannel)?.Guild.GetCurrentUserAsync();
+            if (self != null)
+            {
+                var t = msg.Channel as ITextChannel;
+                var perms = t.PermissionOverwrites.Where(x => x.TargetId == self.Id || self.Roles.Select(r => r.Id).Contains(x.TargetId));
+
+                if (perms.Any(x => x.Permissions.SendMessages == PermValue.Deny))
+                    return;
+            }
+
             if (msg != null)
             {
                 var g = (msg.Channel as IGuildChannel)?.Guild;
@@ -52,6 +62,9 @@ namespace Dogey
                     {
                         if (result.Error != CommandError.UnknownCommand)
                             await msg.Channel.SendMessageAsync(result.ErrorReason);
+
+                        if (result.ErrorReason.Contains("You can use this command again in "))
+                            DogeyConsole.Log(msg);
                     } else {
                         DogeyConsole.Log(msg);
                     }

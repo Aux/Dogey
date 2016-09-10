@@ -57,7 +57,7 @@ namespace Dogey.Models
             {
                 string msg = $"**{Enum.GetName(typeof(ModAction), m)}** | Case #{casenum}\n" +
                              $"**User:** {u} ({u.Id})\n" +
-                             $"`Responsible moderator, please type {prefix}reason <case> <reason>`";
+                             $"Responsible moderator, please type `{prefix}reason <case> <reason>`";
 
                 msgId = (await channel.SendMessageAsync(msg)).Id;
             }

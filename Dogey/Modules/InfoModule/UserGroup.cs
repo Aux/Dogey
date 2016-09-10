@@ -28,9 +28,12 @@ namespace Dogey.Modules.InfoModule
             var guild = (msg.Channel as IGuildChannel)?.Guild;
             var u = user as IGuildUser ?? msg.Author as IGuildUser;
 
-            int msgcount;
+            int msgcount, cmdcount;
             using (var db = new DataContext())
+            {
                 msgcount = db.MessageLogs.Where(x => x.AuthorId == u.Id && x.GuildId == guild.Id).Count();
+                cmdcount = db.Commands.Where(x => x.OwnerId == msg.Author.Id).Count();
+            }
             
             var infomsg = new List<string>
             {
@@ -39,10 +42,10 @@ namespace Dogey.Modules.InfoModule
                 $" Status: {Enum.GetName(typeof(UserStatus), u.Status)}",
                 $"Created: {u.CreatedAt}",
                 $" Joined: {u.JoinedAt}",
-                $"Playing: {u.Game?.Name}",
-                $" Avatar: {u.AvatarUrl}",
                 $"  Roles: {u.Roles.Count()}",
                 $"   Msgs: {msgcount}",
+                $"   Cmds: {cmdcount}",
+                $" Avatar: {u.AvatarUrl}",
                 "```"
             };
 
@@ -68,8 +71,6 @@ namespace Dogey.Modules.InfoModule
 
                 await Utility.SendMessage(msg, string.Join("\n", infomsg));
             }
-
-
         }
     }
 }
