@@ -25,9 +25,12 @@ namespace Dogey.Models
 
         [Column("UserId")]
         public ulong UserId { get; set; }
-        
-        [Column("Text")]
-        public ulong Text { get; set; }
+
+        [Column("Command")]
+        public string Command { get; set; }
+
+        [Column("Parameters")]
+        public string Parameters { get; set; }
 
         [Column("Action")]
         public CommandAction Action { get; set; }
