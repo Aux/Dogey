@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Attributes;
 using Dogey.Tools;
 using System;
 using System.Collections.Generic;

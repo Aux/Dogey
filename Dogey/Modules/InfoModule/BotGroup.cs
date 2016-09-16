@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Attributes;
 using Dogey.Extensions;
 using Dogey.Models;
 using Dogey.Tools;
