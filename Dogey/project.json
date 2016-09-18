@@ -8,12 +8,9 @@
     "Discord.Net": "1.0.0-beta-00417",
     "Discord.Net.Commands": "1.0.0-beta-00417",
     "Microsoft.Data.Sqlite": "1.0.0",
-    "Microsoft.EntityFrameworkCore": "1.0.0",
-    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0",
-    "Microsoft.NETCore.App": {
-        "type": "platform",
-        "version": "1.0.0"
-    }
+    "Microsoft.EntityFrameworkCore": "1.0.1",
+    "Microsoft.EntityFrameworkCore.Sqlite": "1.0.1",
+    "Microsoft.NETCore.App": "1.0.1"
   },
 
   "frameworks": {

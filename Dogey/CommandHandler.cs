@@ -60,9 +60,11 @@ namespace Dogey
 
                     if (!result.IsSuccess)
                     {
-                        if (result.Error != CommandError.UnknownCommand)
+                        if (result.Error == CommandError.UnknownCommand)
+                            await CustomCommand.Handle(msg);
+                        else
                             await msg.Channel.SendMessageAsync(result.ErrorReason);
-
+                        
                         if (result.ErrorReason.Contains("You can use this command again in "))
                             DogeyConsole.Log(msg);
                     } else {
@@ -74,5 +76,7 @@ namespace Dogey
                 }
             }
         }
+
+
     }
 }

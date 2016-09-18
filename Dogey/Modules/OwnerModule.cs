@@ -39,19 +39,34 @@ namespace Dogey.Modules
             await msg.Channel.SendMessageAsync($"I left the guild **{guild.Name}** ({guild.Id}).");
         }
 
-        [Command("set")]
-        public async Task Set(IUserMessage msg)
+        [Command("debug")]
+        public async Task Debug(IUserMessage msg)
         {
-            await Task.Delay(1);
+            var help = new HelpModule(_client);
+            await help.Help(msg, "debug");
         }
 
-        [Module("set"), Name("Owner")]
+        [Module("debug"), Name("Owner")]
         [MinPermissions(AccessLevel.Owner)]
         public class SubCommands
         {
             private DiscordSocketClient _client;
 
             public SubCommands(DiscordSocketClient client)
+            {
+                _client = client;
+            }
+
+
+        }
+
+        [Module("set"), Name("Owner")]
+        [MinPermissions(AccessLevel.Owner)]
+        public class AAAA
+        {
+            private DiscordSocketClient _client;
+
+            public AAAA(DiscordSocketClient client)
             {
                 _client = client;
             }
