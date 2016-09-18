@@ -17,7 +17,7 @@ namespace Dogey.Modules
         {
             _client = client;
         }
-        
+
         [Command("help")]
         public async Task Help(IUserMessage msg)
         {
@@ -34,7 +34,7 @@ namespace Dogey.Modules
 
                 if (string.IsNullOrEmpty(c.Module.Name))
                     continue;
-                
+
                 if (string.IsNullOrEmpty(c.Module.Prefix))      // Root command
                 {
                     if (helpmsg.Keys.Contains(c.Module.Name))
@@ -52,7 +52,8 @@ namespace Dogey.Modules
                             if (!helpmsg[c.Module.Name][index].EndsWith("*"))
                                 helpmsg[c.Module.Name][index] += "*";
                         }
-                    } else
+                    }
+                    else
                     {
                         helpmsg.Add(c.Module.Name, new List<string> { c.Module.Prefix });
                     }
@@ -65,6 +66,12 @@ namespace Dogey.Modules
                 await msg.Channel.SendMessageAsync("There are no commands available.");
             else
                 await msg.Channel.SendMessageAsync($"```xl\n{content}```");
+        }
+
+        [Command("help")]
+        public async Task Help(IUserMessage msg, string cmd)
+        {
+            await Task.Delay(1);
         }
     }
 }

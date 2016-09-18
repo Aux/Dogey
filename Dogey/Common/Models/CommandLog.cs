@@ -35,12 +35,6 @@ namespace Dogey.Models
         [Column("Action")]
         public CommandAction Action { get; set; }
 
-        [Column("Before")]
-        public ulong Before { get; set; }
-
-        [Column("After")]
-        public ulong After { get; set; }
-
         public void CreateTable()
         {
 
