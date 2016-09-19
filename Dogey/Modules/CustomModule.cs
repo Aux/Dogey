@@ -37,7 +37,7 @@ namespace Dogey.Modules
             {
                 int cmds = db.Commands.Where(x => x.GuildId == guild.Id && x.Name == name).Count();
 
-                if (cmds > 0)
+                if (cmds == 0)
                 {
                     var cmd = new CustomCommand(msg, name.ToLower());
                     db.Commands.Add(cmd);
