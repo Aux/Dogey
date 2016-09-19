@@ -52,15 +52,64 @@ namespace Dogey.Models
             set { _messages = JsonConvert.SerializeObject(Messages); }
         }
         
-        public CustomCommand()
+        public CustomCommand(IUserMessage msg, string name, bool channelLocked = false)
         {
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
+
+            Name = name;
             Type = CommandType.Single;
             Messages = new Dictionary<string, string>();
+            GuildId = guild.Id;
+            if (channelLocked)
+                ChannelId = msg.Channel.Id;
+            OwnerId = msg.Author.Id;
         }
 
         public static async Task Handle(IUserMessage msg)
         {
-            await Task.Delay(1);
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
+            var parts = msg.Content.Split(new[] { ' ' }, 2);
+
+            string prefix = await guild.GetCustomPrefixAsync();
+            string name = parts[0].Substring(prefix.Count());
+            string sub = null;
+            if (name.Contains("."))
+                sub = name.Split('.')[1];
+            string parameters = null;
+            if (parts.Count() > 1)
+                parameters = parts[1];
+
+            CustomCommand cmd;
+            using (var db = new DataContext())
+                cmd = db.Commands.Where(x => x.GuildId == guild.Id && x.Name == name).FirstOrDefault();
+
+            if (cmd != null)
+            {
+                //switch (sub)
+                //{
+                //    case null:
+                //        await Base(msg, cmd, parameters);
+                //        break;
+                //    case "":
+                //        await Base(msg, cmd, parameters);
+                //        break;
+                //    case "add":
+                //        await Add(msg, cmd, parameters);
+                //        break;
+                //    case "del":
+                //        await Del(msg, cmd, parameters);
+                //        break;
+                //    case "raw":
+                //        await Raw(msg, cmd, parameters);
+                //        break;
+                //    case "retag":
+                //        await Retag(msg, cmd, parameters);
+                //        break;
+                //    case "mode":
+                //        await Mode(msg, cmd, parameters);
+                //        break;
+                //}
+            }
         }
 
         // !cmd <tag>
@@ -119,9 +168,9 @@ namespace Dogey.Models
             {
                 if (msg.Author.Id == cmd.OwnerId)
                 {
-                    var arr = parameters.Split(' ');
+                    var arr = parameters.Split(new[] { ' ' }, 2);
                     string tag = arr[0];
-                    string message = parameters.Substring(tag.Count() + 1);
+                    string message = arr[1];
 
                     cmd.Messages.Add(tag, message);
                     using (var db = new DataContext())

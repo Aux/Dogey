@@ -89,7 +89,7 @@ namespace Dogey.Modules
         public async Task Pats(IUserMessage msg, [Remainder]IUser user = null)
         {
             var g = (msg.Channel as IGuildChannel).Guild;
-            var u = user as IGuildUser ?? await g.GetCurrentUserAsync();
+            var u = user as IGuildUser ?? msg.Author as IGuildUser;
             
             using (var db = new DataContext())
             {
