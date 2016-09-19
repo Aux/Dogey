@@ -29,36 +29,48 @@ namespace Dogey.Models
         public ulong GuildId { get; set; }
 
         [Column("ChannelId")]
-        public ulong ChannelId { get; set; }
+        public ulong? ChannelId { get; set; }
 
         [Required, Column("OwnerId")]
         public ulong OwnerId { get; set; }
 
         [Column("Type")]
-        public CommandType Type { get; set; }
+        public CommandType Type { get; set; } = CommandType.Single;
 
-        [JsonIgnore]
-        [Column("Messages")]
-        private string _messages
+        #region :T
+        [NotMapped, JsonIgnore]
+        private List<string> _tags { get; set; }
+
+        [Column("Tags")]
+        private string tags
         {
-            get { return JsonConvert.SerializeObject(Messages); }
-            set { Messages = JsonConvert.DeserializeObject<Dictionary<string, string>>(value); }
+            get { return JsonConvert.SerializeObject(_tags); }
+            set { _tags = JsonConvert.DeserializeObject <List<string>>(value); }
         }
+
+        [NotMapped, JsonIgnore]
+        private List<string> _msgs { get; set; }
+
+        [Column("Messages")]
+        private string msgs
+        {
+            get { return JsonConvert.SerializeObject(_msgs); }
+            set { _msgs = JsonConvert.DeserializeObject<List<string>>(value); }
+        }
+        #endregion
 
         [NotMapped]
-        public Dictionary<string, string> Messages
-        {
-            get { return JsonConvert.DeserializeObject<Dictionary<string, string>>(_messages); }
-            set { _messages = JsonConvert.SerializeObject(Messages); }
-        }
-        
+        public List<string> Tags { get; set; } = new List<string>();
+
+        [NotMapped]
+        public List<string> Messages { get; set; } = new List<string>();
+
+        public CustomCommand() { }
         public CustomCommand(IUserMessage msg, string name, bool channelLocked = false)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild;
-
+            
             Name = name;
-            Type = CommandType.Single;
-            Messages = new Dictionary<string, string>();
             GuildId = guild.Id;
             if (channelLocked)
                 ChannelId = msg.Channel.Id;
@@ -74,41 +86,46 @@ namespace Dogey.Models
             string name = parts[0].Substring(prefix.Count());
             string sub = null;
             if (name.Contains("."))
+            {
                 sub = name.Split('.')[1];
+                name = name.Split('.')[0];
+            }
             string parameters = null;
             if (parts.Count() > 1)
                 parameters = parts[1];
-
+            
             CustomCommand cmd;
             using (var db = new DataContext())
                 cmd = db.Commands.Where(x => x.GuildId == guild.Id && x.Name == name).FirstOrDefault();
 
+            Console.WriteLine($"{prefix} / {name} / {sub} / {parameters}");
+
             if (cmd != null)
             {
-                //switch (sub)
-                //{
-                //    case null:
-                //        await Base(msg, cmd, parameters);
-                //        break;
-                //    case "":
-                //        await Base(msg, cmd, parameters);
-                //        break;
-                //    case "add":
-                //        await Add(msg, cmd, parameters);
-                //        break;
-                //    case "del":
-                //        await Del(msg, cmd, parameters);
-                //        break;
-                //    case "raw":
-                //        await Raw(msg, cmd, parameters);
-                //        break;
-                //    case "retag":
-                //        await Retag(msg, cmd, parameters);
-                //        break;
-                //    case "mode":
-                //        await Mode(msg, cmd, parameters);
-                //        break;
-                //}
+                switch (sub)
+                {
+                    case null:
+                        await Base(msg, cmd, parameters);
+                        break;
+                    case "":
+                        await Base(msg, cmd, parameters);
+                        break;
+                    case "add":
+                        await Add(msg, cmd, parameters);
+                        break;
+                    case "del":
+                        await Del(msg, cmd, parameters);
+                        break;
+                    case "raw":
+                        await Raw(msg, cmd, parameters);
+                        break;
+                    case "retag":
+                        await Retag(msg, cmd, parameters);
+                        break;
+                    case "mode":
+                        await Mode(msg, cmd, parameters);
+                        break;
+                }
             }
         }
 
@@ -116,6 +133,7 @@ namespace Dogey.Models
         private static async Task Base(IUserMessage msg, CustomCommand cmd, string parameters)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild;
+            string prefix = await guild.GetCustomPrefixAsync();
             string message = null;
 
             using (var db = new DataContext())
@@ -134,25 +152,25 @@ namespace Dogey.Models
             
             if (!string.IsNullOrWhiteSpace(parameters))
             {
-                string selected = cmd.Messages[parameters] ?? null;
-                if (string.IsNullOrWhiteSpace(selected))
-                    message = $"{parameters}: {selected}";
+                int selected = cmd.Tags.IndexOf(parameters);
+                if (selected >= 0)
+                    message = $"{cmd.Tags[selected]}: {cmd.Messages[selected]}";
             } else
             {
                 switch (cmd.Type)
                 {
                     case CommandType.List:
-                        message = $"These are the tags for **{cmd.Name}**:\n```{string.Join(", ", cmd.Messages.Select(x => x.Key))}```";
+                        message = $"These are the tags for **{cmd.Name}**:\n```{string.Join(", ", cmd.Tags)}```";
                         break;
                     case CommandType.Random:
-                        int r = new Random().Next(0, cmd.Messages.Count());
-                        var selected = cmd.Messages.ElementAt(r);
-                        message = $"{selected.Key}: {selected.Value}";
+                        int r = new Random().Next(0, cmd.Tags.Count());
+                        message = $"{cmd.Tags[r]}: {cmd.Messages[r]}";
                         break;
                     default:
-                        message = cmd.Messages.ElementAt(0).Value;
-                        if (string.IsNullOrWhiteSpace(message))
-                            message = $"This command does not have any tags, add some with `{guild.GetCustomPrefixAsync()}{cmd.Name}.add <tag> <remainder>`.";
+                        if (cmd.Tags.Count() > 0)
+                            message = cmd.Messages.FirstOrDefault();
+                        else
+                            message = $"This command does not have any tags, add some with `{prefix}{cmd.Name}.add <tag> <message>`.";
                         break;
                 }
             }
@@ -172,9 +190,16 @@ namespace Dogey.Models
                     string tag = arr[0];
                     string message = arr[1];
 
-                    cmd.Messages.Add(tag, message);
+                    var tags = cmd.Tags;
+                    tags.Add(tag);
+                    var msgs = cmd.Messages;
+                    msgs.Add(message);
+
                     using (var db = new DataContext())
                     {
+                        cmd.Tags = tags;
+                        cmd.Messages = msgs;
+
                         db.Commands.Update(cmd);
                         await db.SaveChangesAsync();
                     }
@@ -195,7 +220,10 @@ namespace Dogey.Models
             {
                 if (msg.Author.Id == cmd.OwnerId)
                 {
-                    cmd.Messages.Remove(parameters);
+                    int selected = cmd.Tags.IndexOf(parameters);
+                    cmd.Tags.RemoveAt(selected);
+                    cmd.Messages.RemoveAt(selected);
+
                     using (var db = new DataContext())
                     {
                         db.Commands.Update(cmd);
@@ -232,9 +260,8 @@ namespace Dogey.Models
                     string oldtag = arr[0];
                     string newtag = arr[1];
 
-                    string message = cmd.Messages[oldtag];
-                    cmd.Messages.Remove(oldtag);
-                    cmd.Messages.Add(newtag, message);
+                    int selected = cmd.Tags.IndexOf(oldtag);
+                    cmd.Tags[selected] = newtag;
 
                     using (var db = new DataContext())
                     {
