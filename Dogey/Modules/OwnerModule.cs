@@ -56,7 +56,7 @@ namespace Dogey.Modules
 
                     await message.ModifyAsync((e) =>
                     {
-                        e.Content = string.Join("\n", msg);
+                        e.Content = string.Join("\n", lookupmsg);
                     });
                 }
                 else
