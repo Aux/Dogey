@@ -54,11 +54,11 @@ namespace Dogey.Modules
         public async Task Pat(IUserMessage msg, [Remainder]IUser user = null)
         {
             var g = (msg.Channel as IGuildChannel).Guild;
-            var u = user as IGuildUser ?? await g.GetCurrentUserAsync();
+            var u = user as IGuildUser ?? msg.Author as IGuildUser;
 
             if (msg.Author.Id == u.Id)
             {
-                await msg.Channel.SendMessageAsync("You can't pat yourself <:auxSad:224050369439727616>");
+                await msg.Channel.SendMessageAsync("You can't pat yourself <:auxSad:213686503509852160>");
                 return;
             }
             
@@ -97,7 +97,7 @@ namespace Dogey.Modules
                 if (pats != null)
                     await msg.Channel.SendMessageAsync($"{u.Username} has been pet {pats} times <:auxHappy:213686501089738752>");
                 else
-                    await msg.Channel.SendMessageAsync($"{u.Username} has been pet 0 times <:auxSad:224050369439727616>");
+                    await msg.Channel.SendMessageAsync($"{u.Username} has been pet 0 times <:auxSad:213686503509852160>");
             }
         }
     }
