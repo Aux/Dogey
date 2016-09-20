@@ -6,6 +6,7 @@ using Dogey.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules
@@ -22,12 +23,14 @@ namespace Dogey.Modules
         }
 
         [Command("create")]
-        public async Task Create(IUserMessage msg, string name)
+        [Description("Create a new custom command.")]
+        public async Task Create(IUserMessage msg, string name, [Remainder]string description = null)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild;
             string prefix = await guild.GetCustomPrefixAsync();
 
-            if (string.IsNullOrWhiteSpace(name))
+            var regex = new Regex("^[a-zA-Z0-9]*$");
+            if (!regex.IsMatch(name))
             {
                 await msg.Channel.SendMessageAsync("Command names cannot be empty.");
                 return;
@@ -39,11 +42,11 @@ namespace Dogey.Modules
 
                 if (cmds == 0)
                 {
-                    var cmd = new CustomCommand(msg, name.ToLower());
+                    var cmd = new CustomCommand(msg, name.ToLower(), description);
                     db.Commands.Add(cmd);
 
                     await db.SaveChangesAsync();
-                    await msg.Channel.SendMessageAsync($":thumbsup: You can now add tags with `{prefix}.add <tag> <message>`.");
+                    await msg.Channel.SendMessageAsync($":thumbsup: You can now add tags with `{prefix}{cmd.Name}.add <tag> <message>`.");
                 } else
                 {
                     await msg.Channel.SendMessageAsync($"The command `{name}` already exists.");
@@ -52,7 +55,7 @@ namespace Dogey.Modules
         }
 
         [Command("delete")]
-        public async Task Delete(IUserMessage msg, string name)
+        public async Task Delete(IUserMessage msg, string name, string CONFIRM)
         {
 
         }
@@ -77,13 +80,13 @@ namespace Dogey.Modules
                 if (cmds.Count() > 0)
                     message = $"```xl\n{string.Join(", ", cmds)}```";
                 else
-                    message = $"There are no commands for this server, add some with `{prefix}create <command>`.";
+                    message = $"There are no commands for this server, add some with `{prefix}create <name> [desc]`.";
             }
 
             await msg.Channel.SendMessageAsync(message);
         }
         
-        [Module("commands"), Name("")]
+        [Module("commands"), Name("Custom")]
         public class SubCommands
         {
             private DiscordSocketClient _client;

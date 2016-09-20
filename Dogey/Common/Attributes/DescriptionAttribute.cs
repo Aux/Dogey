@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Attributes
+namespace Discord.Commands
 {
     /// <summary>
     /// Because SOMEONE felt like it was necessary to remove Descriptions >:(
