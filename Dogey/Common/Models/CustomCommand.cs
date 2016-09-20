@@ -1,8 +1,6 @@
 ﻿using Discord;
 using Dogey.Enums;
 using Dogey.Extensions;
-using Dogey.Tools;
-using Dogey.Types;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -16,92 +14,81 @@ namespace Dogey.Models
     [Table("commands")]
     public class CustomCommand
     {
-        [Key, Required, Column("Id")]
+        [Column("Id"), Key, Required]
         public int Id { get; set; }
-
-        [Required, Column("Name")]
+        [Column("Name")]
         public string Name { get; set; }
-
-        [Required, Column("Description")]
+        [Column("Description")]
         public string Description { get; set; }
 
-        [Required, Column("GuildId")]
+        [Column("GuildId")]
         public ulong GuildId { get; set; }
-
         [Column("ChannelId")]
         public ulong? ChannelId { get; set; }
-
-        [Required, Column("OwnerId")]
+        [Column("OwnerId")]
         public ulong OwnerId { get; set; }
 
         [Column("Type")]
         public CommandType Type { get; set; } = CommandType.Single;
-
-        #region :T
-        [NotMapped, JsonIgnore]
-        private List<string> _tags { get; set; }
-
-        [Column("Tags")]
-        private string tags
-        {
-            get { return JsonConvert.SerializeObject(_tags); }
-            set { _tags = JsonConvert.DeserializeObject <List<string>>(value); }
-        }
-
-        [NotMapped, JsonIgnore]
-        private List<string> _msgs { get; set; }
-
         [Column("Messages")]
-        private string msgs
-        {
-            get { return JsonConvert.SerializeObject(_msgs); }
-            set { _msgs = JsonConvert.DeserializeObject<List<string>>(value); }
-        }
-        #endregion
-
-        [NotMapped]
-        public List<string> Tags { get; set; } = new List<string>();
-
-        [NotMapped]
-        public List<string> Messages { get; set; } = new List<string>();
+        public string Messages { get; set; } = "{}";
 
         public CustomCommand() { }
-        public CustomCommand(IUserMessage msg, string name, bool channelLocked = false)
+        public CustomCommand(IUserMessage msg, string name, string desc = null, bool channelled = false)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild;
-            
+
             Name = name;
+            Description = desc;
             GuildId = guild.Id;
-            if (channelLocked)
-                ChannelId = msg.Channel.Id;
+            if (channelled) ChannelId = msg.Channel.Id;
             OwnerId = msg.Author.Id;
         }
 
+        #region Commands
         public static async Task Handle(IUserMessage msg)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild;
-            var parts = msg.Content.Split(new[] { ' ' }, 2);
-
             string prefix = await guild.GetCustomPrefixAsync();
-            string name = parts[0].Substring(prefix.Count());
-            string sub = null;
-            if (name.Contains("."))
+
+            string name = null,
+                sub = null,
+                parameters = null;
+
+            string[] parts = msg.Content.Replace(prefix, "").Split(new[] { ' ' }, 2);
+            if (parts[0].Contains('.'))
             {
-                sub = name.Split('.')[1];
-                name = name.Split('.')[0];
+                var text = parts[0].ToLower().Split('.');
+                name = text[0];
+                sub = text[1];
+            } else
+            {
+                name = parts[0].ToLower();
             }
-            string parameters = null;
             if (parts.Count() > 1)
                 parameters = parts[1];
-            
+
             CustomCommand cmd;
             using (var db = new DataContext())
                 cmd = db.Commands.Where(x => x.GuildId == guild.Id && x.Name == name).FirstOrDefault();
 
-            Console.WriteLine($"{prefix} / {name} / {sub} / {parameters}");
-
             if (cmd != null)
             {
+                using (var db = new DataContext())
+                {
+                    db.CommandLogs.Add(new CommandLog()
+                    {
+                        Timestamp = DateTime.UtcNow,
+                        GuildId = guild.Id,
+                        ChannelId = msg.Channel.Id,
+                        UserId = msg.Author.Id,
+                        Command = cmd.Name + sub,
+                        Parameters = parameters,
+                        Action = CommandAction.Executed
+                    });
+                    await db.SaveChangesAsync();
+                }
+
                 switch (sub)
                 {
                     case null:
@@ -128,165 +115,166 @@ namespace Dogey.Models
                 }
             }
         }
-
-        // !cmd <tag>
-        private static async Task Base(IUserMessage msg, CustomCommand cmd, string parameters)
+        
+        public static async Task Base(IUserMessage msg, CustomCommand cmd, string parameters)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild;
             string prefix = await guild.GetCustomPrefixAsync();
-            string message = null;
+            var msgs = cmd.GetMessages();
+
+            if (string.IsNullOrWhiteSpace(parameters))
+            {
+                switch(cmd.Type)
+                {
+                    default:
+                        if (msgs.Count() > 0)
+                            await msg.Channel.SendMessageAsync(msgs.FirstOrDefault().Value);
+                        else
+                            await msg.Channel.SendMessageAsync($"This command does not have any tags, add some with `{prefix}{cmd.Name}.add <tag> <message>`.");
+                        break;
+                    case CommandType.List:
+                        await msg.Channel.SendMessageAsync($"These are the tags for **{cmd.Name}**:\n```{string.Join(", ", msgs.Select(x => x.Key))}```");
+                        break;
+                    case CommandType.Random:
+                        int r = new Random().Next(0, msgs.Count());
+                        await msg.Channel.SendMessageAsync($"{msgs.ElementAt(r).Key}: {msgs.ElementAt(r).Value}");
+                        break;
+                }
+            }
+            else
+            {
+                string tag = parameters.ToLower();
+                if (msgs.ContainsKey(tag))
+                    await msg.Channel.SendMessageAsync($"{tag}: {msgs[tag]}");
+                else
+                    await msg.Channel.SendMessageAsync($"The command `{cmd.Name}` does not contain the tag `{tag}`.");
+            }
+        }
+
+        public static async Task Raw(IUserMessage msg, CustomCommand cmd, string parameters)
+        {
+            await Task.Delay(1);
+        }
+
+        public static async Task Add(IUserMessage msg, CustomCommand cmd, string parameters)
+        {
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
+            string prefix = await guild.GetCustomPrefixAsync();
+            var msgs = cmd.GetMessages();
+
+            var arr = parameters.Split(new[] { ' ' }, 2);
+            string tag = arr[0];
+            string message = arr[1];
+
+            msgs.Add(tag, message);
+            cmd.SetMessages(msgs);
 
             using (var db = new DataContext())
             {
-                db.CommandLogs.Add(new CommandLog()
-                {
-                    Timestamp = DateTime.UtcNow,
-                    GuildId = guild.Id,
-                    ChannelId = msg.Channel.Id,
-                    UserId = msg.Author.Id,
-                    Command = cmd.Name,
-                    Action = CommandAction.Executed
-                });
+                db.Commands.Update(cmd);
                 await db.SaveChangesAsync();
             }
-            
-            if (!string.IsNullOrWhiteSpace(parameters))
-            {
-                int selected = cmd.Tags.IndexOf(parameters);
-                if (selected >= 0)
-                    message = $"{cmd.Tags[selected]}: {cmd.Messages[selected]}";
-            } else
-            {
-                switch (cmd.Type)
-                {
-                    case CommandType.List:
-                        message = $"These are the tags for **{cmd.Name}**:\n```{string.Join(", ", cmd.Tags)}```";
-                        break;
-                    case CommandType.Random:
-                        int r = new Random().Next(0, cmd.Tags.Count());
-                        message = $"{cmd.Tags[r]}: {cmd.Messages[r]}";
-                        break;
-                    default:
-                        if (cmd.Tags.Count() > 0)
-                            message = cmd.Messages.FirstOrDefault();
-                        else
-                            message = $"This command does not have any tags, add some with `{prefix}{cmd.Name}.add <tag> <message>`.";
-                        break;
-                }
-            }
 
-            if (!string.IsNullOrWhiteSpace(message))
-                await msg.Channel.SendMessageAsync(message);
+            await msg.Channel.SendMessageAsync($":thumbsup:");
         }
 
-        // !cmd.add <tag> <remainder>
-        private static async Task Add(IUserMessage msg, CustomCommand cmd, string parameters)
+        public static async Task Del(IUserMessage msg, CustomCommand cmd, string parameters)
         {
-            try
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
+            string prefix = await guild.GetCustomPrefixAsync();
+            var msgs = cmd.GetMessages();
+
+            msgs.Remove(parameters);
+            cmd.SetMessages(msgs);
+
+            using (var db = new DataContext())
             {
-                if (msg.Author.Id == cmd.OwnerId)
-                {
-                    var arr = parameters.Split(new[] { ' ' }, 2);
-                    string tag = arr[0];
-                    string message = arr[1];
-
-                    var tags = cmd.Tags;
-                    tags.Add(tag);
-                    var msgs = cmd.Messages;
-                    msgs.Add(message);
-
-                    using (var db = new DataContext())
-                    {
-                        cmd.Tags = tags;
-                        cmd.Messages = msgs;
-
-                        db.Commands.Update(cmd);
-                        await db.SaveChangesAsync();
-                    }
-
-                    await msg.Channel.SendMessageAsync(":thumbsup:");
-                }
+                db.Commands.Update(cmd);
+                await db.SaveChangesAsync();
             }
-            catch (Exception ex)
-            {
-                DogeyConsole.Log(LogSeverity.Info, "[Add]", ex.Message);
-            }
+
+            await msg.Channel.SendMessageAsync($":thumbsup:");
         }
 
-        // !cmd.del <tag>
-        private static async Task Del(IUserMessage msg, CustomCommand cmd, string parameters)
+        public static async Task Retag(IUserMessage msg, CustomCommand cmd, string parameters)
         {
-            try
-            {
-                if (msg.Author.Id == cmd.OwnerId)
-                {
-                    int selected = cmd.Tags.IndexOf(parameters);
-                    cmd.Tags.RemoveAt(selected);
-                    cmd.Messages.RemoveAt(selected);
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
+            string prefix = await guild.GetCustomPrefixAsync();
+            var msgs = cmd.GetMessages();
 
-                    using (var db = new DataContext())
-                    {
-                        db.Commands.Update(cmd);
-                        await db.SaveChangesAsync();
-                    }
+            var arr = parameters.Split(' ');
+            string oldtag = arr[0];
+            string newtag = arr[1];
 
-                    await msg.Channel.SendMessageAsync(":thumbsup:");
-                }
-            }
-            catch (KeyNotFoundException)
+            string message = msgs[oldtag];
+            msgs.Remove(oldtag);
+            msgs.Add(newtag, message);
+            cmd.SetMessages(msgs);
+
+            using (var db = new DataContext())
             {
-                await msg.Channel.SendMessageAsync($"The tag `{parameters}` does not exist in `{cmd.Name}`.");
+                db.Commands.Update(cmd);
+                await db.SaveChangesAsync();
             }
-            catch (Exception ex)
-            {
-                DogeyConsole.Log(LogSeverity.Info, "[Del]", ex.Message);
-            }
+
+            await msg.Channel.SendMessageAsync($":thumbsup:");
         }
 
-        // !cmd.raw <tag>
-        private static async Task Raw(IUserMessage msg, CustomCommand cmd, string parameters)
+        public static async Task Mode(IUserMessage msg, CustomCommand cmd, string parameters)
         {
-            await Task.Delay(1);
-        }
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
+            string prefix = await guild.GetCustomPrefixAsync();
 
-        // !cmd.retag <oldtag> <newtag>
-        private static async Task Retag(IUserMessage msg, CustomCommand cmd, string parameters)
+            CommandType t = cmd.Type;
+            if (parameters == "0" ||
+                parameters == "single" ||
+                parameters == "s")
+                t = CommandType.Single;
+            else
+            if (parameters == "1" ||
+                parameters == "list" ||
+                parameters == "l")
+                t = CommandType.List;
+            else
+            if (parameters == "2" ||
+                parameters == "random" ||
+                parameters == "r")
+                t = CommandType.Random;
+            else
+                return;
+
+            using (var db = new DataContext())
+            {
+                cmd.Type = t;
+                db.Commands.Update(cmd);
+                await db.SaveChangesAsync();
+            }
+
+            await msg.Channel.SendMessageAsync($"`{cmd.Name}` is now `{Enum.GetName(typeof(CommandType), t)}`");
+        }
+        #endregion
+
+        #region MessageHandler
+        public Dictionary<string, string> GetMessages()
         {
-            try
-            {
-                if (msg.Author.Id == cmd.OwnerId)
-                {
-                    var arr = parameters.Split(' ');
-                    string oldtag = arr[0];
-                    string newtag = arr[1];
-
-                    int selected = cmd.Tags.IndexOf(oldtag);
-                    cmd.Tags[selected] = newtag;
-
-                    using (var db = new DataContext())
-                    {
-                        db.Commands.Update(cmd);
-                        await db.SaveChangesAsync();
-                    }
-
-                    await msg.Channel.SendMessageAsync(":thumbsup:");
-                }
-            }
-            catch (IndexOutOfRangeException)
-            {
-                await msg.Channel.SendMessageAsync($"Invalid parameters.");
-            }
-            catch (Exception ex)
-            {
-                DogeyConsole.Log(LogSeverity.Info, "[Retag]", ex.Message);
-            }
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(Messages);
         }
-
-        // !cmd.mode <mode>
-        // Single, List, Random
-        private static async Task Mode(IUserMessage msg, CustomCommand cmd, string parameters)
+        public void SetMessages(Dictionary<string, string> msgs)
         {
-            await Task.Delay(1);
+            Messages = JsonConvert.SerializeObject(msgs);
         }
+        public void AddMessage(string tag, string message)
+        {
+            var msgs = GetMessages();
+            msgs.Add(tag, message);
+            SetMessages(msgs);
+        }
+        public void DelMessage(string tag)
+        {
+            var msgs = GetMessages();
+            msgs.Remove(tag);
+            SetMessages(msgs);
+        }
+        #endregion
     }
 }
