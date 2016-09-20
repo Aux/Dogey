@@ -110,12 +110,20 @@ namespace Dogey.Modules
             }
 
             [Command("top")]
-            public async Task Top(IUserMessage msg, int page = 1)
+            public async Task Top(IUserMessage msg, int page = 1, IUser user = null)
             {
                 int p = page * 5 - 5;
                 using (var db = new DataContext())
                 {
-                    var cmds = db.CommandLogs.Where(x => !x.Command.Contains("."))
+                    IQueryable<string> cmds;
+                    if (user != null)
+                        cmds = db.CommandLogs.Where(x => !x.Command.Contains(".") && x.UserId == user.Id)
+                                             .GroupBy(x => x.Command)
+                                             .OrderByDescending(g => g.Count())
+                                             .Skip(p).Take(5)
+                                             .Select(x => $"{x.Key}: {x.Count()}");
+                    else
+                        cmds = db.CommandLogs.Where(x => !x.Command.Contains("."))
                                              .GroupBy(x => x.Command)
                                              .OrderByDescending(g => g.Count())
                                              .Skip(p).Take(5)
@@ -134,13 +142,20 @@ namespace Dogey.Modules
             }
 
             [Command("recent")]
-            public async Task Recent(IUserMessage msg, int page = 1)
+            public async Task Recent(IUserMessage msg, int page = 1, IUser user = null)
             {
                 var guild = (msg.Channel as IGuildChannel)?.Guild;
                 int p = page * 10 - 10;
                 using (var db = new DataContext())
                 {
-                    var cmds = db.CommandLogs.Where(x => !x.Command.Contains(".") && x.GuildId == guild.Id)
+                    IQueryable<string> cmds;
+                    if (user != null)
+                        cmds = db.CommandLogs.Where(x => !x.Command.Contains(".") && x.GuildId == guild.Id && x.UserId == user.Id)
+                                             .OrderByDescending(x => x.Timestamp)
+                                             .Skip(p).Take(10)
+                                             .Select(x => $"{guild.GetUser(x.UserId)}: {x.Command} {x.Parameters}");
+                    else
+                        cmds = db.CommandLogs.Where(x => !x.Command.Contains(".") && x.GuildId == guild.Id)
                                              .OrderByDescending(x => x.Timestamp)
                                              .Skip(p).Take(10)
                                              .Select(x => $"{guild.GetUser(x.UserId)}: {x.Command} {x.Parameters}");

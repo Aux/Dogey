@@ -24,7 +24,7 @@ namespace Dogey.Modules.InfoModule
 
         [Command("userinfo")]
         [Description("Get information about this user.")]
-        public async Task Userinfo(IUserMessage msg, IUser user = null)
+        public async Task Userinfo(IUserMessage msg, [Remainder]IUser user = null)
         {
             var guild = (msg.Channel as IGuildChannel)?.Guild;
             var u = user as IGuildUser ?? msg.Author as IGuildUser;
@@ -33,7 +33,7 @@ namespace Dogey.Modules.InfoModule
             using (var db = new DataContext())
             {
                 msgcount = db.MessageLogs.Where(x => x.AuthorId == u.Id && x.GuildId == guild.Id).Count();
-                cmdcount = db.Commands.Where(x => x.OwnerId == msg.Author.Id).Count();
+                cmdcount = db.Commands.Where(x => x.OwnerId == u.Id).Count();
             }
             
             var infomsg = new List<string>
@@ -58,7 +58,7 @@ namespace Dogey.Modules.InfoModule
         {
             [Command("permissions")]
             [Description("Get this user's permissions.")]
-            public async Task Permissions(IUserMessage msg, IUser user = null)
+            public async Task Permissions(IUserMessage msg, [Remainder]IUser user = null)
             {
                 var u = user as IGuildUser ?? msg.Author as IGuildUser;
                 var g = u.GuildPermissions;
