@@ -8,6 +8,7 @@ using Dogey.Models;
 using System.Linq;
 using Dogey.Tools;
 using Dogey.Extensions;
+using Dogey.Enums;
 
 namespace Dogey
 {
@@ -67,7 +68,28 @@ namespace Dogey
                         
                         if (result.ErrorReason.Contains("You can use this command again in "))
                             DogeyConsole.Log(msg);
-                    } else {
+                    } else
+                    {
+                        string[] parts = msg.Content.Replace(prefix, "").Split(new[] { ' ' }, 2);
+                        string parameters = null;
+                        if (parts.Count() > 1)
+                            parameters = parts[1];
+
+                        using (var db = new DataContext())
+                        {
+                            db.CommandLogs.Add(new CommandLog()
+                            {
+                                Timestamp = DateTime.UtcNow,
+                                GuildId = (msg.Channel as IGuildChannel)?.Guild.Id,
+                                ChannelId = msg.Channel.Id,
+                                UserId = msg.Author.Id,
+                                Command = parts[0],
+                                Parameters = parameters,
+                                Action = CommandAction.Executed
+                            });
+                            await db.SaveChangesAsync();
+                        }
+
                         DogeyConsole.Log(msg);
                     }
                 } else

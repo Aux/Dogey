@@ -82,7 +82,7 @@ namespace Dogey.Models
                         GuildId = guild.Id,
                         ChannelId = msg.Channel.Id,
                         UserId = msg.Author.Id,
-                        Command = cmd.Name + sub,
+                        Command = parts[0],
                         Parameters = parameters,
                         Action = CommandAction.Executed
                     });
