@@ -7,6 +7,7 @@
     "dependencies": {
         "Discord.Net": "1.0.0-beta-00417",
         "Discord.Net.Commands": "1.0.0-beta-00417",
+        "Google.Apis.YouTube.v3": "1.16.0.582",
         "Microsoft.Data.Sqlite": "1.0.0",
         "Microsoft.EntityFrameworkCore": "1.0.0",
         "Microsoft.EntityFrameworkCore.Sqlite": "1.0.0",

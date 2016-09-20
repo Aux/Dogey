@@ -2,9 +2,11 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Dogey.Attributes;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.SearchModule
@@ -20,11 +22,43 @@ namespace Dogey.Modules.SearchModule
             _client = client;
         }
 
-        [Command("stackexchange")]
+        [Command("stackexchange"), Alias("question")]
         [Description("Search for tags on a stackexchange site.")]
-        public async Task StackExchange(IUserMessage msg, string site, string keyword)
+        public async Task StackExchange(IUserMessage msg, string site, [Remainder]string keywords)
         {
-            await Task.Delay(1);
+            var message = await msg.Channel.SendMessageAsync("Searching...");
+            var baseUri = new Uri("http://api.stackexchange.com/");
+            string queryUrl = "2.2/search/advanced?page=1&pagesize=1&order=desc&sort=votes&q={0}&answers=1&site={1}";
+
+            string q = string.Format(queryUrl,
+                Uri.EscapeDataString(keywords),
+                Uri.EscapeDataString(site));
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = baseUri;
+                var response = await client.GetAsync(q);
+                response.EnsureSuccessStatusCode();
+
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                var obj = JObject.Parse(jsonResponse);
+
+                if (!obj["items"].HasValues)
+                {
+                    await message.ModifyAsync((e) =>
+                    {
+                        e.Content = $"I was unable to find a question like `{keywords}`.";
+                    });
+                }
+                else
+                {
+                    await message.ModifyAsync((e) =>
+                    {
+                        e.Content = obj["items"][0]["link"].ToString();
+                    });
+                }
+            }
         }
     }
 }
