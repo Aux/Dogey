@@ -39,10 +39,7 @@ namespace Dogey.Modules.InfoModule
                 "```"
             };
 
-            if (Globals.Config.IsSelfbot)
-                await msg.ModifyAsync((e) => e.Content = string.Join("\n", infomsg));
-            else
-                await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
+            await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
         }
         
         [Module("roleinfo"), Name("Info")]
