@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Info
 {
-
     [Module, Name("Info")]
     [RequireContext(ContextType.Guild)]
     public class CommandGroup
