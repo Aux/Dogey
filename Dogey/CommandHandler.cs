@@ -61,13 +61,23 @@ namespace Dogey
 
                     if (!result.IsSuccess)
                     {
-                        if (result.Error == CommandError.UnknownCommand)
-                            await CustomCommand.Handle(msg);
+                        if (!result.ErrorReason.Contains("You can use this command again in "))
+                        {
+                            if (result.Error == CommandError.UnknownCommand)
+                                await CustomCommand.Handle(msg);
+                            else
+                                await msg.Channel.SendMessageAsync(result.ErrorReason);
+                        }
                         else
-                            await msg.Channel.SendMessageAsync(result.ErrorReason);
-                        
-                        if (result.ErrorReason.Contains("You can use this command again in "))
-                            DogeyConsole.Log(msg);
+                        {
+                            var dm = await (msg.Author as IGuildUser)?.CreateDMChannelAsync();
+
+                            if (dm != null)
+                            {
+                                await dm.SendMessageAsync(result.ErrorReason);
+                                DogeyConsole.Log(msg);
+                            }
+                        }
                     } else
                     {
                         string[] parts = msg.Content.Replace(prefix, "").Split(new[] { ' ' }, 2);

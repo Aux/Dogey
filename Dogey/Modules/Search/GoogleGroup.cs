@@ -39,19 +39,21 @@ namespace Dogey.Modules.Search
 
             var searchListResponse = await searchListRequest.ExecuteAsync();
 
+            string video = null;
             foreach (var searchResult in searchListResponse.Items)
             {
                 if (searchResult.Id.Kind == "youtube#video")
                 {
-                    await message.ModifyAsync((e) =>
-                    {
-                        e.Content = string.Format(queryUrl, searchResult.Id.VideoId);
-                    });
+                    video = string.Format(queryUrl, searchResult.Id.VideoId);
                 }
             }
+
             await message.ModifyAsync((e) =>
             {
-                e.Content = $"I was unable to find a video on youtube like `{keywords}`.";
+                if (string.IsNullOrEmpty(video))
+                    e.Content = $"I was unable to find a video on youtube like `{keywords}`.";
+                else
+                    e.Content = video;
             });
         }
     }
