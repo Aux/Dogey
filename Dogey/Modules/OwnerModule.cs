@@ -24,7 +24,8 @@ namespace Dogey.Modules
         }
 
         [Command("lookup")]
-        [Description("Make Dogey leave a server.")]
+        [Description("Find information about an ip address or domain.")]
+        [Example("lookup google.com")]
         public async Task Set(IUserMessage msg, string ip)
         {
             var getUrl = new Uri($"http://ip-api.com/");
@@ -70,10 +71,11 @@ namespace Dogey.Modules
         }
         
         [Command("owner")]
+        [Description("Alias for the help owner command.")]
         public async Task Owner(IUserMessage msg)
         {
             var help = new HelpModule(_client);
-            await help.Help(msg, "debug");
+            await help.Help(msg, "owner");
         }
 
         [Module("owner"), Name("Owner")]
@@ -89,6 +91,7 @@ namespace Dogey.Modules
 
             [Command("say")]
             [Description("Make Dogey say something.")]
+            [Example("owner say I like soup")]
             public async Task Say(IUserMessage msg, [Remainder]string text)
             {
                 await msg.Channel.SendMessageAsync(text);
@@ -96,6 +99,7 @@ namespace Dogey.Modules
 
             [Command("leave")]
             [Description("Make Dogey leave a server.")]
+            [Example("leave ")]
             public async Task Set(IUserMessage msg, ulong guildId)
             {
                 var guild = await _client.GetGuildAsync(guildId);
@@ -106,6 +110,7 @@ namespace Dogey.Modules
 
             [Command("setusername"), Alias("setuser")]
             [Description("Change Dogey's username.")]
+            [Example("owner setusername Dogey")]
             public async Task Username(IUserMessage msg, [Remainder]string name)
             {
                 var self = await _client.GetCurrentUserAsync();
@@ -116,6 +121,7 @@ namespace Dogey.Modules
 
             [Command("setnickname"), Alias("setnick")]
             [Description("Change Dogey's nickname.")]
+            [Example("owner setnickname Dogey")]
             [RequireContext(ContextType.Guild)]
             public async Task Nickname(IUserMessage msg, [Remainder]string name)
             {
@@ -128,6 +134,7 @@ namespace Dogey.Modules
 
             [Command("setavatar"), Alias("seticon")]
             [Description("Change Dogey's avatar.")]
+            [Example("owner setavatar https://auxesis.tv/images/dogey.png")]
             public async Task Avatar(IUserMessage msg, string url)
             {
                 var self = await _client.GetCurrentUserAsync();
@@ -144,6 +151,7 @@ namespace Dogey.Modules
 
             [Command("setgame"), Alias("setplaying")]
             [Description("Change Dogey's game.")]
+            [Example("owner setgame Overwatch")]
             public async Task Game(IUserMessage msg, [Remainder]string game)
             {
                 var self = await _client.GetCurrentUserAsync();
@@ -154,6 +162,7 @@ namespace Dogey.Modules
 
             [Command("block")]
             [Description("Block a user from using any Dogey commands.")]
+            [Example("owner block Your Mother")]
             public async Task Block(IUserMessage msg, [Remainder]IUser user)
             {
                 Globals.Config.Blocked.Add(user.Id);

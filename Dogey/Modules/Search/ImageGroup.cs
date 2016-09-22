@@ -23,6 +23,7 @@ namespace Dogey.Modules.Search
 
         [Command("gif")]
         [Description("Search for a gif with the provided keywords.")]
+        [Example("gif doge")]
         public async Task Youtube(IUserMessage msg, [Remainder]string keywords)
         {
             var message = await msg.Channel.SendMessageAsync("Searching...");

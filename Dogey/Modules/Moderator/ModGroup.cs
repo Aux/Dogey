@@ -39,6 +39,7 @@ namespace Dogey.Modules.AdminModule
 
         [Command("reason")]
         [Description("Give a reason for a moderator action.")]
+        [Example("reason 13 They broke the rules")]
         public async Task Reason(IUserMessage msg, int number, [Remainder]string reason)
         {
             var guild = (msg.Channel as IGuildChannel).Guild;

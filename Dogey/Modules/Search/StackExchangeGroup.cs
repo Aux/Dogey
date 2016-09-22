@@ -24,6 +24,7 @@ namespace Dogey.Modules.SearchModule
 
         [Command("stackexchange"), Alias("question", "q")]
         [Description("Search for tags on a stackexchange site.")]
+        [Example("q stackoverflow c# json string")]
         public async Task StackExchange(IUserMessage msg, string site, [Remainder]string keywords)
         {
             var message = await msg.Channel.SendMessageAsync("Searching...");

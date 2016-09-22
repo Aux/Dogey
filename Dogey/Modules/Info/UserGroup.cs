@@ -69,8 +69,8 @@ namespace Dogey.Modules.InfoModule
                 "```xl",
                 $"   Name: {u} ({u.Id})",
                 $" Status: {Enum.GetName(typeof(UserStatus), u.Status)}",
-                $"Created: {u.CreatedAt}",
-                $" Joined: {u.JoinedAt}",
+                $"Created: {u.CreatedAt.ToString("ddddd, MMM dd yyyy, hh:mm:ss tt")}",
+                $" Joined: {u.JoinedAt.Value.ToString("ddddd, MMM dd yyyy, hh:mm:ss tt")}",
                 $"  Roles: {u.Roles.Count()}",
                 $"   Msgs: {msgcount}",
                 $"   Cmds: {cmdcount}",
@@ -78,7 +78,7 @@ namespace Dogey.Modules.InfoModule
                 "```"
             };
 
-            await Utility.SendMessage(msg, string.Join("\n", infomsg));
+            await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
         }
 
         [Module("userinfo"), Name("Info")]
@@ -98,7 +98,7 @@ namespace Dogey.Modules.InfoModule
                     "```"
                 };
 
-                await Utility.SendMessage(msg, string.Join("\n", infomsg));
+                await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
             }
         }
     }
