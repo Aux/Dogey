@@ -31,7 +31,7 @@ namespace Dogey
 
         public async Task HandleCommand(IUserMessage msg)
         {
-            if (msg.Author.IsBot)
+            if (msg.Author.IsBot || Globals.Config.Blocked.Contains(msg.Author.Id))
                 return;
 
             var self = await (msg.Channel as IGuildChannel)?.Guild.GetCurrentUserAsync();
