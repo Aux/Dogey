@@ -58,7 +58,7 @@ namespace Dogey.Modules.InfoModule
                     "```"
                 };
 
-                await Utility.SendMessage(msg, string.Join("\n", infomsg));
+                await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
             }
         }
     }

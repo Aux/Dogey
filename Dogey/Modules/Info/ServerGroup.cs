@@ -50,7 +50,7 @@ namespace Dogey.Modules.InfoModule
                 "```"
             };
 
-            await Utility.SendMessage(msg, string.Join("\n", infomsg));
+            await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
         }
 
         [Module("serverinfo"), Name("Info")]
@@ -62,7 +62,7 @@ namespace Dogey.Modules.InfoModule
             public async Task Name(IUserMessage msg)
             {
                 var guild = (msg.Channel as IGuildChannel)?.Guild;
-                await Utility.SendMessage(msg, $"{guild.Name} ({guild.Id})");
+                await msg.Channel.SendMessageAsync($"{guild.Name} ({guild.Id})");
             }
 
             [Command("region")]
@@ -70,7 +70,7 @@ namespace Dogey.Modules.InfoModule
             public async Task Region(IUserMessage msg)
             {
                 var guild = (msg.Channel as IGuildChannel)?.Guild;
-                await Utility.SendMessage(msg, $"Voice for this guild is hosted in **{guild.VoiceRegionId}**.");
+                await msg.Channel.SendMessageAsync($"Voice for this guild is hosted in **{guild.VoiceRegionId}**.");
             }
 
             [Command("owner")]
@@ -79,7 +79,7 @@ namespace Dogey.Modules.InfoModule
             {
                 var guild = (msg.Channel as IGuildChannel)?.Guild;
                 var owner = await guild.GetOwnerAsync() as IGuildUser;
-                await Utility.SendMessage(msg, $"This guild's owner is **{owner}** ({owner.Id}).");
+                await msg.Channel.SendMessageAsync($"This guild's owner is **{owner}** ({owner.Id}).");
             }
 
             [Command("created")]
@@ -87,7 +87,7 @@ namespace Dogey.Modules.InfoModule
             public async Task Created(IUserMessage msg)
             {
                 var guild = (msg.Channel as IGuildChannel)?.Guild;
-                await Utility.SendMessage(msg, $"This guild was created **{guild.CreatedAt.ToString("ddddd, MMM dd yyyy '**at**' hh:mm:ss tt")}**.");
+                await msg.Channel.SendMessageAsync($"This guild was created **{guild.CreatedAt.ToString("ddddd, MMM dd yyyy '**at**' hh:mm:ss tt")}**.");
             }
 
             [Command("users")]
@@ -107,7 +107,7 @@ namespace Dogey.Modules.InfoModule
                     "```"
                 };
 
-                await Utility.SendMessage(msg, string.Join("\n", infomsg));
+                await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
             }
 
             [Command("channels")]
@@ -129,7 +129,7 @@ namespace Dogey.Modules.InfoModule
                 "```"
                 };
 
-                await Utility.SendMessage(msg, string.Join("\n", infomsg));
+                await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
             }
 
             [Command("roles")]
@@ -144,7 +144,7 @@ namespace Dogey.Modules.InfoModule
             public async Task Icon(IUserMessage msg)
             {
                 var guild = (msg.Channel as IGuildChannel)?.Guild;
-                await Utility.SendMessage(msg, guild.IconUrl);
+                await msg.Channel.SendMessageAsync(guild.IconUrl);
             }
 
             [Command("emojis")]
@@ -152,7 +152,7 @@ namespace Dogey.Modules.InfoModule
             public async Task Emojis(IUserMessage msg)
             {
                 var guild = (msg.Channel as IGuildChannel)?.Guild;
-                await Utility.SendMessage(msg, string.Join(" ", guild.Emojis.Select(x => $"<:{x.Name}:{x.Id}>")));
+                await msg.Channel.SendMessageAsync(string.Join(" ", guild.Emojis.Select(x => $"<:{x.Name}:{x.Id}>")));
             }
         }
     }

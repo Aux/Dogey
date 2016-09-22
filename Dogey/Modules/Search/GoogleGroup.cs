@@ -22,6 +22,7 @@ namespace Dogey.Modules.Search
 
         [Command("youtube"), Alias("yt")]
         [Description("Search for a video on youtube with the provided keywords.")]
+        [Example("yt the duck song")]
         public async Task Youtube(IUserMessage msg, [Remainder]string keywords)
         {
             var message = await msg.Channel.SendMessageAsync("Searching...");

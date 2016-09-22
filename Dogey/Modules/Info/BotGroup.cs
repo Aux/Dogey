@@ -70,7 +70,7 @@ namespace Dogey.Modules.InfoModule
             }
 
             infomsg.Add("```");
-            await Utility.SendMessage(msg, string.Join("\n", infomsg));
+            await msg.Channel.SendMessageAsync(string.Join("\n", infomsg));
         }
 
         [Module("botinfo"), Name("Info")]
@@ -86,32 +86,32 @@ namespace Dogey.Modules.InfoModule
             [Command("owner")]
             public async Task Owner(IUserMessage msg)
             {
-                await Utility.SendMessage(msg, "Auxesis#8522 (158056840402436096)");
+                await msg.Channel.SendMessageAsync("Auxesis#8522 (158056840402436096)");
             }
 
             [Command("library"), Alias("runtime", "lib")]
             public async Task Library(IUserMessage msg)
             {
-                await Utility.SendMessage(msg, $"Discord.Net ({DiscordConfig.Version}) on {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}");
+                await msg.Channel.SendMessageAsync($"Discord.Net ({DiscordConfig.Version}) on {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}");
             }
 
             [Command("uptime"), Alias("online", "up")]
             public async Task Uptime(IUserMessage msg)
             {
-                await Utility.SendMessage(msg, (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString());
+                await msg.Channel.SendMessageAsync((DateTime.Now - Process.GetCurrentProcess().StartTime).ToString());
             }
 
             [Command("heap")]
             [Alias("memory", "mem")]
             public async Task Heap(IUserMessage msg)
             {
-                await Utility.SendMessage(msg, $"{Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)} MB");
+                await msg.Channel.SendMessageAsync($"{Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)} MB");
             }
 
             [Command("latency"), Alias("ping", "lag")]
             public async Task Latency(IUserMessage msg)
             {
-                await Utility.SendMessage(msg, $"{_client.Latency} MS");
+                await msg.Channel.SendMessageAsync($"{_client.Latency} MS");
             }
 
             [Command("guilds"), Alias("servers")]

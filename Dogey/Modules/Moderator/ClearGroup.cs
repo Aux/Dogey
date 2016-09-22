@@ -23,6 +23,7 @@ namespace Dogey.Modules.AdminModule
 
         [Command("clear")]
         [Description("Clear Dogey's recent messages.")]
+        [Example("clear")]
         public async Task Clear(IUserMessage msg)
         {
             var self = await _client.GetCurrentUserAsync();
@@ -47,6 +48,7 @@ namespace Dogey.Modules.AdminModule
         {
             [Command("all")]
             [Description("Clear all recent messages.")]
+            [Example("clear all 5")]
             public async Task ClearAll(IUserMessage msg, int count = 25)
             {
                 await Utility.AutoDeleteMsg(msg, 5000);
@@ -67,6 +69,7 @@ namespace Dogey.Modules.AdminModule
 
             [Command("user")]
             [Description("Clear a user's recent messages.")]
+            [Example("clear user @Some Spammer")]
             public async Task ClearUser(IUserMessage msg, IUser user, int count = 25)
             {
                 await Utility.AutoDeleteMsg(msg, 5000);
@@ -96,6 +99,7 @@ namespace Dogey.Modules.AdminModule
 
             [Command("contains")]
             [Description("Clear recent messages that contain a specific string.")]
+            [Example("clear contains booty")]
             public async Task ClearContains(IUserMessage msg, string keyword, int count = 25)
             {
                 await Utility.AutoDeleteMsg(msg, 5000);
@@ -116,6 +120,7 @@ namespace Dogey.Modules.AdminModule
 
             [Command("bots")]
             [Description("Clear all recent bot messages.")]
+            [Example("clear bots")]
             public async Task ClearBots(IUserMessage msg, int count = 25)
             {
                 await Utility.AutoDeleteMsg(msg, 5000);
@@ -136,6 +141,7 @@ namespace Dogey.Modules.AdminModule
 
             [Command("embeds")]
             [Description("Clear recent messages that have an embedded link.")]
+            [Example("clear embeds")]
             public async Task ClearEmbeds(IUserMessage msg, int count = 25)
             {
                 await Utility.AutoDeleteMsg(msg, 5000);
@@ -156,6 +162,7 @@ namespace Dogey.Modules.AdminModule
 
             [Command("files")]
             [Description("Clear recent messages that have attachments.")]
+            [Example("clear files 2")]
             public async Task ClearFiles(IUserMessage msg, int count = 25)
             {
                 await Utility.AutoDeleteMsg(msg, 5000);

@@ -25,6 +25,8 @@ namespace Dogey.Modules
         }
 
         [Command("doge")]
+        [Description("Generate a doge!")]
+        [Example("doge verycommand muchparameter")]
         public async Task Doge(IUserMessage msg, [Remainder]string phrase)
         {
             var r = new Random();
@@ -54,6 +56,8 @@ namespace Dogey.Modules
         }
 
         [Command("pat")]
+        [Description("Pat someone.")]
+        [Example("pat Dogey")]
         [Ratelimit(30, RateMeasure.Minutes)]
         public async Task Pat(IUserMessage msg, [Remainder]IUser user = null)
         {
@@ -90,6 +94,8 @@ namespace Dogey.Modules
         }
 
         [Command("pats")]
+        [Description("Find out how many times someone has been pat.")]
+        [Example("pats Dogey")]
         public async Task Pats(IUserMessage msg, [Remainder]IUser user = null)
         {
             var g = (msg.Channel as IGuildChannel).Guild;

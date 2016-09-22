@@ -26,6 +26,7 @@ namespace Dogey.Modules
 
         [Command("create")]
         [Description("Create a new custom command.")]
+        [Example("create example This is an example.")]
         [Ratelimit(5, RateMeasure.Minutes)]
         public async Task Create(IUserMessage msg, string name, [Remainder]string description = null)
         {
@@ -71,6 +72,7 @@ namespace Dogey.Modules
 
         [Command("delete")]
         [Description("Delete an existing custom command.")]
+        [Example("delete example CONFIRM")]
         public async Task Delete(IUserMessage msg, string name, string CONFIRM)
         {
 
@@ -78,6 +80,7 @@ namespace Dogey.Modules
 
         [Command("rename")]
         [Description("Rename an existing custom command.")]
+        [Example("rename example test")]
         public async Task Rename(IUserMessage msg, string oldname, string newname)
         {
 
@@ -85,13 +88,15 @@ namespace Dogey.Modules
 
         [Command("restore")]
         [Description("Restore a command that was deleted in the past 7 days.")]
+        [Example("restore example")]
         public async Task Restore(IUserMessage msg, string name)
         {
 
         }
 
-        [Command("commands")]
+        [Command("commands"), Alias("cmds")]
         [Description("Get a list of all custom commands on this server.")]
+        [Example("commands")]
         public async Task Commands(IUserMessage msg, int page = 1)
         {
             int p = page * 25 - 25;
@@ -124,6 +129,7 @@ namespace Dogey.Modules
 
             [Command("top")]
             [Description("Get a list of the most-used commands in this server.")]
+            [Example("commands top 1 Auxesis")]
             public async Task Top(IUserMessage msg, int page = 1, [Remainder]IUser user = null)
             {
                 int p = page * 5 - 5;
@@ -158,6 +164,7 @@ namespace Dogey.Modules
 
             [Command("recent")]
             [Description("Get a list of the most recently used commands in this server.")]
+            [Example("commands recent 3 Vox Aura")]
             public async Task Recent(IUserMessage msg, int page = 1, [Remainder]IUser user = null)
             {
                 int p = page * 10 - 10;
@@ -190,6 +197,7 @@ namespace Dogey.Modules
 
             [Command("mine")]
             [Description("Get a list of commands you own in this server.")]
+            [Example("commands mine")]
             public async Task Mine(IUserMessage msg, int page = 1)
             {
                 int p = page * 25 - 25;
@@ -212,6 +220,7 @@ namespace Dogey.Modules
 
             [Command("search"), Alias("find")]
             [Description("Search for a custom command.")]
+            [Example("commands search example")]
             public async Task Search(IUserMessage msg, string query, int page = 1)
             {
                 int p = page * 25 - 25;
@@ -224,7 +233,7 @@ namespace Dogey.Modules
                     var cmds = db.Commands.Where(x => x.GuildId == guild.Id && x.Name.Contains(query)).Skip(p).Take(25).Select(x => x.Name);
 
                     if (cmds.Count() > 0)
-                        message = $"Commands like {query} pg{p}```xl\n{string.Join(", ", cmds)}```";
+                        message = $"Commands like **{query}** pg{page}```xl\n{string.Join(", ", cmds)}```";
                     else
                         message = $"You have no commands on this server, add some with `{prefix}create <name> [desc]`.";
                 }

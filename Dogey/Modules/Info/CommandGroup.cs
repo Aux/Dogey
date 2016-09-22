@@ -25,7 +25,7 @@ namespace Dogey.Modules.Info
         [Description("")]
         public async Task CommandInfo(IUserMessage msg, string name)
         {
-            var guild = (msg.Channel as IGuildChannel)?.Guild ?? null;
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
             
             using (var db = new DataContext())
             {

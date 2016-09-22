@@ -13,7 +13,6 @@ namespace Dogey.Types
         public static readonly string appdir = AppContext.BaseDirectory;
 
         public string DefaultPrefix { get; set; } = "~";
-        public bool IsSelfbot { get; set; }
         public List<ulong> Owners { get; set; } = new List<ulong>();
         public List<ulong> Blocked { get; set; } = new List<ulong>();
         public Tokens Token { get; set; } = new Tokens();

@@ -25,6 +25,7 @@ namespace Dogey.Modules.GuildModule
 
         [Command("setprefix")]
         [Description("Change the prefix for this guild.")]
+        [Example("setprefix !")]
         public async Task SetPrefix(IUserMessage msg, string prefix)
         {
             if (prefix.Count() > 10 && !string.IsNullOrWhiteSpace(prefix))
@@ -48,6 +49,7 @@ namespace Dogey.Modules.GuildModule
 
         [Command("setmodlog")]
         [Description("Set the channel moderator actions are logged to.")]
+        [Example("setmodlog #mod-log")]
         public async Task SetLogChannel(IUserMessage msg, ITextChannel channel)
         {
             using (var db = new DataContext())
@@ -63,7 +65,8 @@ namespace Dogey.Modules.GuildModule
         }
 
         [Command("setstar")]
-        [Description("Set the starred messages are logged to.")]
+        [Description("Set the channel starred messages are logged to.")]
+        [Example("setstar #starboard")]
         public async Task SetStarChannel(IUserMessage msg, ITextChannel channel)
         {
             using (var db = new DataContext())
