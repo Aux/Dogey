@@ -24,15 +24,16 @@ namespace Dogey.Modules.InfoModule
 
         [Command("favwords")]
         [Description("Get information about this user.")]
-        public async Task favwords(IUserMessage msg, int page = 1)
+        public async Task favwords(IUserMessage msg, IUser user = null, int page = 1)
         {
             int perpage = 5;
             int pagenum = page * perpage - perpage;
             var guild = (msg.Channel as IGuildChannel)?.Guild;
+            var u = user as IGuildUser ?? msg.Author as IGuildUser;
             using (var db = new DataContext())
             {
-                var words = db.MessageLogs.Where(x => x.AuthorId == msg.Author.Id)
-                              .SelectMany(x => x.Content.Split(' '))
+                var words = db.MessageLogs.Where(x => x.AuthorId == u.Id)
+                              .SelectMany(x => x.Content.ToLower().Split(' '))
                               .GroupBy(x => x).OrderByDescending(x => x.Count())
                               .Skip(pagenum).Take(perpage)
                               .Select(x => $"{x.Key}: {x.Count()}");

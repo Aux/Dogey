@@ -22,13 +22,13 @@ namespace Dogey.Modules.SearchModule
             _client = client;
         }
 
-        [Command("stackexchange"), Alias("question")]
+        [Command("stackexchange"), Alias("question", "q")]
         [Description("Search for tags on a stackexchange site.")]
         public async Task StackExchange(IUserMessage msg, string site, [Remainder]string keywords)
         {
             var message = await msg.Channel.SendMessageAsync("Searching...");
             var baseUri = new Uri("http://api.stackexchange.com/");
-            string queryUrl = "2.2/search/advanced?page=1&pagesize=1&order=desc&sort=votes&q={0}&answers=1&site={1}";
+            string queryUrl = "2.2/search/advanced?page=1&pagesize=1&order=desc&min=1&sort=votes&q={0}&answers=1&site={1}";
 
             string q = string.Format(queryUrl,
                 Uri.EscapeDataString(keywords),
