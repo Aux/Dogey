@@ -145,7 +145,7 @@ namespace Dogey.Modules.InfoModule
                     int gcount = db.MessageLogs.Count(x => x.GuildId == guild.Id);
                     int total = db.MessageLogs.Count();
 
-                    await msg.Channel.SendMessageAsync($"I have logged {total} total messages, {gcount} are from this server ({Math.Round((double)(gcount/total), 2) * 100}%).");
+                    await msg.Channel.SendMessageAsync($"I have logged {total} total messages, {gcount} are from this server ({Math.Round((double)(gcount/total * 100), 2) }%).");
                 }
             }
 

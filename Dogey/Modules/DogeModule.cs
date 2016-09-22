@@ -29,6 +29,10 @@ namespace Dogey.Modules
         {
             var r = new Random();
             string dogeFile = Path.Combine(AppContext.BaseDirectory, $"trash\\{r.Next(10000, 99999)}.png");
+
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "trash")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "trash"));
+
             var baseUri = new Uri("http://dogr.io/");
             string queryUrl = "wow/{0}.png";
 
