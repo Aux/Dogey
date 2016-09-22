@@ -69,14 +69,14 @@ namespace Dogey.Modules
             }
         }
         
-        [Command("debug")]
-        public async Task Debug(IUserMessage msg)
+        [Command("owner")]
+        public async Task Owner(IUserMessage msg)
         {
             var help = new HelpModule(_client);
             await help.Help(msg, "debug");
         }
 
-        [Module("debug"), Name("Owner")]
+        [Module("owner"), Name("Owner")]
         [MinPermissions(AccessLevel.Owner)]
         public class SubCommands
         {
@@ -150,6 +150,15 @@ namespace Dogey.Modules
 
                 await self.ModifyStatusAsync(x => x.Game = new Game(game));
                 await msg.Channel.SendMessageAsync($"I am now playing `{game}`.");
+            }
+
+            [Command("block")]
+            [Description("Block a user from using any Dogey commands.")]
+            public async Task Block(IUserMessage msg, [Remainder]IUser user)
+            {
+                Globals.Config.Blocked.Add(user.Id);
+                Globals.Config.SaveFile("data/configuration.json");
+                await msg.Channel.SendMessageAsync(":disappointed_relieved:");
             }
         }
     }
