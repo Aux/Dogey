@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Dogey.Enums;
 using Dogey.Extensions;
+using Dogey.Types;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -128,7 +129,7 @@ namespace Dogey.Models
                 {
                     default:
                         if (msgs.Count() > 0)
-                            await msg.Channel.SendMessageAsync(msgs.FirstOrDefault().Value);
+                            await msg.Channel.SendMessageAsync(CustomVariables.Format(msg, msgs.FirstOrDefault().Value));
                         else
                             await msg.Channel.SendMessageAsync($"This command does not have any tags, add some with `{prefix}{cmd.Name}.add <tag> <message>`.");
                         break;
@@ -137,7 +138,7 @@ namespace Dogey.Models
                         break;
                     case CommandType.Random:
                         int r = new Random().Next(0, msgs.Count());
-                        await msg.Channel.SendMessageAsync($"{msgs.ElementAt(r).Key}: {msgs.ElementAt(r).Value}");
+                        await msg.Channel.SendMessageAsync($"{msgs.ElementAt(r).Key}: {CustomVariables.Format(msg, msgs.ElementAt(r).Value)}");
                         break;
                 }
             }
@@ -145,7 +146,7 @@ namespace Dogey.Models
             {
                 string tag = parameters.ToLower();
                 if (msgs.ContainsKey(tag))
-                    await msg.Channel.SendMessageAsync($"{tag}: {msgs[tag]}");
+                    await msg.Channel.SendMessageAsync($"{tag}: {CustomVariables.Format(msg, msgs[tag])}");
                 else
                     await msg.Channel.SendMessageAsync($"The command `{cmd.Name}` does not contain the tag `{tag}`.");
             }
@@ -153,7 +154,22 @@ namespace Dogey.Models
 
         public static async Task Raw(IUserMessage msg, CustomCommand cmd, string parameters)
         {
-            await Task.Delay(1);
+            var guild = (msg.Channel as IGuildChannel)?.Guild;
+            string prefix = await guild.GetCustomPrefixAsync();
+            var msgs = cmd.GetMessages();
+
+            if (!string.IsNullOrWhiteSpace(parameters))
+            {
+                string tag = parameters.ToLower();
+                if (msgs.ContainsKey(tag))
+                    await msg.Channel.SendMessageAsync($"{tag}: {CustomVariables.Format(msg, msgs[tag])}");
+                else
+                    await msg.Channel.SendMessageAsync($"The command `{cmd.Name}` does not contain the tag `{tag}`.");
+            }
+            else
+            {
+                await msg.Channel.SendMessageAsync("You must specify a tag to view.");
+            }
         }
 
         public static async Task Add(IUserMessage msg, CustomCommand cmd, string parameters)
