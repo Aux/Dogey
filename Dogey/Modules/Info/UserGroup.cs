@@ -21,35 +21,7 @@ namespace Dogey.Modules.InfoModule
         {
             _client = client;
         }
-
-        [Command("favwords")]
-        [Description("Get information about this user.")]
-        public async Task favwords(IUserMessage msg, IUser user = null, int page = 1)
-        {
-            int perpage = 5;
-            int pagenum = page * perpage - perpage;
-            var guild = (msg.Channel as IGuildChannel)?.Guild;
-            var u = user as IGuildUser ?? msg.Author as IGuildUser;
-            using (var db = new DataContext())
-            {
-                var words = db.MessageLogs.Where(x => x.AuthorId == u.Id)
-                              .SelectMany(x => x.Content.ToLower().Split(' '))
-                              .GroupBy(x => x).OrderByDescending(x => x.Count())
-                              .Skip(pagenum).Take(perpage)
-                              .Select(x => $"{x.Key}: {x.Count()}");
-                
-                var message = new List<string>
-                {
-                    $"Favorite Words pg{page}",
-                    "```xl",
-                    string.Join("\n", words),
-                    "```"
-                };
-
-                await msg.Channel.SendMessageAsync(string.Join("\n", message));
-            }
-        }
-
+        
         [Command("userinfo")]
         [Description("Get information about this user.")]
         public async Task Userinfo(IUserMessage msg, [Remainder]IUser user = null)
