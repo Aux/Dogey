@@ -118,6 +118,7 @@ namespace Dogey.Modules
         }
         
         [Module("commands"), Name("Custom")]
+        [RequireContext(ContextType.Guild)]
         public class SubCommands
         {
             private DiscordSocketClient _client;
@@ -126,42 +127,7 @@ namespace Dogey.Modules
             {
                 _client = client;
             }
-
-            [Command("top")]
-            [Description("Get a list of the most-used commands in this server.")]
-            [Example("commands top 1 Auxesis")]
-            public async Task Top(IUserMessage msg, int page = 1, [Remainder]IUser user = null)
-            {
-                int p = page * 5 - 5;
-                var guild = (msg.Channel as IGuildChannel)?.Guild;
-                using (var db = new DataContext())
-                {
-                    IQueryable<string> cmds;
-                    if (user != null)
-                        cmds = db.CommandLogs.Where(x => !x.Command.Contains(".") && x.GuildId == guild.Id && x.UserId == user.Id)
-                                             .GroupBy(x => x.Command)
-                                             .OrderByDescending(g => g.Count())
-                                             .Skip(p).Take(5)
-                                             .Select(x => $"{x.Key}: {x.Count()}");
-                    else
-                        cmds = db.CommandLogs.Where(x => !x.Command.Contains(".") && x.GuildId == guild.Id)
-                                             .GroupBy(x => x.Command)
-                                             .OrderByDescending(g => g.Count())
-                                             .Skip(p).Take(5)
-                                             .Select(x => $"{x.Key}: {x.Count()}");
-
-                    var message = new List<string>
-                    {
-                        $"Top Commands pg{page}",
-                        "```xl",
-                        string.Join("\n", cmds),
-                        "```"
-                    };
-
-                    await msg.Channel.SendMessageAsync(string.Join("\n", message));
-                }
-            }
-
+            
             [Command("recent")]
             [Description("Get a list of the most recently used commands in this server.")]
             [Example("commands recent 3 Vox Aura")]
