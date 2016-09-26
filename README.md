@@ -1,8 +1,7 @@
 ## Dogey
-Dogey is a Discord bot created using Discord.Net 1.0. There isn't really much else to say here...
+Dogey is a general purpose Discord bot, built using Discord.Net 1.0.
 
-
-### Commands
+## Commands
 - [Administration]()
 - [Doge]()
 - [Guild Settings]()
