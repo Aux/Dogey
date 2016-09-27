@@ -30,6 +30,26 @@ namespace Dogey.Modules
             var helpmsg = new Dictionary<string, List<string>>();
             foreach (var c in commands)
             {
+                var parameters = new List<string>();
+                foreach (var p in c.Parameters)
+                {
+                    if (p.IsOptional)
+                    {
+                        if (p.IsRemainder || p.IsMultiple)
+                            parameters.Add($"[{p.Name}...]");
+                        else
+                            parameters.Add($"[{p.Name}]");
+                    }
+                    else
+                    {
+                        if (p.IsRemainder || p.IsMultiple)
+                            parameters.Add($"<{p.Name}...>");
+                        else
+                            parameters.Add($"<{p.Name}>");
+                    }
+                }
+                c.Markdownify(string.Join(" ", parameters));
+
                 if (!c.CheckPreconditions(msg).Result.IsSuccess)
                     continue;
 
