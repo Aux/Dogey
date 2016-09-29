@@ -29,7 +29,7 @@ namespace Dogey.Models
         public ulong? MsgId { get; set; }
 
         [Column("Action")]
-        public ModAction Action { get; set; }
+        public ModAction Action { get; set; } = ModAction.Kick;
 
         [Column("CaseNum")]
         public int CaseNum { get; set; }
@@ -52,7 +52,7 @@ namespace Dogey.Models
             using (var db = new DataContext())
                 casenum = db.GuildLogs.Count(x => x.GuildId == g.Id);
 
-                ulong? msgId = null;
+            ulong? msgId = null;
             if (channel != null)
             {
                 string msg = $"**{Enum.GetName(typeof(ModAction), m)}** | Case #{casenum}\n" +
@@ -69,7 +69,7 @@ namespace Dogey.Models
                     GuildId = g.Id,
                     MsgId = msgId,
                     Action = m,
-                    CaseNum = casenum++
+                    CaseNum = casenum + 1
                 };
 
                 db.GuildLogs.Add(log);
