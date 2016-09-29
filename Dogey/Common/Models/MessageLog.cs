@@ -14,6 +14,9 @@ namespace Dogey.Models
         [Key, Column("Id")]
         public int Id { get; set; }
 
+        [Column("Name")]
+        public string Name { get; set; }
+
         [Column("Timestamp")]
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
@@ -40,7 +43,10 @@ namespace Dogey.Models
             ChannelId = msg.Channel.Id;
             AuthorId = msg.Author.Id;
             Content = msg.Content;
-            Attachment = msg.Attachments.FirstOrDefault()?.Url;
+            Name = (msg.Author as IGuildUser)?.Nickname ?? msg.Author.Username;
+
+            if (msg.Attachments.Count() > 0)
+                Attachment = $"{msg.Attachments.FirstOrDefault().Id}/{msg.Attachments.FirstOrDefault().Filename}";
         }
     }
 }

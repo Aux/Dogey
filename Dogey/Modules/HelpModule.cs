@@ -48,7 +48,6 @@ namespace Dogey.Modules
                             parameters.Add($"<{p.Name}>");
                     }
                 }
-                c.Markdownify(string.Join(" ", parameters));
 
                 if (!c.CheckPreconditions(msg).Result.IsSuccess)
                     continue;

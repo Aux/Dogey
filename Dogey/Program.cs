@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Dogey.Tools;
-using Dogey.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +20,9 @@ namespace Dogey
         {
             DogeyConsole.TitleCard("Dogey");
 
-            if (!Globals.ConfigExists())
-                Globals.CreateConfig();
-            else
-                Globals.LoadConfig();
+            Globals.EnsureConfigExists();
+            Globals.EnsureDbExists();
+            Globals.LoadConfig();
 
             _cmds = new CommandHandler();
             _client = new DiscordSocketClient(new DiscordSocketConfig()

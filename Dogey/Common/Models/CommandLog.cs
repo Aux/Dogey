@@ -1,8 +1,10 @@
 ﻿using Dogey.Enums;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -33,11 +35,6 @@ namespace Dogey.Models
         public string Parameters { get; set; }
 
         [Column("Action")]
-        public CommandAction Action { get; set; }
-
-        public void CreateTable()
-        {
-
-        }
+        public CommandAction Action { get; set; } = CommandAction.Executed;
     }
 }
