@@ -1,11 +1,14 @@
+[![Discord](https://discordapp.com/api/guilds/158057120493862912/widget.png)](https://discord.gg/0sjlWZiGRvRNZAqx)  
+
 ## Dogey
 Dogey is a general purpose Discord bot, built using Discord.Net 1.0.
 
 ## Commands
-- [Administration]()
+- [Custom]()
 - [Doge]()
-- [Guild Settings]()
-- [Information]()
-- [Search]()
-- [Stats]()
+- [Guild]()
+- [Info]()
+- [Moderator]()
 - [Owner]()
+- [Search]()
+- [Top]()
