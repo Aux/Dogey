@@ -13,7 +13,7 @@ namespace Dogey.Modules
         {
             var type = obj.GetType();
             var info = type.GetTypeInfo();
-            var properties = type.GetProperties()/*.OrderBy(x => x.PropertyType)*/;
+            var properties = type.GetProperties();
 
             if (property != null)
                 return properties.FirstOrDefault(x => x.Name.ToLower() == property)?.GetValue(obj).ToString();
