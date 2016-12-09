@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Dogey.Services;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace Dogey
             => new Program().Start().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
+        private CommandHandler _handler;
 
         public async Task Start()
         {
@@ -32,6 +34,10 @@ namespace Dogey
 
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token.Discord);
             await _client.ConnectAsync();
+
+            _handler = new CommandHandler();
+            await _handler.Install(_client);
+
             await Task.Delay(-1);
         }
 
