@@ -8,6 +8,6 @@ namespace Dogey
 {
     public class DataContext : DbContext
     {
-
+        
     }
 }
