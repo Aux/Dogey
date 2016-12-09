@@ -1,9 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using Dogey.Tools;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -14,48 +12,51 @@ namespace Dogey
             => new Program().Start().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
-        private CommandHandler _cmds;
 
         public async Task Start()
         {
-            DogeyConsole.TitleCard("Dogey");
+            PrettyConsole.NewLine("===   Dogey   ===");
+            PrettyConsole.NewLine();
 
-            Globals.EnsureConfigExists();
-            Globals.EnsureDbExists();
-            Globals.LoadConfig();
-
-            _cmds = new CommandHandler();
+            EnsureConfigExists();
+            // await EnsureDatabaseExists();
+            
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
                 LogLevel = LogSeverity.Info
             });
-            
-            _client.MessageReceived += OnMessageReceived;
+
             _client.Log += (l)
                 => Task.Run(()
-                => DogeyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
+                => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
 
-            await _client.LoginAsync(TokenType.Bot, Globals.Config.Token.Discord);
+            await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token.Discord);
             await _client.ConnectAsync();
-            await _cmds.Install(_client);
-
             await Task.Delay(-1);
         }
 
-        private async Task OnMessageReceived(IMessage arg)
+        public static void EnsureConfigExists()
         {
-            var msg = arg as IUserMessage;
+            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "data")))
+                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "data"));
 
-            if (msg != null)
+            string loc = Path.Combine(AppContext.BaseDirectory, "data/configuration.json");
+
+            if (!File.Exists(loc))
             {
-                await _cmds.HandleCommand(msg);
+                var config = new Configuration();
+                config.Save();
 
-                var channel = msg.Channel as ITextChannel;
-                if (msg.Author.Id == (await _client.GetCurrentUserAsync()).Id)
-                {
-                    DogeyConsole.Log(msg);
-                }
+                PrettyConsole.Log(LogSeverity.Error,
+                    "[Startup]",
+                    "The configuration file has been created at 'data\\configuration.json', " +
+                    "please enter your information and restart Dogey.");
+                PrettyConsole.NewLine("Press any key to continue...");
+
+                Console.ReadKey();
+                Environment.Exit(0);
             }
+            PrettyConsole.Log(LogSeverity.Info, "Dogey", "Configuration Loaded");
         }
     }
 }

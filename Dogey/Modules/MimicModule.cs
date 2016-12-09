@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Enums
+namespace Dogey.Modules
 {
-    public enum ModAction
+    public class MimicModule
     {
-        Kick,
-        Ban,
-        Softban,
-        Unban,
     }
 }

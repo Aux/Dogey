@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Dogey.Enums
+﻿namespace Dogey
 {
     public enum AccessLevel
     {
         Blocked,
         User,
-        ChannelMod,
-        ChannelAdmin,
-        ServerMod,
-        ServerAdmin,
-        Owner
+        Moderator,
+        Administrator,
+        Owner,
+        Bypass
     }
 }

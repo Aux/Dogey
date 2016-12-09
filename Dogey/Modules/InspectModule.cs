@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Enums
+namespace Dogey.Modules
 {
-    public enum RateMeasure
+    public class InspectModule
     {
-        Seconds,
-        Minutes,
-        Hours
     }
 }
