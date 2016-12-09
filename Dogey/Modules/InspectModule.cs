@@ -30,23 +30,16 @@ namespace Dogey.Modules
         }
         
         [Command("inspect")]
-        public async Task Inspect(ITextChannel channel, string property = null)
+        public async Task Inspect(IChannel channel, string property = null)
         {
-            var result = Inspect<ITextChannel>(channel, property);
+            var result = Inspect<IChannel>(channel, property);
             await ReplyAsync(result);
         }
 
         [Command("inspect")]
-        public async Task Inspect(IVoiceChannel channel, string property = null)
+        public async Task Inspect(IRole role, string property = null)
         {
-            var result = Inspect<IVoiceChannel>(channel, property);
-            await ReplyAsync(result);
-        }
-
-        [Command("inspect")]
-        public async Task Inspect(IGuildUser user, string property = null)
-        {
-            var result = Inspect<IGuildUser>(user, property);
+            var result = Inspect<IRole>(role, property);
             await ReplyAsync(result);
         }
 
@@ -57,13 +50,6 @@ namespace Dogey.Modules
             await ReplyAsync(result);
         }
         
-        [Command("inspect")]
-        public async Task Inspect(IUserMessage message, string property = null)
-        {
-            var result = Inspect<IUserMessage>(message, property);
-            await ReplyAsync(result);
-        }
-
         [Command("inspect")]
         public async Task Inspect(IMessage message, string property = null)
         {
