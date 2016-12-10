@@ -21,7 +21,7 @@ namespace Dogey
             PrettyConsole.NewLine();
 
             EnsureConfigExists();
-            // await EnsureDatabaseExists();
+            await EnsureDatabaseExists();
             
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
@@ -63,6 +63,13 @@ namespace Dogey
                 Environment.Exit(0);
             }
             PrettyConsole.Log(LogSeverity.Info, "Dogey", "Configuration Loaded");
+        }
+
+        public async Task EnsureDatabaseExists()
+        {
+            using (var db = new LogContext())
+                await db.Database.EnsureCreatedAsync();
+            PrettyConsole.Log(LogSeverity.Info, "Dogey", "Log Database Loaded");
         }
     }
 }
