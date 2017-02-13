@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Dogey
 {
-    public class LogContext : DbContext
+    public class LogDatabase : DbContext
     {
         public DbSet<DiscordMessage> Messages { get; set; }
 
@@ -13,17 +13,8 @@ namespace Dogey
             if (!Directory.Exists("data"))
                 Directory.CreateDirectory("data");
 
-            string datadir = Path.Combine(AppContext.BaseDirectory, "data/dogey.db");
+            string datadir = Path.Combine(AppContext.BaseDirectory, "data/log.db");
             optionsBuilder.UseSqlite($"Filename={datadir}");
-        }
-        
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            // Id Definitions
-
-            builder.Entity<DiscordMessage>()
-                .Property(x => x.Id)
-                .ValueGeneratedOnAdd();
         }
     }
 }

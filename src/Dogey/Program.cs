@@ -1,8 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using Dogey.Services;
-using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -20,9 +18,9 @@ namespace Dogey
             PrettyConsole.NewLine("===   Dogey   ===");
             PrettyConsole.NewLine();
 
-            EnsureConfigExists();
+            Configuration.EnsureExists();
             await EnsureDatabaseExists();
-            
+
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
                 LogLevel = LogSeverity.Info
@@ -36,38 +34,14 @@ namespace Dogey
             await _client.ConnectAsync();
 
             _handler = new CommandHandler();
-            await _handler.Install(_client);
+            await _handler.InitializeAsync(_client);
 
             await Task.Delay(-1);
         }
 
-        public static void EnsureConfigExists()
-        {
-            if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "data")))
-                Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "data"));
-
-            string loc = Path.Combine(AppContext.BaseDirectory, "data/configuration.json");
-
-            if (!File.Exists(loc))
-            {
-                var config = new Configuration();
-                config.Save();
-
-                PrettyConsole.Log(LogSeverity.Error,
-                    "[Startup]",
-                    "The configuration file has been created at 'data\\configuration.json', " +
-                    "please enter your information and restart Dogey.");
-                PrettyConsole.NewLine("Press any key to continue...");
-
-                Console.ReadKey();
-                Environment.Exit(0);
-            }
-            PrettyConsole.Log(LogSeverity.Info, "Dogey", "Configuration Loaded");
-        }
-
         public async Task EnsureDatabaseExists()
         {
-            using (var db = new LogContext())
+            using (var db = new LogDatabase())
                 await db.Database.EnsureCreatedAsync();
             PrettyConsole.Log(LogSeverity.Info, "Dogey", "Log Database Loaded");
         }
