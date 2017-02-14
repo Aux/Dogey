@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
+    [Group("inspect")]
     public class InspectModule : ModuleBase<SocketCommandContext>
     {
         public Embed Inspect<T>(T obj, string property = null)
@@ -50,14 +51,18 @@ namespace Dogey.Modules
             return embed.Build();
         }
 
-        [Command("inspect"), Priority(1)]
+        [Command]
+        public Task BaseAsync()
+            => new HelpModule().HelpAsync(Context, "inspect");
+
+        [Command, Priority(1)]
         public async Task InspectAsync(SocketChannel channel, string property = null)
         {
             var result = Inspect<SocketChannel>(channel, property);
             await ReplyAsync("", embed: result);
         }
 
-        [Command("inspect"), Priority(0)]
+        [Command, Priority(0)]
         [RequireContext(ContextType.Guild)]
         public async Task InspectAsync(SocketGuildChannel channel, string property = null)
         {
@@ -65,21 +70,21 @@ namespace Dogey.Modules
             await ReplyAsync("", embed: result);
         }
 
-        [Command("inspect")]
+        [Command]
         public async Task InspectAsync(SocketRole role, string property = null)
         {
             var result = Inspect<SocketRole>(role, property);
             await ReplyAsync("", embed: result);
         }
 
-        [Command("inspect"), Priority(1)]
+        [Command, Priority(1)]
         public async Task InspectAsync(SocketUser user, string property = null)
         {
             var result = Inspect<SocketUser>(user, property);
             await ReplyAsync("", embed: result);
         }
 
-        [Command("inspect"), Priority(0)]
+        [Command, Priority(0)]
         [RequireContext(ContextType.Guild)]
         public async Task InspectAsync(SocketGuildUser user, string property = null)
         {
@@ -87,7 +92,7 @@ namespace Dogey.Modules
             await ReplyAsync("", embed: result);
         }
 
-        [Command("inspect")]
+        [Command]
         public async Task InspectAsync(SocketUserMessage message, string property = null)
         {
             var result = Inspect<SocketMessage>(message, property);
