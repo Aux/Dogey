@@ -3,7 +3,7 @@
     <RootNamespace>Dogey</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFramework>netstandard1.5</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="**\*.cs" />

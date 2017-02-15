@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dogey.MySQL", "src\Dogey.My
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "providers", "providers", "{FD3358F2-C385-4F09-B612-57411FF21D07}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dogey.Redis", "src\Dogey.Redis\Dogey.Redis.csproj", "{0D8A9A97-2872-4981-88C7-66F72C290B29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,18 @@ Global
 		{A60D0180-A2CD-461D-B4F8-B8E5E99033BB}.Release|x64.Build.0 = Release|x64
 		{A60D0180-A2CD-461D-B4F8-B8E5E99033BB}.Release|x86.ActiveCfg = Release|x86
 		{A60D0180-A2CD-461D-B4F8-B8E5E99033BB}.Release|x86.Build.0 = Release|x86
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Debug|x64.ActiveCfg = Debug|x64
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Debug|x64.Build.0 = Debug|x64
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Debug|x86.ActiveCfg = Debug|x86
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Debug|x86.Build.0 = Debug|x86
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Release|x64.ActiveCfg = Release|x64
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Release|x64.Build.0 = Release|x64
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Release|x86.ActiveCfg = Release|x86
+		{0D8A9A97-2872-4981-88C7-66F72C290B29}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,5 +92,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D96711DA-F7CE-4F6F-A740-2E176C800BCE} = {FD3358F2-C385-4F09-B612-57411FF21D07}
 		{A60D0180-A2CD-461D-B4F8-B8E5E99033BB} = {FD3358F2-C385-4F09-B612-57411FF21D07}
+		{0D8A9A97-2872-4981-88C7-66F72C290B29} = {FD3358F2-C385-4F09-B612-57411FF21D07}
 	EndGlobalSection
 EndGlobal
