@@ -10,7 +10,7 @@ namespace Dogey.Modules
             => HelpAsync(Context);
         public Task HelpAsync(SocketCommandContext context)
         {
-            return Task.CompletedTask;
+            return context.Channel.SendMessageAsync("This would normally be the help command.");
         }
 
         [Command("help")]
@@ -18,7 +18,7 @@ namespace Dogey.Modules
             => HelpAsync(Context, command);
         public Task HelpAsync(SocketCommandContext context, string command)
         {
-            return Task.CompletedTask;
+            return context.Channel.SendMessageAsync($"This would normally be the help command for `{command}`");
         }
     }
 }
