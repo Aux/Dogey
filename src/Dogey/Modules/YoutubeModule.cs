@@ -8,6 +8,7 @@ using Youtube = Google.Apis.YouTube.v3.Data;
 namespace Dogey.Modules
 {
     [Group("youtube"), Alias("yt")]
+    [Remarks("Search for things on youtube.")]
     public class YoutubeModule : ModuleBase<SocketCommandContext>
     {
         private YouTubeService _youtube;
@@ -25,6 +26,7 @@ namespace Dogey.Modules
             => new HelpModule().HelpAsync(Context, "youtube");
 
         [Command("search")]
+        [Remarks("Search for a video matching the provided text")]
         public async Task SearchAsync([Remainder]string query)
         {
             var video = await SearchYoutubeAsync(query, "youtube#video");
@@ -36,6 +38,7 @@ namespace Dogey.Modules
         }
 
         [Command("channel")]
+        [Remarks("Search for a channel matching the provided text")]
         public async Task ChannelAsync([Remainder]string query)
         {
             var channel = await SearchYoutubeAsync(query, "youtube#channel");
@@ -47,6 +50,7 @@ namespace Dogey.Modules
         }
 
         [Command("playlist")]
+        [Remarks("Search for a playlist matching the provided text")]
         public async Task PlaylistAsync([Remainder]string query)
         {
             var playlist = await SearchYoutubeAsync(query, "youtube#playlist");
