@@ -1,5 +1,7 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -17,13 +19,14 @@ namespace Dogey.Services
 
             await _cmds.AddModulesAsync(Assembly.GetEntryAssembly()); 
 
-            _client.MessageReceived += HandleCommandAsync;         
+            _client.MessageReceived += HandleCommandAsync;
+            PrettyConsole.Log(LogSeverity.Info, "Commands", $"Ready, loaded {_cmds.Commands.Count()} commands");
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
             var msg = s as SocketUserMessage;
-            if (msg != null)
+            if (msg == null)
                 return;
 
             var context = new SocketCommandContext(_client, msg);
