@@ -1,7 +1,7 @@
 ﻿namespace Dogey.Redis
 {
-    public class RedisEntity<T> : IEntity<T>
+    public class RedisEntity : IEntity<long>
     {
-        public T Id { get; set; }
+        public long Id { get; set; }
     }
 }

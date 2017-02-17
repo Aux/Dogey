@@ -2,7 +2,7 @@
 
 namespace Dogey.Redis.Entities.Logs
 {
-    public class RedisDiscordMessage : RedisEntity<long>, IDiscordMessage
+    public class RedisDiscordMessage : RedisEntity, IDiscordMessage
     {
         public DateTime CreatedAt { get; set; }
         public ulong? GuildId { get; set; }
