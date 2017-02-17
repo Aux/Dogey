@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Dogey.Redis.Entities.Logs
 {
@@ -13,5 +14,10 @@ namespace Dogey.Redis.Entities.Logs
         public string Content { get; set; }
         public DateTime? DeletedAt { get; set; }
         public bool? IsDeleted { get; set; }
+
+        public override Task SaveChangesAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

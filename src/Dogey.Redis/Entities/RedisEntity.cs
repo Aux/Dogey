@@ -1,7 +1,11 @@
-﻿namespace Dogey.Redis
+﻿using System.Threading.Tasks;
+
+namespace Dogey.Redis
 {
-    public class RedisEntity : IEntity<long>
+    public abstract class RedisEntity : IDbEntity<ulong>
     {
-        public long Id { get; set; }
+        public ulong Id { get; set; }
+
+        public abstract Task SaveChangesAsync();
     }
 }

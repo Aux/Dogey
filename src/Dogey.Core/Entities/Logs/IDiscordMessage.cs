@@ -2,7 +2,7 @@
 
 namespace Dogey
 {
-    public interface IDiscordMessage : IEntity<long>
+    public interface IDiscordMessage
     {
         DateTime CreatedAt { get; }
         ulong? GuildId { get;}

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace Dogey.MySQL
 {
-    public class MyDiscordMessage : MyEntity<long>, IDiscordMessage
+    public class MyDiscordMessage : MyEntity, IDiscordMessage
     {
         [Required]
         public DateTime CreatedAt { get; set; }
@@ -20,5 +21,10 @@ namespace Dogey.MySQL
         public string Content { get; set; }
         public DateTime? DeletedAt { get; set; }
         public bool? IsDeleted { get; set; }
+
+        public override Task SaveChangesAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace Dogey.SQLite
 {
-    public class LiteEntity<T> : IEntity<T>
+    public abstract class LiteEntity : IDbEntity<ulong>
     {
         [Key]
-        public T Id { get; set; }
+        public ulong Id { get; set; }
+
+        public abstract Task SaveChangesAsync();
     }
 }
