@@ -22,7 +22,9 @@ namespace Dogey
 
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Info
+                LogLevel = LogSeverity.Info,
+                AlwaysDownloadUsers = true,
+                MessageCacheSize = 10000
             });
 
             _client.Log += (l)

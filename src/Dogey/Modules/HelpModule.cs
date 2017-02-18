@@ -5,6 +5,14 @@ namespace Dogey.Modules
 {
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
+        public CommandService _service;
+
+        public HelpModule() { }
+        public HelpModule(CommandService service)
+        {
+            _service = service;
+        }
+
         [Command("help")]
         public Task HelpCommandAsync()
             => HelpAsync(Context);
