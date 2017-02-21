@@ -22,7 +22,7 @@ namespace Dogey.Services
                 CaseSensitiveCommands = false,
 #if DEBUG
                 DefaultRunMode = RunMode.Sync
-#if RELEASE
+#elif RELEASE
                 DefaultRunMode = RunMode.Async
 #endif
             });                         
@@ -71,7 +71,12 @@ namespace Dogey.Services
                 var result = await _service.ExecuteAsync(context, argPos);
 
                 if (!result.IsSuccess)
-                    await context.Channel.SendMessageAsync(result.ToString());
+                {
+                    if (result is ExecuteResult r)
+                        Console.WriteLine(r.Exception.ToString());
+                    else
+                        await context.Channel.SendMessageAsync(result.ToString());
+                }
             }
         }
     }
