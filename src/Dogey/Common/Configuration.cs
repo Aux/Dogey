@@ -6,12 +6,13 @@ namespace Dogey
 {
     public class Configuration : ConfigurationBase
     {
+        public DbMode Database { get; set; } = DbMode.SQLite;
         public string Prefix { get; set; } = "!";
         public AuthTokens Token { get; set; } = new AuthTokens();
         
         public Configuration() : base("config/config.json") { }
 
-        public Configuration Load()
+        public static Configuration Load()
             => Load<Configuration>();
         
         public static void EnsureExists()

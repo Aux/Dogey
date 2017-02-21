@@ -13,5 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dogey.Core\Dogey.Core.csproj" />
+    <ProjectReference Include="..\Dogey.MySQL\Dogey.MySQL.csproj" />
+    <ProjectReference Include="..\Dogey.SQLite\Dogey.SQLite.csproj" />
   </ItemGroup>
 </Project>
