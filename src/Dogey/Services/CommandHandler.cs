@@ -30,22 +30,18 @@ namespace Dogey.Services
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
 
             var config = Configuration.Load();
+            PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading {config.Database} commands");
             switch (config.Database)
             {
                 case DbMode.SQLite:
-                    PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading SQLite commands");
                     await _service.LoadSqliteModulesAsync(); break;
                 case DbMode.MySQL:
-                    PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading MySQL commands");
                     throw new NotImplementedException();
                 case DbMode.Redis:
-                    PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading Redis commands");
                     throw new NotImplementedException();
                 case DbMode.MongoDB:
-                    PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading MongoDB commands");
                     throw new NotImplementedException();
                 case DbMode.PostgreSQL:
-                    PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading PostgreSQL commands");
                     throw new NotImplementedException();
                 default:
                     break;
