@@ -1,34 +1,22 @@
 ﻿using Discord;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 
 namespace Dogey
 {
-    public class Configuration
+    public class Configuration : ConfigurationBase
     {
-        [JsonIgnore]
-        public static string Name = "config/configuration.json";
         public string Prefix { get; set; } = "!";
         public AuthTokens Token { get; set; } = new AuthTokens();
+        
+        public Configuration() : base("config/config.json") { }
 
-        public void Save(string fileName = null)
-        {
-            var dir = fileName == null ? Name : fileName;
-            string file = Path.Combine(AppContext.BaseDirectory, dir);
-            File.WriteAllText(file, ToJson());
-        }
-
-        public static Configuration Load(string fileName = null)
-        {
-            var dir = fileName == null ? Name : fileName;
-            string file = Path.Combine(AppContext.BaseDirectory, dir);
-            return JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(file));
-        }
+        public Configuration Load()
+            => Load<Configuration>();
         
         public static void EnsureExists()
         {
-            string file = Path.Combine(AppContext.BaseDirectory, Name);
+            string file = Path.Combine(AppContext.BaseDirectory, FileName);
             if (!File.Exists(file))
             {
                 string path = Path.GetDirectoryName(file);
@@ -41,13 +29,10 @@ namespace Dogey
                 string token = Console.ReadLine();
 
                 config.Token.Discord = token;
-                config.Save();
+                config.SaveJson();
             }
             PrettyConsole.Log(LogSeverity.Info, "Dogey", "Configuration Loaded");
         }
-        
-        public string ToJson()
-            => JsonConvert.SerializeObject(this, Formatting.Indented);
     }
 
     public class AuthTokens
