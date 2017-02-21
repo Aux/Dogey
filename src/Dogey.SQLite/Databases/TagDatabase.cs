@@ -28,9 +28,10 @@ namespace Dogey.SQLite
         
         public Task<List<LiteTag>> FindTagsAsync(SocketCommandContext context, string name, int stop)
         {
-            int tolerance = 5;
-            var tags = Tags.Where(x => x.Aliases.Any(y => LevenshteinDistance.Compute(name, y) <= tolerance)).Take(stop);
-            return Task.FromResult(tags.ToList());
+            int tolerance = LiteConfiguration.Load().RelatedTagsLimit;
+            var tags = Tags.Where(x => x.Aliases.Any(y => LevenshteinDistance.Compute(name, y) <= tolerance));
+            var selected = tags.OrderBy(x => x.Aliases.Sum(y => LevenshteinDistance.Compute(name, y))).Take(stop);
+            return Task.FromResult(selected.ToList());
         }
 
         public async Task CreateTagAsync(SocketCommandContext context, string name, string content)
