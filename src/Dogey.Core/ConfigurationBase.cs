@@ -7,7 +7,7 @@ namespace Dogey
     public abstract class ConfigurationBase
     {
         [JsonIgnore]
-        public static string FileName { get; private set; }
+        public static string FileName { get; private set; } = "config/config.json";
         
         public ConfigurationBase(string fileName)
         {

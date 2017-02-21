@@ -8,7 +8,7 @@ namespace Dogey.MySQL
 
         protected override void OnConfiguring(DbContextOptionsBuilder builder)
         {
-            var config = Configuration.Load<MyConfiguration>(MyConfiguration.Name);
+            var config = MyConfiguration.Load();
             string connection = $"server={config.Server};userid={config.User};pwd={config.Password};port={config.Port};database=root;sslmode=none;";
             builder.UseMySql(connection);
         }

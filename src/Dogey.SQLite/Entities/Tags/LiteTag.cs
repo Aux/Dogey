@@ -9,7 +9,7 @@ namespace Dogey.SQLite
 {
     public class LiteTag : LiteEntity<ulong>, ITag<ulong>
     {
-        [Timestamp]
+        [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         [NotMapped]

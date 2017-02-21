@@ -9,7 +9,7 @@
 
         public MyConfiguration() : base("config/mysql_config.json") { }
 
-        public MyConfiguration Load()
+        public static MyConfiguration Load()
             => Load<MyConfiguration>();
     }
 }

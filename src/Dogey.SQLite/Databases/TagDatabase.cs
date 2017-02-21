@@ -15,13 +15,14 @@ namespace Dogey.SQLite
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!Directory.Exists("data"))
-                Directory.CreateDirectory("data");
+            string baseDir = Path.Combine(AppContext.BaseDirectory, "data");
+            if (!Directory.Exists(baseDir))
+                Directory.CreateDirectory(baseDir);
 
-            string datadir = Path.Combine(AppContext.BaseDirectory, "data/tags.sqlite.db");
+            string datadir = Path.Combine(baseDir, "tags.sqlite.db");
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }
-
+        
         public Task<LiteTag> GetTagAsync(SocketCommandContext context, string name)
             => Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name.ToLower()));
         
