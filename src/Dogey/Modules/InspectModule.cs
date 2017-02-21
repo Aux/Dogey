@@ -12,6 +12,17 @@ namespace Dogey.Modules
     [Group("inspect")]
     public class InspectModule : ModuleBase<SocketCommandContext>
     {
+        private CommandService _service;
+
+        public InspectModule(CommandService service)
+        {
+            _service = service;
+        }
+
+        [Command]
+        public Task BaseAsync()
+            => new HelpModule(_service).HelpAsync(Context, "inspect");
+
         public Embed Inspect<T>(T obj, string property = null)
         {
             var type = obj.GetType();
@@ -50,10 +61,6 @@ namespace Dogey.Modules
 
             return embed.Build();
         }
-
-        [Command]
-        public Task BaseAsync()
-            => new HelpModule().HelpAsync(Context, "inspect");
 
         [Command, Priority(1)]
         public async Task InspectAsync(SocketChannel channel, string property = null)

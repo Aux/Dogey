@@ -1,4 +1,6 @@
 ﻿using Discord.Commands;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules
@@ -6,8 +8,7 @@ namespace Dogey.Modules
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
         public CommandService _service;
-
-        public HelpModule() { }
+        
         public HelpModule(CommandService service)
         {
             _service = service;
@@ -18,7 +19,13 @@ namespace Dogey.Modules
             => HelpAsync(Context);
         public Task HelpAsync(SocketCommandContext context)
         {
-            return context.Channel.SendMessageAsync("This would normally be the help command.");
+            string list = null;
+            foreach (var m in _service.Modules)
+            {
+                list += $"\n**{m.Name}**: " + string.Join(", ", m.Commands.Select(x => x.Aliases.First()));
+            }
+            
+            return context.Channel.SendMessageAsync(list);
         }
 
         [Command("help")]

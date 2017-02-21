@@ -6,9 +6,16 @@ namespace Dogey.Modules
     [Group("info")]
     public class InfoModule : ModuleBase<SocketCommandContext>
     {
+        private CommandService _service;
+
+        public InfoModule(CommandService service)
+        {
+            _service = service;
+        }
+
         [Command]
         public Task BaseAsync()
-            => new HelpModule().HelpAsync(Context, "info");
+            => new HelpModule(_service).HelpAsync(Context, "info");
 
         [Command("summary")]
         public Task SummaryAsync()

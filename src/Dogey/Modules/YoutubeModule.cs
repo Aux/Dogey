@@ -12,7 +12,13 @@ namespace Dogey.Modules
     public class YoutubeModule : ModuleBase<SocketCommandContext>
     {
         private YouTubeService _youtube;
+        private CommandService _service;
 
+        public YoutubeModule(CommandService service)
+        {
+            _service = service;
+        }
+        
         protected override void BeforeExecute()
         {
             _youtube = new YouTubeService(new BaseClientService.Initializer()
@@ -23,7 +29,7 @@ namespace Dogey.Modules
         
         [Command]
         public Task BaseAsync()
-            => new HelpModule().HelpAsync(Context, "youtube");
+            => new HelpModule(_service).HelpAsync(Context, "youtube");
 
         [Command("search")]
         [Remarks("Search for a video matching the provided text")]
