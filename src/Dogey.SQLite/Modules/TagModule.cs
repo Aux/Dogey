@@ -20,7 +20,7 @@ namespace Dogey.SQLite.Modules
             _db.Dispose();
         }
 
-        [Command, Priority(0)]
+        [Command, Priority(10)]
         [Remarks("Execute the specified tag.")]
         public async Task TagAsync([Remainder]string name)
         {
@@ -29,15 +29,22 @@ namespace Dogey.SQLite.Modules
             if (tag == null)
             {
                 var tags = await _db.FindTagsAsync(Context, name, 5);
-                string related = string.Join(", ", tags.Select(x => x.Aliases.First()));
-                await ReplyAsync($"Could not find a tag like `{name}`. Did you mean:\n{related}");
+
+                string reply = $"Could not find a tag like `{name}`.";
+                if (tags.Count() > 0)
+                {
+                    string related = string.Join(", ", tags.Select(x => x.Aliases.First()));
+                    reply += $"\nDid you mean: {related}";
+                }
+                
+                await ReplyAsync(reply);
                 return;
             }
 
             await ReplyAsync($"{tag.Aliases.First()}: {tag.Content}");
         }
 
-        [Command("create"), Priority(10)]
+        [Command("create"), Priority(0)]
         [Remarks("Create a new tag.")]
         public async Task CreateAsync(string name, [Remainder]string content)
         {
@@ -45,28 +52,28 @@ namespace Dogey.SQLite.Modules
             await ReplyAsync(":thumbsup:");
         }
 
-        [Command("edit"), Priority(10)]
+        [Command("edit"), Priority(0)]
         [Remarks("Edit and existing tag you own.")]
         public Task EditAsync(string name, [Remainder]string content)
         {
             return Task.CompletedTask;
         }
 
-        [Command("alias"), Priority(10)]
+        [Command("alias"), Priority(0)]
         [Remarks("Add aliases to an existing tag.")]
         public Task AliasAsync(string name, params string[] aliases)
         {
             return Task.CompletedTask;
         }
 
-        [Command("unalias"), Priority(10)]
+        [Command("unalias"), Priority(0)]
         [Remarks("Remove an alias to an existing tag.")]
         public Task UnaliasAsync(string name, string alias)
         {
             return Task.CompletedTask;
         }
 
-        [Command("delete"), Priority(10)]
+        [Command("delete"), Priority(0)]
         [Remarks("Delete an existing tag you own.")]
         public async Task DeleteAsync([Remainder]string name)
         {
@@ -74,7 +81,7 @@ namespace Dogey.SQLite.Modules
             await ReplyAsync(":thumbsup:");
         }
 
-        [Command("info"), Priority(10)]
+        [Command("info"), Priority(0)]
         [Remarks("Get information about a tag.")]
         public async Task InfoAsync([Remainder]string name)
         {
