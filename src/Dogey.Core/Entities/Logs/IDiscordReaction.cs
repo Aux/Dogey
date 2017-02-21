@@ -8,7 +8,7 @@ namespace Dogey
         ulong MessageId { get; }
         ulong AuthorId { get; }
         ulong? EmojiId { get; }
-        ulong EmojiName { get; }
+        string EmojiName { get; }
         DateTime? DeletedAt { get; }
         bool? IsDeleted { get; }
     }
