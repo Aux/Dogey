@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -75,10 +76,28 @@ namespace Dogey.SQLite.Modules
 
         [Command("info"), Priority(10)]
         [Remarks("Get information about a tag.")]
-        public Task InfoAsync([Remainder]string name)
+        public async Task InfoAsync([Remainder]string name)
         {
-            var tag = _db.GetTagAsync(Context, name.ToLower());
-            return Task.CompletedTask;
+            var tag = await _db.GetTagAsync(Context, name.ToLower());
+            var builder = new EmbedBuilder();
+
+            var author = Context.Guild.GetUser(tag.OwnerId);
+            builder.Author = new EmbedAuthorBuilder()
+            {
+                IconUrl = author.AvatarUrl,
+                Name = $"{author.ToString()} ({author.Id})"
+            };
+
+            builder.Title = "Tag Info";
+            builder.Description = $"Owner: {author.Mention}\nCreated: {tag.CreatedAt}\nUpdated: {tag.UpdatedAt}";
+
+            builder.AddField(x =>
+            {
+                x.Name = "Aliases";
+                x.Value = string.Join(", ", tag.Aliases);
+            });
+
+            await ReplyAsync("", embed: builder);
         }
     }
 }

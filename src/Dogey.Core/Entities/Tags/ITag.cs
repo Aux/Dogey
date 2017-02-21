@@ -7,7 +7,8 @@ namespace Dogey
     {
         DateTime CreatedAt { get; }
         DateTime? UpdatedAt { get; }
-        List<string> Names { get; }
+        List<string> Aliases { get; }
+        string Names { get; }
         string Content { get; }
         T OwnerId { get; }
         T GuildId { get; }
