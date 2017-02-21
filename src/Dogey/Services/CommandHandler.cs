@@ -17,7 +17,15 @@ namespace Dogey.Services
         public async Task InitializeAsync(DiscordSocketClient c)
         {
             _client = c;                                            
-            _service = new CommandService();                         
+            _service = new CommandService(new CommandServiceConfig()
+            {
+                CaseSensitiveCommands = false,
+#if DEBUG
+                DefaultRunMode = RunMode.Sync
+#if RELEASE
+                DefaultRunMode = RunMode.Async
+#endif
+            });                         
 
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
 
