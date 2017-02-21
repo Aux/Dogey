@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Dogey
 {
@@ -6,7 +7,7 @@ namespace Dogey
     {
         DateTime CreatedAt { get; }
         DateTime? UpdatedAt { get; }
-        string Name { get; }
+        List<string> Names { get; }
         string Content { get; }
         T OwnerId { get; }
         T GuildId { get; }

@@ -28,12 +28,12 @@ namespace Dogey.SQLite.Modules
             if (tag == null)
             {
                 var tags = await _db.FindTagsAsync(Context, name, 5);
-                string related = string.Join(", ", tags.Select(x => x.Name));
+                string related = string.Join(", ", tags.Select(x => x.Aliases.First()));
                 await ReplyAsync($"Could not find a tag like `{name}`. Did you mean:\n{related}");
                 return;
             }
 
-            await ReplyAsync($"{tag.Name}: {tag.Content}");
+            await ReplyAsync($"{tag.Aliases.First()}: {tag.Content}");
         }
 
         [Command("create"), Priority(10)]
@@ -47,6 +47,20 @@ namespace Dogey.SQLite.Modules
         [Command("edit"), Priority(10)]
         [Remarks("Edit and existing tag you own.")]
         public Task EditAsync(string name, [Remainder]string content)
+        {
+            return Task.CompletedTask;
+        }
+
+        [Command("alias"), Priority(10)]
+        [Remarks("Add aliases to an existing tag.")]
+        public Task AliasAsync(string name, params string[] aliases)
+        {
+            return Task.CompletedTask;
+        }
+
+        [Command("unalias"), Priority(10)]
+        [Remarks("Remove an alias to an existing tag.")]
+        public Task UnaliasAsync(string name, string alias)
         {
             return Task.CompletedTask;
         }

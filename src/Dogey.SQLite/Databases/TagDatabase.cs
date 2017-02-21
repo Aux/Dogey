@@ -23,18 +23,18 @@ namespace Dogey.SQLite
         }
 
         public Task<LiteTag> GetTagAsync(SocketCommandContext context, string name)
-            => Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Name == name.ToLower());
+            => Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name.ToLower()));
         
         public Task<List<LiteTag>> FindTagsAsync(SocketCommandContext context, string name, int stop)
         {
             int tolerance = 5;
-            var tags = Tags.Where(x => LevenshteinDistance.Compute(name, x.Name) <= tolerance).Take(stop);
+            var tags = Tags.Where(x => x.Aliases.Any(y => LevenshteinDistance.Compute(name, y) <= tolerance)).Take(stop);
             return Task.FromResult(tags.ToList());
         }
 
         public async Task CreateTagAsync(SocketCommandContext context, string name, string content)
         {
-            var duplicate = await Tags.AnyAsync(x => x.GuildId == context.Guild.Id && x.Name == name);
+            var duplicate = await Tags.AnyAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name));
 
             if (duplicate)
                 throw new ArgumentException($"The tag `{name}` already exists.");
@@ -43,7 +43,7 @@ namespace Dogey.SQLite
             {
                 GuildId = context.Guild.Id,
                 OwnerId = context.User.Id,
-                Name = name,
+                Aliases = new List<string>() { name },
                 Content = content
             };
 
@@ -53,7 +53,7 @@ namespace Dogey.SQLite
 
         public async Task DeleteTagAsync(SocketCommandContext context, string name)
         {
-            var tag = await Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Name == name);
+            var tag = await Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name));
 
             if (tag == null)
                 throw new ArgumentException($"The tag `{name}` does not exist.");
