@@ -15,11 +15,11 @@ Dogey is a bot built using Discord.Net 1.0 and aims to provide an example implem
 
 #### Structure
 ##### Projects
-- Dogey
+- Dogey  
 Contains initialization logic, modules, and services that don't require access to a database provider to function.
-- Dogey.Core
+- Dogey.Core  
 Contains the utility classes and entity contracts used to maintain a structure across multiple database providers.
-- Dogey.SQLite/MySQL/Redis
+- Dogey.SQLite/MySQL/Redis  
 Contains several examples of writing modules and services that integrate with the specified database providers.
 
 ##### Entities
