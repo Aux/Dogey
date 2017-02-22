@@ -7,6 +7,8 @@ namespace Dogey.SQLite
     public class LogDatabase : DbContext
     {
         public DbSet<LiteDiscordMessage> Messages { get; set; }
+        public DbSet<LiteDiscordReaction> Reactions { get; set; }
+        public DbSet<LiteDiscordCommand> Commands { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
