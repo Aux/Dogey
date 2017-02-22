@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 namespace Dogey.SQLite.Modules
 {
     [Group("tag")]
+    [Remarks("Create and manage tags.")]
     public class TagModule : ModuleBase<SocketCommandContext>
     {
         private TagDatabase _db;
@@ -36,7 +37,7 @@ namespace Dogey.SQLite.Modules
                     string related = string.Join(", ", tags.Select(x => x.Aliases.First()));
                     reply += $"\nDid you mean: {related}";
                 }
-                
+
                 await ReplyAsync(reply);
                 return;
             }
@@ -67,7 +68,7 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command("unalias"), Priority(0)]
-        [Remarks("Remove an alias to an existing tag.")]
+        [Remarks("Remove an alias from an existing tag.")]
         public Task UnaliasAsync(string name, string alias)
         {
             return Task.CompletedTask;
