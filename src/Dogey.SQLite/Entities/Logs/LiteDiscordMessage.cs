@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Discord.WebSocket;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace Dogey.SQLite
 {
@@ -27,9 +27,21 @@ namespace Dogey.SQLite
         public LiteDiscordCommand Command { get; set; }
         public List<LiteDiscordReaction> Reactions { get; set; }
 
-        public override Task SaveChangesAsync()
+        public LiteDiscordMessage() { }
+        public LiteDiscordMessage(SocketMessage message)
         {
-            throw new NotImplementedException();
+            ChannelId = message.Channel.Id;
+            AuthorId = message.Author.Id;
+            MessageId = message.Id;
+            Content = message.Content;
+            Name = message.Author.Username;
+            CreatedAt = message.Timestamp.UtcDateTime;
+
+            if (message.Channel is SocketTextChannel channel)
+            {
+                Name = (message.Author as SocketGuildUser)?.Nickname ?? message.Author.Username;
+                GuildId = channel.Guild.Id;
+            }
         }
     }
 }

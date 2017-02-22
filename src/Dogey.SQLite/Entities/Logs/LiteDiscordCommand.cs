@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Dogey.SQLite
 {
@@ -15,10 +13,5 @@ namespace Dogey.SQLite
         // Foreign Keys
         public ulong LogMessageId { get; set; }
         public LiteDiscordMessage LogMessage { get; set; }
-
-        public override Task SaveChangesAsync()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

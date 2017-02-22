@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Discord.WebSocket;
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace Dogey.SQLite
 {
@@ -15,15 +15,18 @@ namespace Dogey.SQLite
         public ulong? EmojiId { get; set; }
         public string EmojiName { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public bool? IsDeleted { get; set; }
 
         // Foreign Keys
-        public ulong LogMessageId { get; set; }
-        public LiteDiscordMessage Message { get; set; }
+        public ulong? LogMessageId { get; set; }
+        public LiteDiscordMessage LogMessage { get; set; }
 
-        public override Task SaveChangesAsync()
+        public LiteDiscordReaction(SocketReaction reaction)
         {
-            throw new NotImplementedException();
+            CreatedAt = DateTime.UtcNow;
+            AuthorId = reaction.UserId;
+            MessageId = reaction.MessageId;
+            EmojiId = reaction.Emoji.Id;
+            EmojiName = reaction.Emoji.Name;
         }
     }
 }

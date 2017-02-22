@@ -10,6 +10,5 @@ namespace Dogey
         ulong? EmojiId { get; }
         string EmojiName { get; }
         DateTime? DeletedAt { get; }
-        bool? IsDeleted { get; }
     }
 }
