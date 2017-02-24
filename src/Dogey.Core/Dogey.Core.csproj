@@ -14,7 +14,7 @@
     <EmbeddedResource Remove="Common\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="1.0.0-rc-00598" />
+    <PackageReference Include="Discord.Net" Version="1.0.0-rc-00606" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NETStandard.Library" Version="1.6.1" />

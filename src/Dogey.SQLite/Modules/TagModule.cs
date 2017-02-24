@@ -92,7 +92,7 @@ namespace Dogey.SQLite.Modules
             var author = Context.Guild.GetUser(tag.OwnerId);
             builder.Author = new EmbedAuthorBuilder()
             {
-                IconUrl = author.AvatarUrl,
+                IconUrl = author.GetAvatarUrl(),
                 Name = $"{author.ToString()} ({author.Id})"
             };
 
