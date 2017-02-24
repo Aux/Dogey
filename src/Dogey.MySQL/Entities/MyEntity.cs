@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.MySQL
 {
-    public abstract class MyEntity : IDbEntity<ulong>
+    public abstract class MyEntity
     {
         [Key]
         public ulong Id { get; set; }

@@ -33,10 +33,5 @@ namespace Dogey.SQLite
                 Aliases = JsonConvert.DeserializeObject<List<string>>(value);
             }
         }
-
-        public override Task SaveChangesAsync()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
