@@ -13,6 +13,9 @@ Dogey is a bot built using Discord.Net 1.0 and aims to provide an example implem
 | MongoDB    |   [Waiting](https://github.com/Aux/Dogey/issues/4)   |
 | PostgreSQL |   [Waiting](https://github.com/Aux/Dogey/issues/5)   |
 
+#### Requirements
+- [Visual Studio 2017 RC](https://www.microsoft.com/net/core#windowsvs2017)
+
 #### Structure
 ##### Projects
 - Dogey  
