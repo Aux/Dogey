@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.SQLite
 {
-    public class TagDatabase : DbContext
+    internal class TagDatabase : DbContext
     {
         public DbSet<LiteTag> Tags { get; set; }
 
@@ -23,13 +23,13 @@ namespace Dogey.SQLite
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }
         
-        public Task<LiteTag> GetTagAsync(SocketCommandContext context, string name)
-            => Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name.ToLower()));
+        public Task<LiteTag> GetTagAsync(ulong guildId, string name)
+            => Tags.FirstOrDefaultAsync(x => x.GuildId == guildId && x.Aliases.Any(y => y == name.ToLower()));
         
-        public Task<List<LiteTag>> FindTagsAsync(SocketCommandContext context, string name, int stop)
+        public Task<List<LiteTag>> FindTagsAsync(ulong guildId, string name, int stop)
         {
             int tolerance = LiteConfiguration.Load().RelatedTagsLimit;
-            var tags = Tags.Where(x => x.Aliases.Any(y => LevenshteinDistance.Compute(name, y) <= tolerance));
+            var tags = Tags.Where(x => x.GuildId == guildId && x.Aliases.Any(y => LevenshteinDistance.Compute(name, y) <= tolerance));
             var selected = tags.OrderBy(x => x.Aliases.Sum(y => LevenshteinDistance.Compute(name, y))).Take(stop);
             return Task.FromResult(selected.ToList());
         }
@@ -65,6 +65,38 @@ namespace Dogey.SQLite
                 throw new UnauthorizedAccessException($"You are not the owner of the tag `{name}`.");
 
             Tags.Remove(tag);
+            await SaveChangesAsync();
+        }
+
+        public async Task AddAliasAsync(SocketCommandContext context, string name, string[] aliases)
+        {
+            var tag = await Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name));
+
+            if (tag == null)
+                throw new ArgumentException($"The tag `{name}` does not exist.");
+
+            var user = context.User as SocketGuildUser;
+            if (tag.OwnerId != user.Id && !user.GuildPermissions.ManageMessages)
+                throw new UnauthorizedAccessException($"You are not the owner of the tag `{name}`.");
+
+            tag.Aliases.AddRange(aliases);
+            await SaveChangesAsync();
+        }
+
+        public async Task RemoveAliasAsync(SocketCommandContext context, string name, string[] aliases)
+        {
+            var tag = await Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name));
+
+            if (tag == null)
+                throw new ArgumentException($"The tag `{name}` does not exist.");
+
+            var user = context.User as SocketGuildUser;
+            if (tag.OwnerId != user.Id && !user.GuildPermissions.ManageMessages)
+                throw new UnauthorizedAccessException($"You are not the owner of the tag `{name}`.");
+
+            foreach (var alias in aliases)
+                tag.Aliases.Remove(alias);
+
             await SaveChangesAsync();
         }
     }

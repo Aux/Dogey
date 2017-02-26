@@ -25,11 +25,11 @@ namespace Dogey.SQLite.Modules
         [Remarks("Execute the specified tag.")]
         public async Task TagAsync([Remainder]string name)
         {
-            var tag = await _db.GetTagAsync(Context, name.ToLower());
+            var tag = await _db.GetTagAsync(Context.Guild.Id, name.ToLower());
 
             if (tag == null)
             {
-                var tags = await _db.FindTagsAsync(Context, name, 5);
+                var tags = await _db.FindTagsAsync(Context.Guild.Id, name, 5);
 
                 string reply = $"Could not find a tag like `{name}`.";
                 if (tags.Count() > 0)
@@ -50,28 +50,30 @@ namespace Dogey.SQLite.Modules
         public async Task CreateAsync(string name, [Remainder]string content)
         {
             await _db.CreateTagAsync(Context, name.ToLower(), content);
-            await ReplyAsync(":thumbsup:");
+            await Context.Message.AddReactionAsync(":thumbsup:");
         }
 
         [Command("edit"), Priority(0)]
         [Remarks("Edit and existing tag you own.")]
-        public Task EditAsync(string name, [Remainder]string content)
+        public async Task EditAsync(string name, [Remainder]string content)
         {
-            return Task.CompletedTask;
+            await Context.Message.AddReactionAsync(":thumbsup:");
         }
 
         [Command("alias"), Priority(0)]
         [Remarks("Add aliases to an existing tag.")]
-        public Task AliasAsync(string name, params string[] aliases)
+        public async Task AliasAsync(string name, params string[] aliases)
         {
-            return Task.CompletedTask;
+            await _db.AddAliasAsync(Context, name, aliases);
+            await Context.Message.AddReactionAsync(":thumbsup:");
         }
 
         [Command("unalias"), Priority(0)]
         [Remarks("Remove an alias from an existing tag.")]
-        public Task UnaliasAsync(string name, string alias)
+        public async Task UnaliasAsync(string name, params string[] aliases)
         {
-            return Task.CompletedTask;
+            await _db.RemoveAliasAsync(Context, name, aliases);
+            await Context.Message.AddReactionAsync(":thumbsup:");
         }
 
         [Command("delete"), Priority(0)]
@@ -79,14 +81,14 @@ namespace Dogey.SQLite.Modules
         public async Task DeleteAsync([Remainder]string name)
         {
             await _db.DeleteTagAsync(Context, name.ToLower());
-            await ReplyAsync(":thumbsup:");
+            await Context.Message.AddReactionAsync(":thumbsup:");
         }
 
         [Command("info"), Priority(0)]
         [Remarks("Get information about a tag.")]
         public async Task InfoAsync([Remainder]string name)
         {
-            var tag = await _db.GetTagAsync(Context, name.ToLower());
+            var tag = await _db.GetTagAsync(Context.Guild.Id, name.ToLower());
             var builder = new EmbedBuilder();
 
             var author = Context.Guild.GetUser(tag.OwnerId);
