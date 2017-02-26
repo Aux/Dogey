@@ -22,7 +22,7 @@ namespace Dogey
 
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                LogLevel = LogSeverity.Info,
+                LogLevel = LogSeverity.Verbose,
                 AlwaysDownloadUsers = true,
                 MessageCacheSize = 10000
             });
@@ -32,7 +32,7 @@ namespace Dogey
                 => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
 
             await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token.Discord);
-            await _client.ConnectAsync();
+            await _client.StartAsync();
 
             _handler = new CommandHandler();
             await _handler.InitializeAsync(_client);
