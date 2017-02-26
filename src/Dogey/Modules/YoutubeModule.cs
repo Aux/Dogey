@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Youtube = Google.Apis.YouTube.v3.Data;
@@ -21,9 +22,14 @@ namespace Dogey.Modules
         
         protected override void BeforeExecute()
         {
+            string token = Configuration.Load().Token.Youtube;
+
+            if (string.IsNullOrWhiteSpace(token))
+                throw new InvalidOperationException("The Youtube module has not yet been configured. Please add the youtube token to the configuration file.");
+            
             _youtube = new YouTubeService(new BaseClientService.Initializer()
             {
-                ApiKey = Configuration.Load().Token.Youtube
+                ApiKey = token
             });
         }
         
