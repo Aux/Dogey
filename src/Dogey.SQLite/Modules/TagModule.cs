@@ -50,14 +50,14 @@ namespace Dogey.SQLite.Modules
         public async Task CreateAsync(string name, [Remainder]string content)
         {
             await _db.CreateTagAsync(Context, name.ToLower(), content);
-            await Context.Message.AddReactionAsync(":thumbsup:");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("edit"), Priority(0)]
         [Remarks("Edit and existing tag you own.")]
         public async Task EditAsync(string name, [Remainder]string content)
         {
-            await Context.Message.AddReactionAsync(":thumbsup:");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("alias"), Priority(0)]
@@ -65,7 +65,7 @@ namespace Dogey.SQLite.Modules
         public async Task AliasAsync(string name, params string[] aliases)
         {
             await _db.AddAliasAsync(Context, name, aliases);
-            await Context.Message.AddReactionAsync(":thumbsup:");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("unalias"), Priority(0)]
@@ -73,7 +73,7 @@ namespace Dogey.SQLite.Modules
         public async Task UnaliasAsync(string name, params string[] aliases)
         {
             await _db.RemoveAliasAsync(Context, name, aliases);
-            await Context.Message.AddReactionAsync(":thumbsup:");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("delete"), Priority(0)]
@@ -81,7 +81,7 @@ namespace Dogey.SQLite.Modules
         public async Task DeleteAsync([Remainder]string name)
         {
             await _db.DeleteTagAsync(Context, name.ToLower());
-            await Context.Message.AddReactionAsync(":thumbsup:");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("info"), Priority(0)]

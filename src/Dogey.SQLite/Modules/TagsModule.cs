@@ -1,4 +1,7 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
+using Discord.WebSocket;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dogey.SQLite.Modules
@@ -20,15 +23,46 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command]
-        public Task TagsAsync()
+        public async Task TagsAsync()
         {
-            return Task.CompletedTask;
+            var tags = await _db.GetTagsAsync(Context.Guild.Id);
+
+            if (tags.Count() == 0)
+            {
+                await ReplyAsync("This guild has no tags yet!");
+                return;
+            }
+
+            var builder = GetEmbed(tags, Context.Guild.Name, Context.Guild.IconUrl);
+            await ReplyAsync("", embed: builder);
         }
 
         [Command]
-        public Task TagsAsync([Remainder]string name)
+        public async Task TagsAsync([Remainder]SocketUser user)
         {
-            return Task.CompletedTask;
+            var tags = await _db.GetTagsAsync(Context.Guild.Id, user.Id);
+
+            if (tags.Count() == 0)
+            {
+                await ReplyAsync("This user has no tags yet!");
+                return;
+            }
+
+            var builder = GetEmbed(tags, user.ToString(), user.GetAvatarUrl());
+            await ReplyAsync("", embed: builder);
+        }
+
+        private EmbedBuilder GetEmbed(LiteTag[] tags, string name, string image)
+        {
+            string tagMessage = string.Join(", ", tags.Select(x => x.Aliases.First()));
+
+            var builder = new EmbedBuilder();
+
+            builder.ThumbnailUrl = image;
+            builder.Title = $"Tags for {name}";
+            builder.Description = tagMessage;
+
+            return builder;
         }
     }
 }

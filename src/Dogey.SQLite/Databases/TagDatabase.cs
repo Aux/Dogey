@@ -25,7 +25,10 @@ namespace Dogey.SQLite
         
         public Task<LiteTag> GetTagAsync(ulong guildId, string name)
             => Tags.FirstOrDefaultAsync(x => x.GuildId == guildId && x.Aliases.Any(y => y == name.ToLower()));
-        
+
+        public Task<LiteTag[]> GetTagsAsync(ulong guildId, ulong? userId = null)
+            => Tags.Where(x => x.GuildId == guildId && (userId == null ? true : x.OwnerId == userId)).ToArrayAsync();
+
         public Task<List<LiteTag>> FindTagsAsync(ulong guildId, string name, int stop)
         {
             int tolerance = LiteConfiguration.Load().RelatedTagsLimit;
