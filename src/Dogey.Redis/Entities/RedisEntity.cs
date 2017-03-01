@@ -2,7 +2,7 @@
 
 namespace Dogey.Redis
 {
-    public abstract class RedisEntity : IDbEntity<ulong>
+    public abstract class RedisEntity : IEntity<ulong>
     {
         public ulong Id { get; set; }
 
