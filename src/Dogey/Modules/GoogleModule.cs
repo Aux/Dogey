@@ -1,12 +1,12 @@
 ﻿using Discord.Commands;
 using Google.Apis.Customsearch.v1;
+using Google.Apis.Customsearch.v1.Data;
 using Google.Apis.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Search = Google.Apis.Customsearch.v1.Data;
 
 namespace Dogey.Modules
 {
@@ -43,35 +43,56 @@ namespace Dogey.Modules
         public Task BaseAsync()
             => new HelpModule(_service).HelpAsync(Context, "google");
 
-        [Command]
-        public async Task GoogleAsync([Remainder]string query)
+        [Command, Priority(10)]
+        public async Task SearchAsync([Remainder]string query)
         {
-            var sites = await SearchGoogleAsync(query);
+            var links = await SearchGoogleAsync(query);
 
-            if (sites.Count() == 0)
+            if (links.Count() == 0)
             {
                 await ReplyAsync("No results found.");
                 return;
             }
 
-            StringBuilder reply = new StringBuilder();
-            reply.AppendLine(sites.First().Link);
-            reply.AppendLine();
-            reply.AppendLine("**Related:**");
-
-            foreach (var site in sites.Skip(1))
-                reply.AppendLine($"<{site.Link}>");
-
-            await ReplyAsync(reply.ToString());
+            await ReplyAsync(GetMessage(links));
         }
 
-        private async Task<IEnumerable<Search.Result>> SearchGoogleAsync(string query)
+        [Command, Priority(0)]
+        public async Task SearchSiteAsync(Uri site, [Remainder]string query)
+        {
+            var links = await SearchGoogleAsync(query, site);
+
+            if (links.Count() == 0)
+            {
+                await ReplyAsync("No results found.");
+                return;
+            }
+
+            await ReplyAsync(GetMessage(links));
+        }
+
+        private async Task<IEnumerable<Result>> SearchGoogleAsync(string query, Uri site = null)
         {
             var request = _search.Cse.List(query);
             request.Cx = _config.EngineId;
+            if (site != null)
+                request.SiteSearch = site.ToString();
 
             var result = await request.ExecuteAsync();
             return result.Items.Take(_config.ResultCount);
+        }
+
+        private string GetMessage(IEnumerable<Result> links)
+        {
+            StringBuilder reply = new StringBuilder();
+            reply.AppendLine(links.First().Link);
+            reply.AppendLine();
+            reply.AppendLine("**Related:**");
+
+            foreach (var site in links.Skip(1))
+                reply.AppendLine($"<{site.Link}>");
+
+            return reply.ToString();
         }
     }
 }

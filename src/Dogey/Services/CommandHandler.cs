@@ -25,8 +25,9 @@ namespace Dogey.Services
 #elif RELEASE
                 DefaultRunMode = RunMode.Async
 #endif
-            });                         
+            });
 
+            _service.AddTypeReader(typeof(Uri), new UriTypeReader());
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
 
             var config = Configuration.Load();
