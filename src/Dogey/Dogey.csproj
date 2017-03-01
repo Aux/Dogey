@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.21.0.466" />
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.21.0.760" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Dogey.Core\Dogey.Core.csproj" />
     <ProjectReference Include="..\Dogey.MySQL\Dogey.MySQL.csproj" />
     <ProjectReference Include="..\Dogey.Redis\Dogey.Redis.csproj" />

@@ -9,6 +9,7 @@ namespace Dogey
         public DbMode Database { get; set; } = DbMode.SQLite;
         public string Prefix { get; set; } = "!";
         public AuthTokens Token { get; set; } = new AuthTokens();
+        public CustomSearchConfig CustomSearch { get; set; } = new CustomSearchConfig();
         
         public Configuration() : base("config/config.json") { }
 
@@ -39,6 +40,13 @@ namespace Dogey
     public class AuthTokens
     {
         public string Discord { get; set; } = "";
-        public string Youtube { get; set; } = "";
+        public string Google { get; set; } = "";
+    }
+
+    public class CustomSearchConfig
+    {
+        public string Token { get; set; } = "";
+        public string EngineId { get; set; } = "";
+        public int ResultCount { get; set; } = 3;
     }
 }
