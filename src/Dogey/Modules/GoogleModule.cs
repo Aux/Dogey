@@ -57,7 +57,7 @@ namespace Dogey.Modules
             StringBuilder reply = new StringBuilder();
             reply.AppendLine(sites.First().Link);
             reply.AppendLine();
-            reply.AppendLine("**See Also:**");
+            reply.AppendLine("**Related:**");
 
             foreach (var site in sites.Skip(1))
                 reply.AppendLine($"<{site.Link}>");

@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,49 +12,75 @@ namespace Dogey.Modules
     public class CleanModule : ModuleBase<SocketCommandContext>
     {
         [Command]
-        public async Task CleanAsync(int count = 25)
-        { 
-            var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
-            await Context.Channel.DeleteMessagesAsync(messages);
-            var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s)");
-            await Task.Delay(5000);
-            await tempMsg.DeleteAsync();
-        }
-
-        [Command("contains")]
-        public async Task ContainsAsync(string content, int count = 25)
+        public async Task CleanAsync(int history = 25)
         {
-            var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
-            messages = messages.Where(x => x.Content.Contains(content));
+            var messages = await GetMessageAsync(history);
+            await DeleteMessagesAsync(messages);
 
-            await Context.Channel.DeleteMessagesAsync(messages);
-            var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s) containing **{content}**");
-            await Task.Delay(5000);
-            await tempMsg.DeleteAsync();
+            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s)");
+            await DelayDeleteMessageAsync(reply);
         }
 
         [Command("user")]
-        public async Task UserAsync(SocketUser user, int count = 25)
+        public async Task UserAsync(SocketUser user, int history = 25)
         {
-            var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
-            messages = messages.Where(x => x.Author.Id == user.Id);
+            var messages = (await GetMessageAsync(history)).Where(x => x.Author.Id == user.Id);
+            await DeleteMessagesAsync(messages);
 
-            await Context.Channel.DeleteMessagesAsync(messages);
-            var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** message(s) by **{user}**");
-            await Task.Delay(5000);
-            await tempMsg.DeleteAsync();
+            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) by **{user}**");
+            await DelayDeleteMessageAsync(reply);
         }
 
         [Command("bots")]
-        public async Task BotsAsync(int count = 25)
+        public async Task BotsAsync(int history = 25)
         {
-            var messages = await Context.Channel.GetMessagesAsync(count, CacheMode.AllowDownload).Flatten();
-            messages = messages.Where(x => x.Author.IsBot);
+            var messages = (await GetMessageAsync(history)).Where(x => x.Author.IsBot);
+            await DeleteMessagesAsync(messages);
 
-            await Context.Channel.DeleteMessagesAsync(messages);
-            var tempMsg = await ReplyAsync($"Deleted **{messages.Count()}** bot message(s)");
-            await Task.Delay(5000);
-            await tempMsg.DeleteAsync();
+            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) by bots");
+            await DelayDeleteMessageAsync(reply);
+        }
+
+        [Command("webhooks")]
+        public async Task WebhooksAsync(int history = 25)
+        {
+            var messages = (await GetMessageAsync(history)).Where(x => x.IsWebhook);
+            await DeleteMessagesAsync(messages);
+
+            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) by webhooks");
+            await DelayDeleteMessageAsync(reply);
+        }
+
+        [Command("contains")]
+        public async Task ContainsAsync(string text, int history = 25)
+        {
+            var messages = (await GetMessageAsync(history)).Where(x => x.Content.ToLower().Contains(text.ToLower()));
+            await DeleteMessagesAsync(messages);
+
+            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) containing `{text}`.");
+            await DelayDeleteMessageAsync(reply);
+        }
+
+        [Command("attachments")]
+        public async Task AttachmentsAsync(int history = 25)
+        {
+            var messages = (await GetMessageAsync(history)).Where(x => x.Attachments.Count() != 0);
+            await DeleteMessagesAsync(messages);
+
+            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) with attachments.");
+            await DelayDeleteMessageAsync(reply);
+        }
+        
+        private Task<IEnumerable<IMessage>> GetMessageAsync(int count)
+            => Context.Channel.GetMessagesAsync(count).Flatten();
+
+        private Task DeleteMessagesAsync(IEnumerable<IMessage> messages)
+            => Context.Channel.DeleteMessagesAsync(messages);
+
+        private async Task DelayDeleteMessageAsync(IMessage message, int ms = 5000)
+        {
+            await Task.Delay(ms);
+            await message.DeleteAsync();
         }
     }
 }
