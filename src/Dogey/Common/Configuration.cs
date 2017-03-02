@@ -7,7 +7,6 @@ namespace Dogey
     public class Configuration : ConfigurationBase
     {
         public DbMode Database { get; set; } = DbMode.SQLite;
-        public string Prefix { get; set; } = "!";
         public AuthTokens Token { get; set; } = new AuthTokens();
         public CustomSearchConfig CustomSearch { get; set; } = new CustomSearchConfig();
         

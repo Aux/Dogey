@@ -11,5 +11,14 @@ namespace Dogey.SQLite
             await Task.Delay(0);
             return null;
         }
+
+        public static async Task<string> GetLitePrefixAsync(this IGuild guild)
+        {
+            using (var db = new ConfigDatabase())
+            {
+                var config = await db.GetConfigAsync(guild.Id);
+                return config.Prefix;
+            }
+        }
     }
 }

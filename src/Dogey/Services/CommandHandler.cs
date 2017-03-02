@@ -59,11 +59,12 @@ namespace Dogey.Services
                 return;
 
             var context = new SocketCommandContext(_client, msg);
-            string prefix = Configuration.Load().Prefix;
+            string prefix = await GetStringPrefixAsync(context.Guild);
 
             int argPos = 0;
-            if (msg.HasStringPrefix(prefix, ref argPos) ||
-                msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
+            bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
+
+            if (hasStringPrefix || msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
                 var result = await _service.ExecuteAsync(context, argPos);
 
@@ -74,6 +75,25 @@ namespace Dogey.Services
                     else
                         await context.Channel.SendMessageAsync(result.ToString());
                 }
+            }
+        }
+
+        private Task<string> GetStringPrefixAsync(IGuild guild)
+        {
+            switch (Configuration.Load().Database)
+            {
+                case DbMode.SQLite:
+                    return guild.GetLitePrefixAsync();
+                case DbMode.MySQL:
+                    throw new NotImplementedException();
+                case DbMode.Redis:
+                    throw new NotImplementedException();
+                case DbMode.MongoDB:
+                    throw new NotImplementedException();
+                case DbMode.PostgreSQL:
+                    throw new NotImplementedException();
+                default:
+                    return Task.FromResult<string>(null);
             }
         }
     }
