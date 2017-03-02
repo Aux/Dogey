@@ -1,9 +1,9 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using System.Threading.Tasks;
 
 namespace Dogey.SQLite.Modules
 {
-    
     public class GuildModule : ModuleBase<SocketCommandContext>
     {
         private ConfigDatabase _db;
@@ -19,6 +19,7 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command("prefix")]
+        [Remarks("Check what prefix this guild has configured.")]
         public async Task PrefixAsync()
         {
             var config = await _db.GetConfigAsync(Context.Guild.Id);
@@ -30,6 +31,8 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command("setprefix")]
+        [Remarks("Change or remove this guild's string prefix.")]
+        [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetPrefixAsync([Remainder]string prefix)
         {
             var config = await _db.GetConfigAsync(Context.Guild.Id);
