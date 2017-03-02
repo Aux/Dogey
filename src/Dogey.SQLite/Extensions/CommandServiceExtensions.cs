@@ -11,6 +11,12 @@ namespace Dogey.SQLite
             using (var db = new TagDatabase())
                 db.Database.EnsureCreated();
 
+            using (var db = new LogDatabase())
+                db.Database.EnsureCreated();
+
+            using (var db = new ConfigDatabase())
+                db.Database.EnsureCreated();
+
             return service.AddModulesAsync(typeof(LiteEntity<>).GetTypeInfo().Assembly);
         }
     }

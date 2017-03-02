@@ -20,7 +20,7 @@ namespace Dogey.SQLite
 
         public async Task<LiteGuildConfig> GetConfigAsync(ulong guildId)
         {
-            var config = await GuildConfigs.FirstOrDefaultAsync(x => x.Id == guildId);
+            var config = await GuildConfigs.FirstOrDefaultAsync(x => x.GuildId == guildId);
 
             if (config != null)
                 return config;
