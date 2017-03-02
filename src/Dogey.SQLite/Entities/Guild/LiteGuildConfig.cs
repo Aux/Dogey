@@ -7,5 +7,11 @@ namespace Dogey.SQLite
         [Required]
         public ulong GuildId { get; set; }
         public string Prefix { get; set; }
+
+        public LiteGuildConfig() { }
+        public LiteGuildConfig(ulong guildId)
+        {
+            GuildId = guildId;
+        }
     }
 }

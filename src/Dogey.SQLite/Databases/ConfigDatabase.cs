@@ -18,12 +18,22 @@ namespace Dogey.SQLite
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }
 
-        public Task<LiteGuildConfig> GetConfigAsync(ulong guildId)
-            => GuildConfigs.FirstOrDefaultAsync(x => x.Id == guildId);
+        public async Task<LiteGuildConfig> GetConfigAsync(ulong guildId)
+        {
+            var config = await GuildConfigs.FirstOrDefaultAsync(x => x.Id == guildId);
+
+            if (config != null)
+                return config;
+
+            config = new LiteGuildConfig(guildId);
+            await GuildConfigs.AddAsync(config);
+            await SaveChangesAsync();
+            return config;
+        }
 
         public async Task SetPrefixAsync(ulong guildId, string prefix)
         {
-            var config = await GuildConfigs.FirstOrDefaultAsync(x => x.GuildId == guildId);
+            var config = await GetConfigAsync(guildId);
             await SetPrefixAsync(config, prefix);
         }
 
