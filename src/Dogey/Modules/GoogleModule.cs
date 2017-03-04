@@ -34,7 +34,7 @@ namespace Dogey.Modules
 
             _search = new CustomsearchService(new BaseClientService.Initializer()
             {
-                ApiKey = _config.Token,
+                ApiKey =_token,
                 MaxUrlLength = 256
             });
         }
