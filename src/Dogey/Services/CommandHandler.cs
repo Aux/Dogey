@@ -7,7 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Dogey.Services
+namespace Dogey
 {
     public class CommandHandler
     {

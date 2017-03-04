@@ -7,23 +7,46 @@ namespace Dogey
     public class ServiceManager
     {
         private DiscordSocketClient _client;
+        private CommandHandler _handler;
+
+        //sqlite
+        private SQLite.LoggingService _litelog;
 
         public ServiceManager(DiscordSocketClient client)
         {
             _client = client;
         }
 
-        public async Task InitializeSQLiteAsync()
+        public async Task InitializeAsync()
         {
-            await Task.Delay(0);
+            _handler = new CommandHandler();
+            await _handler.InitializeAsync(_client);
+
+            switch (Configuration.Load().Database)
+            {
+                case DbMode.SQLite:
+                    await InitializeSQLiteAsync(); break;
+                case DbMode.MySQL:
+                    await InitializeSQLiteAsync(); break;
+                case DbMode.Redis:
+                    await InitializeSQLiteAsync(); break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
-        public Task InitializeMySQLAsync()
+        private Task InitializeSQLiteAsync()
+        {
+            _litelog = new SQLite.LoggingService(_client);
+            return Task.CompletedTask;
+        }
+
+        private Task InitializeMySQLAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task InitializeRedisAsync()
+        private Task InitializeRedisAsync()
         {
             throw new NotImplementedException();
         }
