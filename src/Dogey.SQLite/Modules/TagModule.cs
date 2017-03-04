@@ -95,18 +95,25 @@ namespace Dogey.SQLite.Modules
             builder.Author = new EmbedAuthorBuilder()
             {
                 IconUrl = author.GetAvatarUrl(),
-                Name = $"{author.ToString()} ({author.Id})"
+                Name = author.ToString()
             };
 
-            builder.Title = "Tag Info";
-            builder.Description = $"Owner: {author.Mention}\nCreated: {tag.CreatedAt}\nUpdated: {tag.UpdatedAt}";
-
+            builder.AddField(x =>
+            {
+                x.Name = "Owner";
+                x.Value = author.Mention;
+                x.IsInline = true;
+            });
+            
             builder.AddField(x =>
             {
                 x.Name = "Aliases";
                 x.Value = string.Join(", ", tag.Aliases);
+                x.IsInline = true;
             });
-
+            
+            builder.Timestamp = tag.CreatedAt;
+            
             await ReplyAsync("", embed: builder);
         }
     }
