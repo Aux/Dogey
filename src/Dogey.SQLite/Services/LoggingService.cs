@@ -32,29 +32,29 @@ namespace Dogey.SQLite
             }
         }
 
-        private async Task OnReactionAddedAsync(ulong id, Optional<SocketUserMessage> msg, SocketReaction reaction)
+        private async Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             var log = new LiteDiscordReaction(reaction);
 
             using (var db = new LogDatabase())
             {
-                var message = await db.Messages.FirstOrDefaultAsync(x => x.MessageId == reaction.MessageId);
+                var msg = await db.Messages.FirstOrDefaultAsync(x => x.MessageId == reaction.MessageId);
 
-                if (message != null)
-                    log.LogMessageId = message.Id;
+                if (msg != null)
+                    log.LogMessageId = msg.Id;
 
                 await db.Reactions.AddAsync(log);
                 await db.SaveChangesAsync();
             }
         }
 
-        private async Task OnReactionRemovedAsync(ulong id, Optional<SocketUserMessage> msg, SocketReaction reaction)
+        private async Task OnReactionRemovedAsync(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             using (var db = new LogDatabase())
             {
-                var log = await db.Reactions.FirstOrDefaultAsync(x 
-                    => x.MessageId == reaction.MessageId 
-                    && x.AuthorId == reaction.UserId 
+                var log = await db.Reactions.FirstOrDefaultAsync(x
+                    => x.MessageId == reaction.MessageId
+                    && x.AuthorId == reaction.UserId
                     && x.EmojiId == reaction.Emoji.Id
                     && x.EmojiName == reaction.Emoji.Name);
 
@@ -64,11 +64,11 @@ namespace Dogey.SQLite
             }
         }
 
-        private async Task OnReactionsClearedAsync(ulong id, Optional<SocketUserMessage> msg)
+        private async Task OnReactionsClearedAsync(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel)
         {
             using (var db = new LogDatabase())
             {
-                var logs = db.Reactions.Where(x => x.MessageId == msg.Value.Id);
+                var logs = db.Reactions.Where(x => x.MessageId == message.Id);
 
                 foreach (var log in logs)
                     log.DeletedAt = DateTime.UtcNow;

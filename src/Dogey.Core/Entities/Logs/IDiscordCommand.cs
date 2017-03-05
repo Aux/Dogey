@@ -2,8 +2,6 @@
 {
     public interface IDiscordCommand
     {
-        string Name { get; }
-        string Parameters { get; }
-        double ExecuteTime { get; }
+        long ExecuteTime { get; }
     }
 }

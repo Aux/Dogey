@@ -5,13 +5,21 @@ namespace Dogey.SQLite
     public class LiteDiscordCommand : LiteEntity<ulong>, IDiscordCommand
     {
         [Required]
-        public string Name { get; set; }
-        public string Parameters { get; set; }
+        public ulong MessageId { get; set; }
         [Required]
-        public double ExecuteTime { get; set; }
+        public ulong LogMessageId { get; set; }
+        [Required]
+        public long ExecuteTime { get; set; }
 
         // Foreign Keys
-        public ulong LogMessageId { get; set; }
         public LiteDiscordMessage LogMessage { get; set; }
+
+        public LiteDiscordCommand() { }
+        public LiteDiscordCommand(ulong logId, ulong msgId, long time)
+        {
+            LogMessageId = logId;
+            MessageId = msgId;
+            ExecuteTime = time;
+        }
     }
 }
