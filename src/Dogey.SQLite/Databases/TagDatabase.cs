@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.SQLite
 {
-    internal class TagDatabase : DbContext
+    public class TagDatabase : DbContext
     {
         public DbSet<LiteTag> Tags { get; set; }
 

@@ -12,7 +12,7 @@ namespace Dogey.SQLite
             return null;
         }
 
-        public static async Task<string> GetLitePrefixAsync(this IGuild guild)
+        public static async Task<string> GetPrefixAsync(this IGuild guild)
         {
             using (var db = new ConfigDatabase())
             {

@@ -1,5 +1,7 @@
-﻿using Discord.WebSocket;
+﻿using Discord.Commands;
+using Discord.WebSocket;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -7,10 +9,10 @@ namespace Dogey
     public class ServiceManager
     {
         private DiscordSocketClient _client;
-        private CommandHandler _handler;
 
         //sqlite
         private SQLite.LoggingService _litelog;
+        private SQLite.CommandHandler _litecommands;
 
         public ServiceManager(DiscordSocketClient client)
         {
@@ -19,34 +21,53 @@ namespace Dogey
 
         public async Task InitializeAsync()
         {
-            _handler = new CommandHandler();
-            await _handler.InitializeAsync(_client);
+            var commands = new CommandService(new CommandServiceConfig()
+            {
+                CaseSensitiveCommands = false,
+#if DEBUG
+                DefaultRunMode = RunMode.Sync
+#elif RELEASE
+                DefaultRunMode = RunMode.Async
+#endif
+            });
+
+            commands.AddTypeReader(typeof(Uri), new UriTypeReader());
+            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
 
             switch (Configuration.Load().Database)
             {
                 case DbMode.SQLite:
-                    await InitializeSQLiteAsync(); break;
+                    await InitializeSQLiteAsync(commands); break;
                 case DbMode.MySQL:
-                    await InitializeSQLiteAsync(); break;
+                    await InitializeMySQLAsync(commands); break;
                 case DbMode.Redis:
-                    await InitializeSQLiteAsync(); break;
+                    await InitializeRedisAsync(commands); break;
                 default:
                     throw new NotImplementedException();
             }
         }
 
-        private Task InitializeSQLiteAsync()
+        private async Task InitializeSQLiteAsync(CommandService commands)
         {
+            using (var db = new SQLite.ConfigDatabase())
+                db.Database.EnsureCreated();
+            using (var db = new SQLite.LogDatabase())
+                db.Database.EnsureCreated();
+            using (var db = new SQLite.TagDatabase())
+                db.Database.EnsureCreated();
+            
             _litelog = new SQLite.LoggingService(_client);
-            return Task.CompletedTask;
+            _litecommands = new SQLite.CommandHandler();
+
+            await _litecommands.InitializeAsync(_client, commands);
         }
 
-        private Task InitializeMySQLAsync()
+        private Task InitializeMySQLAsync(CommandService commands)
         {
             throw new NotImplementedException();
         }
 
-        private Task InitializeRedisAsync()
+        private Task InitializeRedisAsync(CommandService commands)
         {
             throw new NotImplementedException();
         }
