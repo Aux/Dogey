@@ -12,7 +12,23 @@ namespace Dogey.Modules
     public class CleanModule : ModuleBase<SocketCommandContext>
     {
         [Command]
-        public async Task CleanAsync(int history = 25)
+        public async Task CleanAsync()
+        {
+            var self = Context.Guild.CurrentUser;
+            var messages = (await GetMessageAsync(100)).Where(x => x.Author.Id == self.Id);
+
+            if (self.GetPermissions(Context.Channel as SocketGuildChannel).ManageMessages)
+                await DeleteMessagesAsync(messages);
+            else
+                foreach (var msg in messages)
+                    await msg.DeleteAsync();
+
+            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s)");
+            await DelayDeleteMessageAsync(reply);
+        }
+
+        [Command]
+        public async Task AllAsync(int history = 25)
         {
             var messages = await GetMessageAsync(history);
             await DeleteMessagesAsync(messages);
