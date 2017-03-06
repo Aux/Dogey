@@ -27,7 +27,7 @@ namespace Dogey.Modules
             await DelayDeleteMessageAsync(reply);
         }
 
-        [Command]
+        [Command("all")]
         public async Task AllAsync(int history = 25)
         {
             var messages = await GetMessageAsync(history);
