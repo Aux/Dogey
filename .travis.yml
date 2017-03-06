@@ -1,0 +1,19 @@
+language: csharp
+solution: Dogey.sln
+git:
+  depth: 1
+branches:
+  only:
+  - master
+matrix:
+  include:
+  - os: linux
+    dist: trusty
+    sudo: required
+    mono: none
+    dotnet: 1.0.0-preview2-003131
+    env: DOTNETCORE=1
+script:
+  - sudo apt-get install dotnet-dev-1.0.0-rc4-004771
+  - dotnet restore --configfile nuget.config
+  - dotnet build
