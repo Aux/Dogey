@@ -51,6 +51,8 @@ namespace Dogey.SQLite
                 {
                     if (result is ExecuteResult r)
                         Console.WriteLine(r.Exception.ToString());
+                    else if (result.Error == CommandError.UnknownCommand)
+                        await context.Channel.SendMessageAsync("Command not recognized");
                     else
                         await context.Channel.SendMessageAsync(result.ToString());
                 } else
