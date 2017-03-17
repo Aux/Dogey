@@ -21,6 +21,7 @@ namespace Dogey.SQLite
             _service = service;
 
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _service.AddModulesAsync(typeof(LiteEntity<>).GetTypeInfo().Assembly);
 
             _client.MessageReceived += HandleCommandAsync;
             PrettyConsole.Log(LogSeverity.Info, "Commands", $"Ready, loaded {_service.Commands.Count()} commands");

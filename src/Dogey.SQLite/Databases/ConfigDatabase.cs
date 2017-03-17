@@ -8,7 +8,7 @@ namespace Dogey.SQLite
     public class ConfigDatabase : DbContext
     {
         public DbSet<LiteGuildConfig> GuildConfigs { get; set; }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!Directory.Exists("data"))

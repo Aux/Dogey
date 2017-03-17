@@ -7,7 +7,7 @@ namespace Dogey.SQLite
     public class LiteDiscordReaction : LiteEntity<ulong>, IDiscordReaction
     {
         [Required]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         [Required]
         public ulong AuthorId { get; set; }
         [Required]
@@ -22,7 +22,6 @@ namespace Dogey.SQLite
 
         public LiteDiscordReaction(SocketReaction reaction)
         {
-            CreatedAt = DateTime.UtcNow;
             AuthorId = reaction.UserId;
             MessageId = reaction.MessageId;
             EmojiId = reaction.Emoji.Id;

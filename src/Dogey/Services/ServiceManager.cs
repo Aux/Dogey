@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -49,13 +50,19 @@ namespace Dogey
 
         private async Task InitializeSQLiteAsync(CommandService commands)
         {
+            string dataPath = Path.Combine(AppContext.BaseDirectory, "data");
+            if (!Directory.Exists(dataPath))
+                Directory.CreateDirectory(dataPath);
+
             using (var db = new SQLite.ConfigDatabase())
                 db.Database.EnsureCreated();
             using (var db = new SQLite.LogDatabase())
                 db.Database.EnsureCreated();
             using (var db = new SQLite.TagDatabase())
                 db.Database.EnsureCreated();
-            
+            using (var db = new SQLite.PatsDatabase())
+                db.Database.EnsureCreated();
+
             _litelog = new SQLite.LoggingService(_client);
             _litecommands = new SQLite.CommandHandler();
 

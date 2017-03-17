@@ -8,7 +8,7 @@ namespace Dogey.SQLite
     public class LiteDiscordMessage : LiteEntity<ulong>, IDiscordMessage
     {
         [Required]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ulong? GuildId { get; set; }
         [Required]
         public ulong ChannelId { get; set; }
@@ -35,7 +35,6 @@ namespace Dogey.SQLite
             MessageId = message.Id;
             Content = message.Content;
             Name = message.Author.Username;
-            CreatedAt = message.Timestamp.UtcDateTime;
 
             if (message.Channel is SocketTextChannel channel)
             {
