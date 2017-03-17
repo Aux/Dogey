@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.21.0.466" />
-    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.21.0.760" />
+    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.22.0.466" />
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.22.0.760" />
   </ItemGroup>
 
   <ItemGroup>
