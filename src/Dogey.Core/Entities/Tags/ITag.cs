@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 namespace Dogey
 {
-    public interface ITag<T>
+    public interface ITag<TId, TAlias>
     {
         DateTime CreatedAt { get; }
         DateTime? UpdatedAt { get; }
-        List<string> Aliases { get; }
-        string Names { get; }
+        TAlias Aliases { get; }
         string Content { get; }
-        T OwnerId { get; }
-        T GuildId { get; }
+        TId OwnerId { get; }
+        TId GuildId { get; }
     }
 }

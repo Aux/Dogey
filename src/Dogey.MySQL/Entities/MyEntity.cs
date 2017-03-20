@@ -1,13 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace Dogey.MySQL
 {
-    public abstract class MyEntity
+    public abstract class MyEntity<T>
     {
         [Key]
-        public ulong Id { get; set; }
-
-        public abstract Task SaveChangesAsync();
+        public T Id { get; set; }
     }
 }

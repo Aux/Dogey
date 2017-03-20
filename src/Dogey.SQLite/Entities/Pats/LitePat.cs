@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Dogey.SQLite
 {
-    public class LitePat : LiteEntity<ulong>
+    public class LitePat : LiteEntity<ulong>, IPat<ulong>
     {
         [Required]
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;

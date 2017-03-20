@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dogey.SQLite
 {
-    public class LiteDiscordMessage : LiteEntity<ulong>, IDiscordMessage
+    public class LiteDiscordMessage : LiteEntity<ulong>, IDiscordMessage<ulong>
     {
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -18,10 +19,8 @@ namespace Dogey.SQLite
         public ulong AuthorId { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
         public string Content { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public bool? IsDeleted { get; set; }
 
         // Foreign Keys
         public LiteDiscordCommand Command { get; set; }
@@ -42,5 +41,9 @@ namespace Dogey.SQLite
                 GuildId = channel.Guild.Id;
             }
         }
+
+        [NotMapped]
+        ulong IDiscordMessage<ulong>.GuildId
+            => throw new NotImplementedException();
     }
 }

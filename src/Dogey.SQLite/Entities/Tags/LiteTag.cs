@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dogey.SQLite
 {
-    public class LiteTag : LiteEntity<ulong>, ITag<ulong>
+    public class LiteTag : LiteEntity<ulong>, ITag<ulong, List<string>>
     {
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

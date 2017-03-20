@@ -1,8 +1,8 @@
 ﻿namespace Dogey
 {
-    public interface IGuildConfig<T>
+    public interface IGuildConfig<TId>
     {
-        T GuildId { get; }
+        TId GuildId { get; }
         string Prefix { get; }
     }
 }
