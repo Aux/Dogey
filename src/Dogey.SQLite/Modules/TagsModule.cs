@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -52,6 +53,23 @@ namespace Dogey.SQLite.Modules
             await ReplyAsync("", embed: builder);
         }
 
+        [Command("random")]
+        public async Task RandomAsync()
+        {
+            var tags = await _db.GetTagsAsync(Context.Guild.Id);
+            
+            if (tags.Count() == 0)
+            {
+                await ReplyAsync("This guild does not have any tags!");
+                return;
+            }
+
+            var selectedIndex = new Random().Next(0, tags.Count());
+            var tag = tags.ElementAt(selectedIndex);
+
+            await ReplyAsync($"{tag.Aliases.First()}: {tag.Content}");
+        }
+        
         private EmbedBuilder GetEmbed(LiteTag[] tags, string name, string image)
         {
             string tagMessage = string.Join(", ", tags.Select(x => x.Aliases.First()));
