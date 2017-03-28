@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.0-rc-00652" />
+    <PackageReference Include="NTwitch" Version="0.0.5-beta-110" />
   </ItemGroup>
 
   <ItemGroup>

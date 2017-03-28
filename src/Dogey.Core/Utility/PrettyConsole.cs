@@ -39,7 +39,7 @@ namespace Dogey
             Console.Write(Environment.NewLine + text);
         }
 
-        public static void Log(LogSeverity severity, string source, string message)
+        public static void Log(object severity, string source, string message)
         {
             PrettyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
             PrettyConsole.Append($"[{severity}] ", ConsoleColor.Red);

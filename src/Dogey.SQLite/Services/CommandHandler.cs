@@ -11,13 +11,15 @@ namespace Dogey.SQLite
 {
     public class CommandHandler
     {
+        private DependencyMap _map;
         private DiscordSocketClient _client;
         private CommandService _service;
 
-        public async Task InitializeAsync(DiscordSocketClient c, CommandService service)
+        public async Task InitializeAsync(CommandService service, DependencyMap map)
         {
             PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loading SQLite commands");
-            _client = c;
+            _map = map;
+            _client = _map.Get<DiscordSocketClient>();
             _service = service;
 
             await _service.AddModulesAsync(Assembly.GetEntryAssembly());
@@ -44,7 +46,7 @@ namespace Dogey.SQLite
 
             if (hasStringPrefix || msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
-                var result = await _service.ExecuteAsync(context, argPos);
+                var result = await _service.ExecuteAsync(context, argPos, _map);
 
                 timer.Stop();
                 if (!result.IsSuccess)

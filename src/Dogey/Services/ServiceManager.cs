@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using NTwitch.Rest;
 using System;
 using System.IO;
 using System.Reflection;
@@ -9,15 +10,22 @@ namespace Dogey
 {
     public class ServiceManager
     {
-        private DiscordSocketClient _client;
+        private DependencyMap _map;
+        private DiscordSocketClient _discord;
+        private TwitchRestClient _twitch;
 
         //sqlite
         private SQLite.LoggingService _litelog;
         private SQLite.CommandHandler _litecommands;
 
-        public ServiceManager(DiscordSocketClient client)
+        public ServiceManager(DiscordSocketClient discord, TwitchRestClient twitch)
         {
-            _client = client;
+            _map = new DependencyMap();
+            _discord = discord;
+            _twitch = twitch;
+
+            _map.Add(_discord);
+            _map.Add(_twitch);
         }
 
         public async Task InitializeAsync()
@@ -34,6 +42,8 @@ namespace Dogey
 
             commands.AddTypeReader(typeof(Uri), new UriTypeReader());
             await commands.AddModulesAsync(Assembly.GetEntryAssembly());
+
+
 
             switch (Configuration.Load().Database)
             {
@@ -63,10 +73,10 @@ namespace Dogey
             using (var db = new SQLite.PatsDatabase())
                 db.Database.EnsureCreated();
 
-            _litelog = new SQLite.LoggingService(_client);
+            _litelog = new SQLite.LoggingService(_discord);
             _litecommands = new SQLite.CommandHandler();
 
-            await _litecommands.InitializeAsync(_client, commands);
+            await _litecommands.InitializeAsync(commands, _map);
         }
 
         private Task InitializeMySQLAsync(CommandService commands)
