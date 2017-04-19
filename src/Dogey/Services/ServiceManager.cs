@@ -1,6 +1,5 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
-using NTwitch.Rest;
 using System;
 using System.IO;
 using System.Reflection;
@@ -12,20 +11,17 @@ namespace Dogey
     {
         private DependencyMap _map;
         private DiscordSocketClient _discord;
-        private TwitchRestClient _twitch;
 
         //sqlite
         private SQLite.LoggingService _litelog;
         private SQLite.CommandHandler _litecommands;
 
-        public ServiceManager(DiscordSocketClient discord, TwitchRestClient twitch)
+        public ServiceManager(DiscordSocketClient discord)
         {
             _map = new DependencyMap();
             _discord = discord;
-            _twitch = twitch;
 
             _map.Add(_discord);
-            _map.Add(_twitch);
         }
 
         public async Task InitializeAsync()

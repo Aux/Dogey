@@ -56,17 +56,7 @@ namespace Dogey.Modules
             var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) by bots");
             await DelayDeleteMessageAsync(reply);
         }
-
-        [Command("webhooks")]
-        public async Task WebhooksAsync(int history = 25)
-        {
-            var messages = (await GetMessageAsync(history)).Where(x => x.IsWebhook);
-            await DeleteMessagesAsync(messages);
-
-            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) by webhooks");
-            await DelayDeleteMessageAsync(reply);
-        }
-
+        
         [Command("contains")]
         public async Task ContainsAsync(string text, int history = 25)
         {
