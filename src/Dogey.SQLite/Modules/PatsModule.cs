@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.SQLite.Modules
 {
+    [Name("Pats")]
     public class PatsModule : ModuleBase<SocketCommandContext>
     {
         private PatsDatabase _db;

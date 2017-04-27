@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [Group("clean"), RequireContext(ContextType.Guild)]
-    [Remarks("Clean messages from a channel.")]
+    [Group("clean"), Name("Clean")]
+    [RequireContext(ContextType.Guild)]
+    [Summary("Clean messages from a channel.")]
     public class CleanModule : ModuleBase<SocketCommandContext>
     {
         [Command]

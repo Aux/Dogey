@@ -8,8 +8,8 @@ using Youtube = Google.Apis.YouTube.v3.Data;
 
 namespace Dogey.Modules
 {
-    [Group("youtube"), Alias("yt")]
-    [Remarks("Search for things on youtube.")]
+    [Group("youtube"), Alias("yt"), Name("Youtube")]
+    [Summary("Search for things on youtube.")]
     public class YoutubeModule : ModuleBase<SocketCommandContext>
     {
         private YouTubeService _youtube;

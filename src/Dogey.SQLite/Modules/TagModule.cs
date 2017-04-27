@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Dogey.SQLite.Modules
 {
-    [Group("tag")]
-    [Remarks("Create and manage tags.")]
+    [Group("tag"), Name("Tag")]
+    [Summary("Create and manage tags.")]
     public class TagModule : ModuleBase<SocketCommandContext>
     {
         private TagDatabase _db;
@@ -22,7 +22,7 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command, Priority(0)]
-        [Remarks("Execute the specified tag.")]
+        [Summary("Execute the specified tag.")]
         public async Task TagAsync([Remainder]string name)
         {
             var tag = await _db.GetTagAsync(Context.Guild.Id, name.ToLower());
@@ -46,7 +46,7 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command("create"), Priority(10)]
-        [Remarks("Create a new tag.")]
+        [Summary("Create a new tag.")]
         public async Task CreateAsync(string name, [Remainder]string content)
         {
             await _db.CreateTagAsync(Context, name.ToLower(), content);
@@ -54,14 +54,14 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command("edit"), Priority(10)]
-        [Remarks("Edit and existing tag you own.")]
+        [Summary("Edit and existing tag you own.")]
         public async Task EditAsync(string name, [Remainder]string content)
         {
             await ReplyAsync(":thumbsup:");
         }
 
         [Command("alias"), Priority(10)]
-        [Remarks("Add aliases to an existing tag.")]
+        [Summary("Add aliases to an existing tag.")]
         public async Task AliasAsync(string name, params string[] aliases)
         {
             await _db.AddAliasAsync(Context, name, aliases);
@@ -69,7 +69,7 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command("unalias"), Priority(10)]
-        [Remarks("Remove an alias from an existing tag.")]
+        [Summary("Remove an alias from an existing tag.")]
         public async Task UnaliasAsync(string name, params string[] aliases)
         {
             await _db.RemoveAliasAsync(Context, name, aliases);
@@ -77,7 +77,7 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command("delete"), Priority(10)]
-        [Remarks("Delete an existing tag you own.")]
+        [Summary("Delete an existing tag you own.")]
         public async Task DeleteAsync([Remainder]string name)
         {
             await _db.DeleteTagAsync(Context, name.ToLower());
@@ -85,7 +85,7 @@ namespace Dogey.SQLite.Modules
         }
 
         [Command("info"), Priority(10)]
-        [Remarks("Get information about a tag.")]
+        [Summary("Get information about a tag.")]
         public async Task InfoAsync([Remainder]string name)
         {
             var tag = await _db.GetTagAsync(Context.Guild.Id, name.ToLower());

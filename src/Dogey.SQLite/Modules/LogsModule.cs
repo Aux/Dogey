@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 
 namespace Dogey.SQLite.Modules
 {
-    [Group("logs")]
+    [Group("logs"), Name("Logs")]
     public class LogsModule : ModuleBase<SocketCommandContext>
     {
         [Command]
-        [Remarks("Get some general information about the sqlite databases.")]
+        [Summary("Get some general information about the sqlite databases.")]
         public Task LogsAsync()
         {
             return Task.CompletedTask;

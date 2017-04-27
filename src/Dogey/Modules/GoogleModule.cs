@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [Group("google"), Alias("g")]
+    [Group("google"), Alias("g"), Name("Google")]
+    [Summary("Search google for the specified query")]
     public class GoogleModule : ModuleBase<SocketCommandContext>
     {
         private CustomsearchService _search;

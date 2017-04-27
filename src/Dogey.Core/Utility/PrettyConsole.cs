@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using System.Threading.Tasks;
 
 namespace Dogey
 {
@@ -45,6 +46,15 @@ namespace Dogey
             PrettyConsole.Append($"[{severity}] ", ConsoleColor.Red);
             PrettyConsole.Append($"{source}: ", ConsoleColor.DarkGreen);
             PrettyConsole.Append(message, ConsoleColor.White);
+        }
+
+        public static Task LogAsync(object severity, string source, string message)
+        {
+            PrettyConsole.NewLine($"{DateTime.Now.ToString("hh:mm:ss")} ", ConsoleColor.DarkGray);
+            PrettyConsole.Append($"[{severity}] ", ConsoleColor.Red);
+            PrettyConsole.Append($"{source}: ", ConsoleColor.DarkGreen);
+            PrettyConsole.Append(message, ConsoleColor.White);
+            return Task.CompletedTask;
         }
 
         public static void Log(IUserMessage msg)

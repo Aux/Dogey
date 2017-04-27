@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [Group("inspect")]
+    [Group("inspect"), Name("Inspect")]
+    [Summary("")]
     public class InspectModule : ModuleBase<SocketCommandContext>
     {
         private CommandService _service;

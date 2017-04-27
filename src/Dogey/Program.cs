@@ -9,7 +9,7 @@ namespace Dogey
         public static void Main(string[] args)
             => new Program().Start().GetAwaiter().GetResult();
 
-        private DiscordSocketClient _discord;
+        private DiscordSocketClient _client;
         private ServiceManager _manager;
 
         public async Task Start()
@@ -19,24 +19,25 @@ namespace Dogey
 
             Configuration.EnsureExists();
 
-            _discord = new DiscordSocketClient(new DiscordSocketConfig()
+            _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
                 LogLevel = LogSeverity.Info,
                 AlwaysDownloadUsers = true,
                 MessageCacheSize = 1000
             });
 
-            _discord.Log += (l)
-                => Task.Run(()
-                => PrettyConsole.Log(l.Severity, l.Source, l.Exception?.ToString() ?? l.Message));
+            _client.Log += OnLogAsync;
             
-            await _discord.LoginAsync(TokenType.Bot, Configuration.Load().Token.Discord);
-            await _discord.StartAsync();
+            await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token.Discord);
+            await _client.StartAsync();
 
-            _manager = new ServiceManager(_discord);
+            _manager = new ServiceManager(_client);
             await _manager.InitializeAsync();
 
             await Task.Delay(-1);
         }
+
+        private Task OnLogAsync(LogMessage msg)
+            => PrettyConsole.LogAsync(msg.Severity, msg.Source, msg.Exception?.ToString() ?? msg.Message);
     }
 }

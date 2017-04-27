@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Dogey.SQLite.Modules
 {
-    [Group("tags")]
-    [Remarks("Search and view available tags.")]
+    [Group("tags"), Name("Tags")]
+    [Summary("Search and view available tags.")]
     public class TagsModule : ModuleBase<SocketCommandContext>
     {
         private TagDatabase _db;

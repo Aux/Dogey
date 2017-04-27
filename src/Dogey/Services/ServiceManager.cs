@@ -12,7 +12,7 @@ namespace Dogey
         private DependencyMap _map;
         private DiscordSocketClient _discord;
 
-        //sqlite
+        // SQLite
         private SQLite.LoggingService _litelog;
         private SQLite.CommandHandler _litecommands;
 
@@ -38,9 +38,7 @@ namespace Dogey
 
             commands.AddTypeReader(typeof(Uri), new UriTypeReader());
             await commands.AddModulesAsync(Assembly.GetEntryAssembly());
-
-
-
+            
             switch (Configuration.Load().Database)
             {
                 case DbMode.SQLite:
