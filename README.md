@@ -1,7 +1,7 @@
 ## Dogey  
-[![Discord](https://discordapp.com/api/guilds/158057120493862912/widget.png)](https://discord.gg/0sjlWZiGRvRNZAqx)  [![Build Status](https://travis-ci.org/Aux/Dogey.svg?branch=master)](https://travis-ci.org/Aux/Dogey)  
+[![Discord](https://discordapp.com/api/guilds/158057120493862912/widget.png)](https://discord.gg/B4BwQ8r)  [![Build Status](https://travis-ci.org/Aux/Dogey.svg?branch=master)](https://travis-ci.org/Aux/Dogey)  
 
-Dogey is a bot for [Discord](https://discordapp.com) that aims to provide example implementations of 5 of the common choices for database providers in applications. For help you can join [Dogey's guild](https://discord.gg/0sjlWZiGRvRNZAqx) or the discord.net channel in the [Discord API guild](https://discord.gg/BeDSNf2).
+Dogey is a bot for [Discord](https://discordapp.com) that aims to provide example implementations of 5 of the common choices for database providers in applications. For help you can join [Dogey's guild](https://discord.gg/B4BwQ8r) or the discord.net channel in the [Discord API guild](https://discord.gg/BeDSNf2).
 
 #### Provider Example Status
 
