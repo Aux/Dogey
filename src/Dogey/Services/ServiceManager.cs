@@ -1,86 +1,51 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Dogey
 {
     public class ServiceManager
     {
-        private DependencyMap _map;
-        private DiscordSocketClient _discord;
+        private readonly DiscordSocketClient _client;
 
-        // SQLite
-        private SQLite.LoggingService _litelog;
-        private SQLite.CommandHandler _litecommands;
-
-        public ServiceManager(DiscordSocketClient discord)
+        public ServiceManager(DiscordSocketClient client)
         {
-            _map = new DependencyMap();
-            _discord = discord;
-
-            _map.Add(_discord);
+            _client = client;
+            _client.Log += OnLogAsync;
         }
 
-        public async Task InitializeAsync()
+        public async Task StartAsync()
         {
-            var commands = new CommandService(new CommandServiceConfig()
-            {
-                CaseSensitiveCommands = false,
-#if DEBUG
-                DefaultRunMode = RunMode.Sync
-#elif RELEASE
-                DefaultRunMode = RunMode.Async
-#endif
-            });
+            var provider = ConfigureServices();
 
-            commands.AddTypeReader(typeof(Uri), new UriTypeReader());
-            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            var handler = provider.GetService<CommandHandler>();
+            await handler.StartAsync();
+        }
+
+        private IServiceProvider ConfigureServices()
+        {
+            var services = new ServiceCollection()
+                .AddDbContext<TagDatabase>()
+                .AddDbContext<ConfigDatabase>()
+                .AddDbContext<PatsDatabase>()
+                .AddSingleton<CommandHandler>()
+                .AddSingleton(_client)
+                .AddSingleton(new CommandService(new CommandServiceConfig()
+                {
+                    DefaultRunMode = RunMode.Async,
+                    ThrowOnError = false
+                }));
             
-            switch (Configuration.Load().Database)
-            {
-                case DbMode.SQLite:
-                    await InitializeSQLiteAsync(commands); break;
-                case DbMode.MySQL:
-                    await InitializeMySQLAsync(commands); break;
-                case DbMode.Redis:
-                    await InitializeRedisAsync(commands); break;
-                default:
-                    throw new NotImplementedException();
-            }
+            var provider = new DefaultServiceProviderFactory().CreateServiceProvider(services);
+            provider.GetService<CommandHandler>();
+            
+            return provider;
         }
 
-        private async Task InitializeSQLiteAsync(CommandService commands)
-        {
-            string dataPath = Path.Combine(AppContext.BaseDirectory, "data");
-            if (!Directory.Exists(dataPath))
-                Directory.CreateDirectory(dataPath);
-
-            using (var db = new SQLite.ConfigDatabase())
-                db.Database.EnsureCreated();
-            using (var db = new SQLite.LogDatabase())
-                db.Database.EnsureCreated();
-            using (var db = new SQLite.TagDatabase())
-                db.Database.EnsureCreated();
-            using (var db = new SQLite.PatsDatabase())
-                db.Database.EnsureCreated();
-
-            _litelog = new SQLite.LoggingService(_discord);
-            _litecommands = new SQLite.CommandHandler();
-
-            await _litecommands.InitializeAsync(commands, _map);
-        }
-
-        private Task InitializeMySQLAsync(CommandService commands)
-        {
-            throw new NotImplementedException();
-        }
-
-        private Task InitializeRedisAsync(CommandService commands)
-        {
-            throw new NotImplementedException();
-        }
+        private Task OnLogAsync(LogMessage msg)
+            => PrettyConsole.LogAsync(msg.Severity, msg.Source, msg.Exception?.ToString() ?? msg.Message);
     }
 }

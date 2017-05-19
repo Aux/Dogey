@@ -9,7 +9,7 @@ namespace Dogey.Modules
 {
     [Group("performance"), Name("Performance")]
     [Summary("Get technical information about Dogey")]
-    public class PerformanceModule : ModuleBase<ShardedCommandContext>
+    public class PerformanceModule : ModuleBase<SocketCommandContext>
     {
         private Process _process;
 
@@ -33,8 +33,7 @@ namespace Dogey.Modules
                        $"**OS:** {GetOperatingSystem()}\n" +
                        $"**Framework:** {GetFramework()}\n" +
                        $"**Memory Usage:** {GetMemoryUsage()}\n" +
-                       $"**Latency:** {GetLatency()}\n" +
-                       $"**Shards:** {Context.Client.Shards.Count}";
+                       $"**Latency:** {GetLatency()}\n";
 
             builder.Description = desc;
             return ReplyAsync("", embed: builder);
