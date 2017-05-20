@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using NTwitch.Rest;
 using System;
 using System.Threading.Tasks;
 
@@ -21,6 +22,9 @@ namespace Dogey
         {
             var provider = ConfigureServices();
 
+            var twitch = provider.GetService<TwitchRestClient>();
+            await twitch.LoginAsync(Configuration.Load().Token.Twitch);
+
             var handler = provider.GetService<CommandHandler>();
             await handler.StartAsync();
         }
@@ -33,9 +37,11 @@ namespace Dogey
                 .AddDbContext<PatsDatabase>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton(_client)
+                .AddSingleton(new TwitchRestClient())
                 .AddSingleton(new CommandService(new CommandServiceConfig()
                 {
                     DefaultRunMode = RunMode.Async,
+                    LogLevel = LogSeverity.Info,
                     ThrowOnError = false
                 }));
             

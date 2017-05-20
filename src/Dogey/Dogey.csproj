@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.25.0.466" />
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.25.0.760" />
+    <PackageReference Include="NTwitch" Version="0.0.6-beta-114" />
   </ItemGroup>
 
   <ItemGroup>
