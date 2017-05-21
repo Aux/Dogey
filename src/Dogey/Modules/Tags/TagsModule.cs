@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,18 +10,13 @@ namespace Dogey.Modules
 {
     [Group("tags"), Name("Tags")]
     [Summary("Search and view available tags.")]
-    public class TagsModule : ModuleBase<SocketCommandContext>
+    public class TagsModule : ModuleBase<SocketCommandContext>, IDisposable
     {
-        private TagDatabase _db;
+        private readonly TagDatabase _db;
 
-        protected override void BeforeExecute()
+        public TagsModule(IServiceProvider provider)
         {
-            _db = new TagDatabase();
-        }
-
-        protected override void AfterExecute()
-        {
-            _db.Dispose();
+            _db = provider.GetService<TagDatabase>();
         }
 
         [Command]
@@ -81,6 +77,11 @@ namespace Dogey.Modules
             builder.Description = tagMessage;
 
             return builder;
+        }
+
+        public void Dispose()
+        {
+            _db.Dispose();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Discord.Commands;
 using Google.Apis.Customsearch.v1;
 using Google.Apis.Customsearch.v1.Data;
-using Google.Apis.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,35 +14,19 @@ namespace Dogey.Modules
     [Summary("Search google for the specified query")]
     public class GoogleModule : ModuleBase<SocketCommandContext>
     {
-        private CustomsearchService _search;
-        private CommandService _service;
-        private CustomSearchConfig _config;
-        private string _token;
-
-        public GoogleModule(CommandService service)
+        private readonly CommandService _commands;
+        private readonly Configuration _config;
+        private readonly CustomsearchService _search;
+        
+        public GoogleModule(IServiceProvider provider)
         {
-            _service = service;
-            _config = Configuration.Load().CustomSearch;
-            _token = string.IsNullOrWhiteSpace(_config.Token) 
-                ? Configuration.Load().Token.Google 
-                : _config.Token;
+            _commands = provider.GetService<CommandService>();
+            _config = provider.GetService<Configuration>();
         }
-
-        protected override void BeforeExecute()
-        {
-            if (string.IsNullOrWhiteSpace(_token))
-                throw new InvalidOperationException("The Google module has not yet been configured. Please add the google token to the configuration file.");
-
-            _search = new CustomsearchService(new BaseClientService.Initializer()
-            {
-                ApiKey =_token,
-                MaxUrlLength = 256
-            });
-        }
-
+        
         [Command]
         public Task BaseAsync()
-            => new HelpModule(_service).HelpAsync(Context, "google");
+            => new HelpModule(_commands).HelpAsync(Context, "google");
 
         [Command, Priority(10)]
         public async Task SearchAsync([Remainder]string query)
@@ -75,12 +59,12 @@ namespace Dogey.Modules
         private async Task<IEnumerable<Result>> SearchGoogleAsync(string query, Uri site = null)
         {
             var request = _search.Cse.List(query);
-            request.Cx = _config.EngineId;
+            request.Cx = _config.CustomSearch.EngineId;
             if (site != null)
                 request.SiteSearch = site.ToString();
 
             var result = await request.ExecuteAsync();
-            return result.Items.Take(_config.ResultCount);
+            return result.Items.Take(_config.CustomSearch.ResultCount);
         }
 
         private string GetMessage(IEnumerable<Result> links)

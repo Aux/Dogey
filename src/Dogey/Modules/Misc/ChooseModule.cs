@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,6 +11,13 @@ namespace Dogey.Modules
     [Summary("")]
     public class ChooseModule : ModuleBase<SocketCommandContext>
     {
+        private readonly Random _random;
+
+        public ChooseModule(IServiceProvider provider)
+        {
+            _random = provider.GetService<Random>();
+        }
+
         [Command]
         [Remarks("Select an option at random")]
         public Task ChooseAsync(params string[] options)

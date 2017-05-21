@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
@@ -8,13 +9,13 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Name("Pats")]
-    public class PatsModule : ModuleBase<SocketCommandContext>
+    public class PatsModule : ModuleBase<SocketCommandContext>, IDisposable
     {
-        private PatsDatabase _db;
-
-        protected override void BeforeExecute()
+        private readonly PatsDatabase _db;
+        
+        public PatsModule(IServiceProvider provider)
         {
-            _db = new PatsDatabase();
+            _db = provider.GetService<PatsDatabase>();
         }
 
         [Command("pats")]
@@ -56,6 +57,11 @@ namespace Dogey.Modules
             var stream = File.Open(selected, FileMode.Open);
             string name = Path.GetFileName(selected);
             return Tuple.Create(stream, name);
+        }
+
+        public void Dispose()
+        {
+            _db.Dispose();
         }
     }
 }

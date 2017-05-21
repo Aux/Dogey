@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
-using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,30 +12,18 @@ namespace Dogey.Modules
     [Summary("Search for things on youtube.")]
     public class YoutubeModule : ModuleBase<SocketCommandContext>
     {
-        private YouTubeService _youtube;
-        private CommandService _service;
+        private readonly CommandService _commands;
+        private readonly YouTubeService _youtube;
 
-        public YoutubeModule(CommandService service)
+        public YoutubeModule(IServiceProvider provider)
         {
-            _service = service;
-        }
-        
-        protected override void BeforeExecute()
-        {
-            string token = Configuration.Load().Token.Google;
-
-            if (string.IsNullOrWhiteSpace(token))
-                throw new InvalidOperationException("The Youtube module has not yet been configured. Please add the youtube token to the configuration file.");
-            
-            _youtube = new YouTubeService(new BaseClientService.Initializer()
-            {
-                ApiKey = token
-            });
+            _commands = provider.GetService<CommandService>();
+            _youtube = provider.GetService<YouTubeService>();
         }
         
         [Command]
         public Task BaseAsync()
-            => new HelpModule(_service).HelpAsync(Context, "youtube");
+            => new HelpModule(_commands).HelpAsync(Context, "youtube");
 
         [Command]
         [Remarks("Search for a video matching the provided text")]

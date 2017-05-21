@@ -1,22 +1,19 @@
 ﻿using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
     [Name("Config")]
-    public class GuildModule : ModuleBase<SocketCommandContext>
+    public class GuildModule : ModuleBase<SocketCommandContext>, IDisposable
     {
-        private ConfigDatabase _db;
-
-        protected override void BeforeExecute()
+        private readonly ConfigDatabase _db;
+        
+        public GuildModule(IServiceProvider provider)
         {
-            _db = new ConfigDatabase();
-        }
-
-        protected override void AfterExecute()
-        {
-            _db.Dispose();
+            _db = provider.GetService<ConfigDatabase>();
         }
 
         [Command("prefix")]
@@ -40,6 +37,11 @@ namespace Dogey.Modules
             await _db.SetPrefixAsync(config, prefix);
 
             await ReplyAsync($"This guild's prefix is now `{prefix}`");
+        }
+
+        public void Dispose()
+        {
+            _db.Dispose();
         }
     }
 }

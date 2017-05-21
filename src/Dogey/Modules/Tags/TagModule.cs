@@ -1,5 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,20 +9,15 @@ namespace Dogey.Modules
 {
     [Group("tag"), Name("Tag")]
     [Summary("Create and manage tags.")]
-    public class TagModule : ModuleBase<SocketCommandContext>
+    public class TagModule : ModuleBase<SocketCommandContext>, IDisposable
     {
-        private TagDatabase _db;
+        private readonly TagDatabase _db;
 
-        protected override void BeforeExecute()
+        public TagModule(IServiceProvider provider)
         {
-            _db = new TagDatabase();
+            _db = provider.GetService<TagDatabase>();
         }
-
-        protected override void AfterExecute()
-        {
-            _db.Dispose();
-        }
-
+        
         [Command, Priority(0)]
         [Summary("Execute the specified tag.")]
         public async Task TagAsync([Remainder]string name)
@@ -69,7 +66,7 @@ namespace Dogey.Modules
         }
 
         [Command("unalias"), Priority(10)]
-        [Summary("Remove an alias from an existing tag.")]
+        [Summary("Remove aliases from an existing tag.")]
         public async Task UnaliasAsync(string name, params string[] aliases)
         {
             await _db.RemoveAliasAsync(Context, name, aliases);
@@ -115,6 +112,11 @@ namespace Dogey.Modules
             builder.Timestamp = tag.CreatedAt;
             
             await ReplyAsync("", embed: builder);
+        }
+        
+        public void Dispose()
+        {
+            _db.Dispose();
         }
     }
 }

@@ -6,11 +6,11 @@ namespace Dogey.Modules
 {
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
-        public CommandService _service;
+        public readonly CommandService _commands;
         
         public HelpModule(CommandService service)
         {
-            _service = service;
+            _commands = service;
         }
 
         [Command("help")]
@@ -19,7 +19,7 @@ namespace Dogey.Modules
         public Task HelpAsync(SocketCommandContext context)
         {
             string list = null;
-            foreach (var m in _service.Modules)
+            foreach (var m in _commands.Modules)
             {
                 list += $"\n**{m.Name}**: " + string.Join(", ", m.Commands.Select(x => x.Aliases.First()));
             }
