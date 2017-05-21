@@ -40,6 +40,7 @@ namespace Dogey
                 .AddDbContext<TagDatabase>()
                 .AddDbContext<ConfigDatabase>()
                 .AddDbContext<PatsDatabase>()
+                .AddDbContext<ScriptDatabase>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<Random>()
                 .AddSingleton(_client)
