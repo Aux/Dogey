@@ -7,6 +7,7 @@ namespace Dogey.Modules.Eval
 {
     [Group("eval"), Name("Eval")]
     [Summary("Evaluate csharp scripts.")]
+    [RequireOwner]
     public class EvalModule : ModuleBase<SocketCommandContext>
     {
         private readonly RoslynManager _roslyn;

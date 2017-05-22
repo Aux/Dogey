@@ -9,6 +9,7 @@ namespace Dogey.Modules.Eval
 {
     [Group("script"), Name("Script")]
     [Summary("Create and manage scripts.")]
+    [RequireOwner]
     public class ScriptModule : ModuleBase<SocketCommandContext>, IDisposable
     {
         private readonly RoslynManager _roslyn;

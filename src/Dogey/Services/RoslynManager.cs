@@ -3,6 +3,8 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.Extensions.DependencyInjection;
+using NTwitch.Rest;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,6 +16,13 @@ namespace Dogey
 {
     public class RoslynManager
     {
+        private readonly IServiceProvider _provider;
+
+        public RoslynManager(IServiceProvider provider)
+        {
+            _provider = provider;
+        }
+        
         public ScriptOptions GetOptions()
         {
             var options = ScriptOptions.Default
@@ -55,7 +64,7 @@ namespace Dogey
 
             try
             {
-                result = await CSharpScript.EvaluateAsync(cleancode, options, context);
+                result = await CSharpScript.EvaluateAsync(cleancode, options, new RoslynGlobals(_provider, context));
             }
             catch (Exception ex)
             {
@@ -107,6 +116,18 @@ namespace Dogey
             });
 
             return builder;
+        }
+    }
+
+    public class RoslynGlobals
+    {
+        public readonly SocketCommandContext Context;
+        public readonly TwitchRestClient _twitch;
+
+        public RoslynGlobals(IServiceProvider provider, SocketCommandContext context)
+        {
+            Context = context;
+            _twitch = provider.GetService<TwitchRestClient>();
         }
     }
 }
