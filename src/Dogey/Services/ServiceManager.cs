@@ -42,6 +42,7 @@ namespace Dogey
                 .AddDbContext<PatsDatabase>()
                 .AddDbContext<ScriptDatabase>()
                 .AddSingleton<CommandHandler>()
+                .AddSingleton<RoslynManager>()
                 .AddSingleton<Random>()
                 .AddSingleton(_client)
                 .AddSingleton(config)

@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
@@ -40,29 +41,31 @@ namespace Dogey
             return options;
         }
 
-        //public async Task<object> CSharpAsync(string code)
-        //{
-        //    var _timer = new Stopwatch();
-        //    _timer.Start();
+        public Task<Embed> EvalAsync(SocketCommandContext context, Script script)
+            => EvalAsync(context, script.Content);
 
-        //    string reply, type;
+        public async Task<Embed> EvalAsync(SocketCommandContext context, string content)
+        {
+            var _timer = new Stopwatch();
+            _timer.Start();
 
-        //    try
-        //    {
-        //        var result = await CSharpScript.EvaluateAsync(code, options, Context);
-        //        type = result.GetType().Name;
-        //        reply = result.ToString();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        type = ex.GetType().Name;
-        //        reply = ex.Message;
-        //    }
-        //    _timer.Stop();
+            var cleancode = GetFormattedCode("cs", content);
+            var options = GetOptions();
+            object result;
 
-        //    return null;
-        //}
+            try
+            {
+                result = await CSharpScript.EvaluateAsync(cleancode, options, context);
+            }
+            catch (Exception ex)
+            {
+                result = ex;
+            }
+            _timer.Stop();
 
+            return GetEmbed(cleancode, result, _timer.ElapsedMilliseconds);
+        }
+        
         public string GetFormattedCode(string language, string rawmsg)
         {
             string code = rawmsg;
@@ -79,21 +82,31 @@ namespace Dogey
 
             return code;
         }
-    }
-
-    public class RoslynResult
-    {
-        public object Result { get; }
-        public Type ResultType { get; }
-        public string Language { get; }
-        public long ExecuteTime { get; }
-
-        public RoslynResult(object result, string language, long executeTime)
+        
+        public Embed GetEmbed(string code, object result, long executeTime)
         {
-            Result = result;
-            ResultType = result.GetType();
-            Language = language;
-            ExecuteTime = executeTime;
+            var builder = new EmbedBuilder();
+            builder.Color = new Color(25, 128, 0);
+            builder.AddField(x =>
+            {
+                x.Name = "Code";
+                x.Value = $"```cs\n{code}```";
+            });
+            builder.AddField(x =>
+            {
+                x.Name = $"Result<{result?.GetType().FullName ?? "null"}>";
+
+                if (result is Exception ex)
+                    x.Value = ex.Message;
+                else
+                    x.Value = result ?? "null";
+            });
+            builder.WithFooter(x =>
+            {
+                x.Text = $"In {executeTime}ms";
+            });
+
+            return builder;
         }
     }
 }

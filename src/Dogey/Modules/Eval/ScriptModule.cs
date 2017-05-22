@@ -1,6 +1,8 @@
 ﻿using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.Eval
@@ -22,7 +24,16 @@ namespace Dogey.Modules.Eval
         [Summary("Execute the specified script")]
         public async Task ScriptAsync([Remainder]string name)
         {
-            await ReplyAsync(":thumbsup:");
+            var script = await _db.GetScriptAsync(name);
+
+            if (script == null)
+            {
+                await SuggestScriptAsync(name);
+                return;
+            }
+
+            var result = await _roslyn.EvalAsync(Context, script);
+            await ReplyAsync("", embed: result);
         }
 
         [Command("create"), Priority(10)]
@@ -72,6 +83,23 @@ namespace Dogey.Modules.Eval
         public async Task InfoAsync([Remainder]string name)
         {
             await ReplyAsync(":thumbsup:");
+        }
+
+        private async Task SuggestScriptAsync(string name)
+        {
+            var scripts = await _db.FindScriptsAsync(name, 3);
+
+            var reply = new StringBuilder();
+
+            reply.Append($"Could not find a script like `{name}`");
+            if (scripts.Count() > 0)
+            {
+                reply.AppendLine("Did you mean:");
+                foreach (var script in scripts)
+                    reply.AppendLine(script.Aliases.First());
+            }
+
+            await ReplyAsync(reply.ToString());
         }
 
         public void Dispose()

@@ -3,6 +3,7 @@ using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules
@@ -26,16 +27,7 @@ namespace Dogey.Modules
 
             if (tag == null)
             {
-                var tags = await _db.FindTagsAsync(Context.Guild.Id, name, 5);
-
-                string reply = $"Could not find a tag like `{name}`.";
-                if (tags.Count() > 0)
-                {
-                    string related = string.Join(", ", tags.Select(x => x.Aliases.First()));
-                    reply += $"\nDid you mean: {related}";
-                }
-
-                await ReplyAsync(reply);
+                await SuggestTagsAsync(name);
                 return;
             }
 
@@ -114,6 +106,23 @@ namespace Dogey.Modules
             await ReplyAsync("", embed: builder);
         }
         
+        private async Task SuggestTagsAsync(string name)
+        {
+            var tags = await _db.FindTagsAsync(Context.Guild.Id, name, 5);
+
+            var reply = new StringBuilder();
+
+            reply.Append($"Could not find a tag like `{name}`");
+            if (tags.Count() > 0)
+            {
+                reply.AppendLine("Did you mean:");
+                foreach (var script in tags)
+                    reply.AppendLine(script.Aliases.First());
+            }
+            
+            await ReplyAsync(reply.ToString());
+        }
+
         public void Dispose()
         {
             _db.Dispose();
