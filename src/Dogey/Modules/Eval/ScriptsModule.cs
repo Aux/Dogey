@@ -1,7 +1,9 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.Eval
@@ -20,16 +22,28 @@ namespace Dogey.Modules.Eval
         
         [Command]
         [Summary("")]
-        public async Task ScriptsAsync()
-        {
-            await ReplyAsync(":thumbsup:");
-        }
-
+        public Task ScriptsAsync()
+            => ScriptsAsync(Context.User);
+        
         [Command]
         [Summary("")]
         public async Task ScriptsAsync([Remainder]SocketUser user)
         {
-            await ReplyAsync(":thumbsup:");
+            var scripts = await _db.GetScriptsAsync(user.Id);
+
+            if (scripts.Count() == 0)
+            {
+                await ReplyAsync("This user has no scripts yet!");
+                return;
+            }
+
+            var builder = new EmbedBuilder();
+
+            builder.ThumbnailUrl = user.GetAvatarUrl();
+            builder.Title = $"Scripts for {user}";
+            builder.Description = string.Join(", ", scripts.SelectMany(x => x.Aliases));
+
+            await ReplyAsync("", embed: builder);
         }
     }
 }

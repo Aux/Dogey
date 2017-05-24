@@ -10,7 +10,7 @@ namespace Dogey.Modules
 {
     [Group("tag"), Name("Tag")]
     [Summary("Create and manage tags.")]
-    public class TagModule : ModuleBase<SocketCommandContext>, IDisposable
+    public class TagModule : ModuleBase<SocketCommandContext>
     {
         private readonly TagDatabase _db;
 
@@ -42,12 +42,12 @@ namespace Dogey.Modules
             await ReplyAsync(":thumbsup:");
         }
 
-        [Command("edit"), Priority(10)]
-        [Summary("Edit and existing tag you own.")]
-        public async Task EditAsync(string name, [Remainder]string content)
-        {
-            await ReplyAsync(":thumbsup:");
-        }
+        //[Command("edit"), Priority(10)]
+        //[Summary("Edit and existing tag you own.")]
+        //public async Task EditAsync(string name, [Remainder]string content)
+        //{
+        //    await ReplyAsync(":thumbsup:");
+        //}
 
         [Command("alias"), Priority(10)]
         [Summary("Add aliases to an existing tag.")]
@@ -86,21 +86,9 @@ namespace Dogey.Modules
                 IconUrl = author.GetAvatarUrl(),
                 Name = author.ToString()
             };
-
-            builder.AddField(x =>
-            {
-                x.Name = "Owner";
-                x.Value = author.Mention;
-                x.IsInline = true;
-            });
             
-            builder.AddField(x =>
-            {
-                x.Name = "Aliases";
-                x.Value = string.Join(", ", tag.Aliases);
-                x.IsInline = true;
-            });
-            
+            builder.AddInlineField("Owner", author.Mention);
+            builder.AddInlineField("Aliases", string.Join(", ", tag.Aliases));
             builder.Timestamp = tag.CreatedAt;
             
             await ReplyAsync("", embed: builder);
@@ -121,11 +109,6 @@ namespace Dogey.Modules
             }
             
             await ReplyAsync(reply.ToString());
-        }
-
-        public void Dispose()
-        {
-            _db.Dispose();
         }
     }
 }

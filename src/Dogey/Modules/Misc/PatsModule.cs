@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Name("Pats")]
-    public class PatsModule : ModuleBase<SocketCommandContext>, IDisposable
+    public class PatsModule : ModuleBase<SocketCommandContext>
     {
         private readonly PatsDatabase _db;
         
@@ -57,11 +57,6 @@ namespace Dogey.Modules
             var stream = File.Open(selected, FileMode.Open);
             string name = Path.GetFileName(selected);
             return Tuple.Create(stream, name);
-        }
-
-        public void Dispose()
-        {
-            _db.Dispose();
         }
     }
 }

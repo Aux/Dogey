@@ -29,12 +29,12 @@ namespace Dogey
         public Task<Tag[]> GetTagsAsync(ulong guildId, ulong? userId = null)
             => Tags.Where(x => x.GuildId == guildId && (userId == null ? true : x.OwnerId == userId)).ToArrayAsync();
 
-        public Task<List<Tag>> FindTagsAsync(ulong guildId, string name, int stop)
+        public Task<Tag[]> FindTagsAsync(ulong guildId, string name, int stop)
         {
             int tolerance = Configuration.Load().RelatedTagsLimit;
             var tags = Tags.Where(x => x.GuildId == guildId && x.Aliases.Any(y => Levenshtein.GetDistance(name, y) <= tolerance));
             var selected = tags.OrderBy(x => x.Aliases.Sum(y => Levenshtein.GetDistance(name, y))).Take(stop);
-            return Task.FromResult(selected.ToList());
+            return selected.ToArrayAsync();
         }
 
         public async Task CreateTagAsync(SocketCommandContext context, string name, string content)

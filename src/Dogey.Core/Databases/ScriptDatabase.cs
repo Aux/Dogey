@@ -11,6 +11,11 @@ namespace Dogey
     {
         public DbSet<Script> Scripts { get; set; }
 
+        public ScriptDatabase()
+        {
+            Database.EnsureCreated();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string baseDir = Path.Combine(AppContext.BaseDirectory, "data");

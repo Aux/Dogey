@@ -122,12 +122,12 @@ namespace Dogey
     public class RoslynGlobals
     {
         public readonly SocketCommandContext Context;
-        public readonly TwitchRestClient _twitch;
+        public readonly TwitchRestClient Twitch;
 
         public RoslynGlobals(IServiceProvider provider, SocketCommandContext context)
         {
             Context = context;
-            _twitch = provider.GetService<TwitchRestClient>();
+            Twitch = provider.GetService<TwitchRestClient>();
         }
     }
 }

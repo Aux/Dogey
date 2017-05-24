@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Name("Config")]
-    public class GuildModule : ModuleBase<SocketCommandContext>, IDisposable
+    public class GuildModule : ModuleBase<SocketCommandContext>
     {
         private readonly ConfigDatabase _db;
         
@@ -37,11 +37,6 @@ namespace Dogey.Modules
             await _db.SetPrefixAsync(config, prefix);
 
             await ReplyAsync($"This guild's prefix is now `{prefix}`");
-        }
-
-        public void Dispose()
-        {
-            _db.Dispose();
         }
     }
 }

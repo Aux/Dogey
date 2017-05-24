@@ -10,7 +10,7 @@ namespace Dogey.Modules
 {
     [Group("tags"), Name("Tags")]
     [Summary("Search and view available tags.")]
-    public class TagsModule : ModuleBase<SocketCommandContext>, IDisposable
+    public class TagsModule : ModuleBase<SocketCommandContext>
     {
         private readonly TagDatabase _db;
 
@@ -77,11 +77,6 @@ namespace Dogey.Modules
             builder.Description = tagMessage;
 
             return builder;
-        }
-
-        public void Dispose()
-        {
-            _db.Dispose();
         }
     }
 }
