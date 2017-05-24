@@ -22,6 +22,7 @@ namespace Dogey.Modules
         {
             _commands = provider.GetService<CommandService>();
             _config = provider.GetService<Configuration>();
+            _search = provider.GetService<CustomsearchService>();
         }
         
         [Command]

@@ -8,7 +8,12 @@ namespace Dogey
     public class ConfigDatabase : DbContext
     {
         public DbSet<GuildConfig> GuildConfigs { get; set; }
-        
+
+        public ConfigDatabase()
+        {
+            Database.EnsureCreated();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!Directory.Exists("data"))

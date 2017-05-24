@@ -13,6 +13,11 @@ namespace Dogey
     {
         public DbSet<Tag> Tags { get; set; }
 
+        public TagDatabase()
+        {
+            Database.EnsureCreated();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string baseDir = Path.Combine(AppContext.BaseDirectory, "data");

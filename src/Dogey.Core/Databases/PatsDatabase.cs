@@ -10,6 +10,11 @@ namespace Dogey
     {
         public DbSet<Pat> Pats { get; set; }
 
+        public PatsDatabase()
+        {
+            Database.EnsureCreated();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             string baseDir = Path.Combine(AppContext.BaseDirectory, "data");
