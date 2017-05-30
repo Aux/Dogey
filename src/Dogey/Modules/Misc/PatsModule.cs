@@ -52,7 +52,7 @@ namespace Dogey.Modules
             string dir = Path.Combine(AppContext.BaseDirectory, "pats");
             var images = Directory.EnumerateFiles(dir);
             
-            string selected = images.ElementAt(new Random().Next(0, images.Count() + 1));
+            string selected = images.ElementAt(new Random().Next(0, images.Count()));
 
             var stream = File.Open(selected, FileMode.Open);
             string name = Path.GetFileName(selected);
