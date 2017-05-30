@@ -10,7 +10,7 @@ namespace Dogey.Modules
 {
     [Group("youtube"), Alias("yt"), Name("Youtube")]
     [Summary("Search for things on youtube.")]
-    public class YoutubeModule : ModuleBase<SocketCommandContext>
+    public class YoutubeModule : ModuleBase<DogeyCommandContext>
     {
         private readonly CommandService _commands;
         private readonly YouTubeService _youtube;

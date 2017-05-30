@@ -42,7 +42,7 @@ namespace Dogey
             return selected.ToArrayAsync();
         }
 
-        public async Task CreateTagAsync(SocketCommandContext context, string name, string content)
+        public async Task CreateTagAsync(DogeyCommandContext context, string name, string content)
         {
             var duplicate = await Tags.AnyAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name));
 
@@ -61,7 +61,7 @@ namespace Dogey
             await SaveChangesAsync();
         }
 
-        public async Task DeleteTagAsync(SocketCommandContext context, string name)
+        public async Task DeleteTagAsync(DogeyCommandContext context, string name)
         {
             var tag = await Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name));
 
@@ -76,7 +76,7 @@ namespace Dogey
             await SaveChangesAsync();
         }
 
-        public async Task AddAliasAsync(SocketCommandContext context, string name, string[] aliases)
+        public async Task AddAliasAsync(DogeyCommandContext context, string name, string[] aliases)
         {
             var tag = await Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name));
 
@@ -91,7 +91,7 @@ namespace Dogey
             await SaveChangesAsync();
         }
 
-        public async Task RemoveAliasAsync(SocketCommandContext context, string name, string[] aliases)
+        public async Task RemoveAliasAsync(DogeyCommandContext context, string name, string[] aliases)
         {
             var tag = await Tags.FirstOrDefaultAsync(x => x.GuildId == context.Guild.Id && x.Aliases.Any(y => y == name));
 

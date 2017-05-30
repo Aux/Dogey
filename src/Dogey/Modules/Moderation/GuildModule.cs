@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Name("Config")]
-    public class GuildModule : ModuleBase<SocketCommandContext>
+    public class GuildModule : ModuleBase<DogeyCommandContext>
     {
         private readonly ConfigDatabase _db;
         

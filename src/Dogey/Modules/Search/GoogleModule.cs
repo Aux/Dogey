@@ -12,7 +12,7 @@ namespace Dogey.Modules
 {
     [Group("google"), Alias("g"), Name("Google")]
     [Summary("Search google for the specified query")]
-    public class GoogleModule : ModuleBase<SocketCommandContext>
+    public class GoogleModule : ModuleBase<DogeyCommandContext>
     {
         private readonly CommandService _commands;
         private readonly Configuration _config;

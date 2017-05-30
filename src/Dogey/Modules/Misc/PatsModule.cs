@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Name("Pats")]
-    public class PatsModule : ModuleBase<SocketCommandContext>
+    public class PatsModule : ModuleBase<DogeyCommandContext>
     {
         private readonly PatsDatabase _db;
         

@@ -50,7 +50,7 @@ namespace Dogey
                 .AddSingleton(new CommandService(new CommandServiceConfig()
                 {
                     DefaultRunMode = RunMode.Async,
-                    LogLevel = LogSeverity.Info,
+                    LogLevel = LogSeverity.Verbose,
                     ThrowOnError = false
                 }))
                 .AddSingleton(new CustomsearchService(new BaseClientService.Initializer()

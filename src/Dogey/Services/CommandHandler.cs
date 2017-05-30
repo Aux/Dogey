@@ -40,33 +40,42 @@ namespace Dogey
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
-            var timer = new Stopwatch();
-            timer.Start();
-
             var msg = s as SocketUserMessage;
             if (msg == null)
                 return;
 
-            var context = new SocketCommandContext(_client, msg);
+            var context = new DogeyCommandContext(_client, msg);
             string prefix = await context.Guild.GetPrefixAsync();
 
             int argPos = 0;
             bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
 
             if (hasStringPrefix || msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
-            {
-                var result = await _commands.ExecuteAsync(context, argPos, _provider);
+                await ExecuteAsync(context, _provider, argPos);
+        }
 
-                timer.Stop();
-                if (!result.IsSuccess)
-                {
-                    if (result is ExecuteResult r)
-                        Console.WriteLine(r.Exception.ToString());
-                    else if (result.Error == CommandError.UnknownCommand)
-                        await context.Channel.SendMessageAsync("Command not recognized");
-                    else
-                        await context.Channel.SendMessageAsync(result.ToString());
-                }
+        public async Task ExecuteAsync(DogeyCommandContext context, IServiceProvider provider, int argPos)
+        {
+            var result = await _commands.ExecuteAsync(context, argPos, provider);
+            await ResultAsync(context, result);
+        }
+
+        public async Task ExecuteAsync(DogeyCommandContext context, IServiceProvider provider, string input)
+        {
+            var result = await _commands.ExecuteAsync(context, input, provider);
+            await ResultAsync(context, result);
+        }
+
+        private async Task ResultAsync(DogeyCommandContext context, IResult result)
+        {
+            if (!result.IsSuccess)
+            {
+                if (result is ExecuteResult r)
+                    Console.WriteLine(r.Exception.ToString());
+                else if (result.Error == CommandError.UnknownCommand)
+                    await context.Channel.SendMessageAsync("Command not recognized");
+                else
+                    await context.Channel.SendMessageAsync(result.ToString());
             }
         }
 

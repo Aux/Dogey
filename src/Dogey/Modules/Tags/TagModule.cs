@@ -10,7 +10,7 @@ namespace Dogey.Modules
 {
     [Group("tag"), Name("Tag")]
     [Summary("Create and manage tags.")]
-    public class TagModule : ModuleBase<SocketCommandContext>
+    public class TagModule : ModuleBase<DogeyCommandContext>
     {
         private readonly TagDatabase _db;
 

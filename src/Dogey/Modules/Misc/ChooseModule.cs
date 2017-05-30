@@ -9,7 +9,7 @@ namespace Dogey.Modules
 {
     [Group("choose"), Name("Choose")]
     [Summary("")]
-    public class ChooseModule : ModuleBase<SocketCommandContext>
+    public class ChooseModule : ModuleBase<DogeyCommandContext>
     {
         private readonly Random _random;
 

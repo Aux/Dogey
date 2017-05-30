@@ -50,10 +50,10 @@ namespace Dogey
             return options;
         }
 
-        public Task<Embed> EvalAsync(SocketCommandContext context, Script script)
+        public Task<Embed> EvalAsync(DogeyCommandContext context, Script script)
             => EvalAsync(context, script.Content);
 
-        public async Task<Embed> EvalAsync(SocketCommandContext context, string content)
+        public async Task<Embed> EvalAsync(DogeyCommandContext context, string content)
         {
             var _timer = new Stopwatch();
             _timer.Start();
@@ -121,10 +121,10 @@ namespace Dogey
 
     public class RoslynGlobals
     {
-        public readonly SocketCommandContext Context;
+        public readonly DogeyCommandContext Context;
         public readonly TwitchRestClient Twitch;
 
-        public RoslynGlobals(IServiceProvider provider, SocketCommandContext context)
+        public RoslynGlobals(IServiceProvider provider, DogeyCommandContext context)
         {
             Context = context;
             Twitch = provider.GetService<TwitchRestClient>();

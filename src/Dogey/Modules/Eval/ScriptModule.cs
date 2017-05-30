@@ -11,7 +11,7 @@ namespace Dogey.Modules.Eval
     [Group("script"), Name("Script")]
     [Summary("Create and manage scripts.")]
     [RequireOwner]
-    public class ScriptModule : ModuleBase<SocketCommandContext>
+    public class ScriptModule : ModuleBase<DogeyCommandContext>
     {
         private readonly RoslynManager _roslyn;
         private readonly ScriptDatabase _db;

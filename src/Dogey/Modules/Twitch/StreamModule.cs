@@ -10,7 +10,7 @@ namespace Dogey.Modules.Twitch
 {
     [Group("twitch"), Name("Twitch")]
     [Summary("")]
-    public class StreamModule : ModuleBase<SocketCommandContext>
+    public class StreamModule : ModuleBase<DogeyCommandContext>
     {
         private readonly TwitchRestClient _client;
 

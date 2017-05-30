@@ -9,7 +9,7 @@ namespace Dogey.Modules
 {
     [Group("performance"), Name("Performance")]
     [Summary("Get technical information about Dogey")]
-    public class PerformanceModule : ModuleBase<SocketCommandContext>
+    public class PerformanceModule : ModuleBase<DogeyCommandContext>
     {
         private Process _process;
 

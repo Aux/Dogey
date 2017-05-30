@@ -10,7 +10,7 @@ namespace Dogey.Modules
     [Group("clean"), Name("Clean")]
     [RequireContext(ContextType.Guild)]
     [Summary("Clean messages from a channel.")]
-    public class CleanModule : ModuleBase<SocketCommandContext>
+    public class CleanModule : ModuleBase<DogeyCommandContext>
     {
         [Command]
         public async Task CleanAsync()

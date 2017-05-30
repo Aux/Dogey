@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    public class HelpModule : ModuleBase<SocketCommandContext>
+    public class HelpModule : ModuleBase<DogeyCommandContext>
     {
         public readonly CommandService _commands;
         
@@ -16,7 +16,7 @@ namespace Dogey.Modules
         [Command("help")]
         public Task HelpCommandAsync()
             => HelpAsync(Context);
-        public Task HelpAsync(SocketCommandContext context)
+        public Task HelpAsync(DogeyCommandContext context)
         {
             string list = null;
             foreach (var m in _commands.Modules)
@@ -30,7 +30,7 @@ namespace Dogey.Modules
         [Command("help")]
         public Task HelpCommandAsync(string command)
             => HelpAsync(Context, command);
-        public Task HelpAsync(SocketCommandContext context, string command)
+        public Task HelpAsync(DogeyCommandContext context, string command)
         {
             return context.Channel.SendMessageAsync($"This would normally be the help command for `{command}`");
         }

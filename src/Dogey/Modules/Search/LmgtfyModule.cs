@@ -6,7 +6,7 @@ namespace Dogey.Modules
 {
     [Name("Let Me Google That For You")]
     [Summary("")]
-    public class LmgtfyModule : ModuleBase<SocketCommandContext>
+    public class LmgtfyModule : ModuleBase<DogeyCommandContext>
     {
         private const string _lmgtfyUrl = "http://lmgtfy.com/?q=";
         private const string _lmfgtfyUrl = "http://lmfgtfy.com/?q=";
