@@ -10,12 +10,12 @@ namespace Dogey.Modules.Moderation
     [RequireOwner]
     public class SudoModule : ModuleBase<DogeyCommandContext>
     {
-        private readonly CommandHandler _manager;
+        private readonly CommandManager _manager;
         private readonly IServiceProvider _provider;
 
         public SudoModule(IServiceProvider provider)
         {
-            _manager = provider.GetService<CommandHandler>();
+            _manager = provider.GetService<CommandManager>();
             _provider = provider;
         }
 

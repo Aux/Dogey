@@ -35,8 +35,8 @@ namespace Dogey
         public Task<Script[]> FindScriptsAsync(string name, int stop)
         {
             int tolerance = Configuration.Load().RelatedTagsLimit;
-            var scripts = Scripts.Where(x => x.Aliases.Any(y => Levenshtein.GetDistance(name, y) <= tolerance));
-            var selected = scripts.OrderBy(x => x.Aliases.Sum(y => Levenshtein.GetDistance(name, y))).Take(stop);
+            var scripts = Scripts.Where(x => x.Aliases.Any(y => MathHelper.GetStringDistance(name, y) <= tolerance));
+            var selected = scripts.OrderBy(x => x.Aliases.Sum(y => MathHelper.GetStringDistance(name, y))).Take(stop);
             return selected.ToArrayAsync();
         }
 

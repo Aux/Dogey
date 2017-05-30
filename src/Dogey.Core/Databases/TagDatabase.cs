@@ -37,8 +37,8 @@ namespace Dogey
         public Task<Tag[]> FindTagsAsync(ulong guildId, string name, int stop)
         {
             int tolerance = Configuration.Load().RelatedTagsLimit;
-            var tags = Tags.Where(x => x.GuildId == guildId && x.Aliases.Any(y => Levenshtein.GetDistance(name, y) <= tolerance));
-            var selected = tags.OrderBy(x => x.Aliases.Sum(y => Levenshtein.GetDistance(name, y))).Take(stop);
+            var tags = Tags.Where(x => x.GuildId == guildId && x.Aliases.Any(y => MathHelper.GetStringDistance(name, y) <= tolerance));
+            var selected = tags.OrderBy(x => x.Aliases.Sum(y => MathHelper.GetStringDistance(name, y))).Take(stop);
             return selected.ToArrayAsync();
         }
 

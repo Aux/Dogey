@@ -2,9 +2,9 @@
 
 namespace Dogey
 {
-    public static class Levenshtein
+    public static class MathHelper
     {
-        public static int GetDistance(string s, string t)
+        public static int GetStringDistance(string s, string t)
         {
             int n = s.Length;
             int m = t.Length;

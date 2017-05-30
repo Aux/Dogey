@@ -1,6 +1,5 @@
-﻿using Discord;
-using Discord.WebSocket;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dogey
 {
@@ -9,28 +8,20 @@ namespace Dogey
         public static void Main(string[] args)
             => new Program().StartAsync().GetAwaiter().GetResult();
 
-        private DiscordSocketClient _client;
-        private ServiceManager _manager;
+        private Startup _startup = new Startup();
 
         public async Task StartAsync()
         {
-            PrettyConsole.NewLine("===   Dogey   ===");
+            PrettyConsole.NewLine($"Dogey v{AppHelper.Version}");
             PrettyConsole.NewLine();
 
             Configuration.EnsureExists();
 
-            _client = new DiscordSocketClient(new DiscordSocketConfig()
-            {
-                LogLevel = LogSeverity.Verbose,
-                MessageCacheSize = 1000
-            });
-            
-            await _client.LoginAsync(TokenType.Bot, Configuration.Load().Token.Discord);
-            await _client.StartAsync();
+            var services = await _startup.ConfigureServices();
 
-            _manager = new ServiceManager(_client);
-            await _manager.StartAsync();
-            
+            var manager = services.GetService<CommandManager>();
+            await manager.StartAsync();
+
             await Task.Delay(-1);
         }
     }
