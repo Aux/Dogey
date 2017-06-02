@@ -20,6 +20,9 @@ namespace Dogey
         }
         public List<string> Aliases { get; private set; }
 
+        // Foreign Keys
+        public List<TagLog> Logs { get; private set; }
+
         public Tag() { }
         public Tag(string name, string content, ICommandContext context)
         {

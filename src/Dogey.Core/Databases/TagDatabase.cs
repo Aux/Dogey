@@ -7,6 +7,7 @@ namespace Dogey
     public class TagDatabase : DbContext
     {
         public DbSet<Tag> Tags { get; private set; }
+        public DbSet<TagLog> Logs { get; private set; }
 
         public TagDatabase()
         {
@@ -47,9 +48,25 @@ namespace Dogey
             builder.Entity<Tag>()
                 .Property(x => x.Names)
                 .IsRequired();
-
             builder.Entity<Tag>()
                 .Ignore(x => x.Aliases);
+
+            builder.Entity<TagLog>()
+                .Property(x => x.Id)
+                .ValueGeneratedOnAdd()
+                .IsRequired();
+            builder.Entity<TagLog>()
+                .Property(x => x.GuildId)
+                .IsRequired();
+            builder.Entity<TagLog>()
+                .Property(x => x.ChannelId)
+                .IsRequired();
+            builder.Entity<TagLog>()
+                .Property(x => x.UserId)
+                .IsRequired();
+            builder.Entity<TagLog>()
+                .Property(x => x.TagId)
+                .IsRequired();
         }
     }
 }
