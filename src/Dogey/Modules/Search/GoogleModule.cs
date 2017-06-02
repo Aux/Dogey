@@ -25,9 +25,9 @@ namespace Dogey.Modules
             _search = provider.GetService<CustomsearchService>();
         }
         
-        [Command]
-        public Task BaseAsync()
-            => new HelpModule(_commands).HelpAsync(Context, "google");
+        //[Command]
+        //public Task BaseAsync()
+        //    => new HelpModule(_commands).HelpAsync(Context, "google");
 
         [Command, Priority(10)]
         public async Task SearchAsync([Remainder]string query)

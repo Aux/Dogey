@@ -21,9 +21,9 @@ namespace Dogey.Modules
             _youtube = provider.GetService<YouTubeService>();
         }
         
-        [Command]
-        public Task BaseAsync()
-            => new HelpModule(_commands).HelpAsync(Context, "youtube");
+        //[Command]
+        //public Task BaseAsync()
+        //    => new HelpModule(_commands).HelpAsync(Context, "youtube");
 
         [Command]
         [Remarks("Search for a video matching the provided text")]

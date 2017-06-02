@@ -20,9 +20,9 @@ namespace Dogey.Modules
             _service = service;
         }
 
-        [Command]
-        public Task BaseAsync()
-            => new HelpModule(_service).HelpAsync(Context, "inspect");
+        //[Command]
+        //public Task BaseAsync()
+        //    => new HelpModule(_service).HelpAsync(Context, "inspect");
 
         public Embed Inspect<T>(T obj, string property = null)
         {
