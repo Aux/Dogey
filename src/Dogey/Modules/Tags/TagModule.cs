@@ -25,6 +25,7 @@ namespace Dogey.Modules.Tags
             if (NotExists(tag, name))
                 return;
 
+            var _ = _manager.AddLogAsync(tag, Context);
             await ReplyAsync($"{tag.Aliases.First()}: {tag.Content}");
         }
 
@@ -94,6 +95,7 @@ namespace Dogey.Modules.Tags
             if (NotExists(tag, name))
                 return;
 
+            await _manager.AddAliasesAsync(tag, aliases);
             await ReplyAsync(":thumbsup:");
         }
 
@@ -107,6 +109,7 @@ namespace Dogey.Modules.Tags
             if (NotExists(tag, name) || !IsOwner(tag))
                 return;
 
+            await _manager.RemoveAliasesAsync(tag, aliases);
             await ReplyAsync(":thumbsup:");
         }
 
