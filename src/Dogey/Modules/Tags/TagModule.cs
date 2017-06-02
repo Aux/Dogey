@@ -1,114 +1,143 @@
-﻿using Discord;
-using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using Discord.Commands;
+using Discord.WebSocket;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Dogey.Modules
+namespace Dogey.Modules.Tags
 {
     [Group("tag"), Name("Tag")]
-    [Summary("Create and manage tags.")]
+    [Summary("Create and manage tags for this guild")]
     public class TagModule : ModuleBase<DogeyCommandContext>
     {
-        private readonly TagDatabase _db;
+        private readonly TagManager _manager;
 
-        public TagModule(IServiceProvider provider)
+        public TagModule(TagManager manager)
         {
-            _db = provider.GetService<TagDatabase>();
+            _manager = manager;
         }
         
         [Command, Priority(0)]
-        [Summary("Execute the specified tag.")]
+        [Summary("Show the tag associated with the specified name")]
         public async Task TagAsync([Remainder]string name)
         {
-            var tag = await _db.GetTagAsync(Context.Guild.Id, name.ToLower());
+            var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            if (tag == null)
-            {
-                await SuggestTagsAsync(name);
+            if (NotExists(tag, name))
                 return;
-            }
 
             await ReplyAsync($"{tag.Aliases.First()}: {tag.Content}");
         }
 
-        [Command("create"), Priority(10)]
-        [Summary("Create a new tag.")]
+        [Priority(10)]
+        [Command("create"), Alias("new", "add")]
+        [Summary("Create a new tag for this guild")]
         public async Task CreateAsync(string name, [Remainder]string content)
         {
-            await _db.CreateTagAsync(Context, name.ToLower(), content);
+            var tag = await _manager.GetTagAsync(name, Context.Guild);
+
+            if (Exists(tag, name))
+                return;
+
+            await _manager.CreateTagAsync(name, content, Context);
             await ReplyAsync(":thumbsup:");
         }
 
-        //[Command("edit"), Priority(10)]
-        //[Summary("Edit and existing tag you own.")]
-        //public async Task EditAsync(string name, [Remainder]string content)
-        //{
-        //    await ReplyAsync(":thumbsup:");
-        //}
-
-        [Command("alias"), Priority(10)]
-        [Summary("Add aliases to an existing tag.")]
-        public async Task AliasAsync(string name, params string[] aliases)
+        [Priority(10)]
+        [Command("delete"), Alias("remove")]
+        [Summary("Delete an existing tag from this guild")]
+        public async Task DeleteAsync(string name)
         {
-            await _db.AddAliasAsync(Context, name, aliases);
+            var tag = await _manager.GetTagAsync(name, Context.Guild);
+
+            if (NotExists(tag, name))
+                return;
+
+            await _manager.DeleteTagAsync(tag);
             await ReplyAsync(":thumbsup:");
         }
 
-        [Command("unalias"), Priority(10)]
-        [Summary("Remove aliases from an existing tag.")]
-        public async Task UnaliasAsync(string name, params string[] aliases)
+        [Priority(10)]
+        [Command("modify"), Alias("edit", "change")]
+        [Summary("Modify an existing tag from this guild")]
+        public async Task ModifyAsync(string name, [Remainder]string content)
         {
-            await _db.RemoveAliasAsync(Context, name, aliases);
+            var tag = await _manager.GetTagAsync(name, Context.Guild);
+
+            if (NotExists(tag, name) || !IsOwner(tag))
+                return;
+
+            await _manager.ModifyTagAsync(tag, content);
             await ReplyAsync(":thumbsup:");
         }
 
-        [Command("delete"), Priority(10)]
-        [Summary("Delete an existing tag you own.")]
-        public async Task DeleteAsync([Remainder]string name)
+        [Priority(10)]
+        [Command("setowner"), Alias("donate", "give")]
+        [Summary("Change the owner of a tag in this guild")]
+        public async Task SetOwnerAsync(string name, [Remainder]SocketUser user)
         {
-            await _db.DeleteTagAsync(Context, name.ToLower());
+            var tag = await _manager.GetTagAsync(name, Context.Guild);
+
+            if (NotExists(tag, name) || !IsOwner(tag))
+                return;
+
+            await _manager.SetOwnerAsync(tag, user);
             await ReplyAsync(":thumbsup:");
         }
 
-        [Command("info"), Priority(10)]
-        [Summary("Get information about a tag.")]
-        public async Task InfoAsync([Remainder]string name)
+        [Priority(10)]
+        [Command("alias"), Alias("addalias")]
+        [Summary("Add a new alias to the specified tag")]
+        public async Task AddAliasAsync(string name, params string[] aliases)
         {
-            var tag = await _db.GetTagAsync(Context.Guild.Id, name.ToLower());
-            var builder = new EmbedBuilder();
+            var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            var author = Context.Guild.GetUser(tag.OwnerId);
-            builder.Author = new EmbedAuthorBuilder()
+            if (NotExists(tag, name))
+                return;
+
+            await ReplyAsync(":thumbsup:");
+        }
+
+        [Priority(10)]
+        [Command("unalias"), Alias("removealias")]
+        [Summary("Remove an existing alias from the specified tag")]
+        public async Task RemoveAliasAsync(string name, params string[] aliases)
+        {
+            var tag = await _manager.GetTagAsync(name, Context.Guild);
+
+            if (NotExists(tag, name) || !IsOwner(tag))
+                return;
+
+            await ReplyAsync(":thumbsup:");
+        }
+
+        private bool IsOwner(Tag tag)
+        {
+            if (tag.OwnerId != Context.User.Id)
             {
-                IconUrl = author.GetAvatarUrl(),
-                Name = author.ToString()
-            };
-            
-            builder.AddInlineField("Owner", author.Mention);
-            builder.AddInlineField("Aliases", string.Join(", ", tag.Aliases));
-            builder.Timestamp = tag.CreatedAt;
-            
-            await ReplyAsync("", embed: builder);
-        }
-        
-        private async Task SuggestTagsAsync(string name)
-        {
-            var tags = await _db.FindTagsAsync(Context.Guild.Id, name, 5);
-
-            var reply = new StringBuilder();
-
-            reply.Append($"Could not find a tag like `{name}`");
-            if (tags.Count() > 0)
-            {
-                reply.AppendLine("Did you mean:");
-                foreach (var script in tags)
-                    reply.AppendLine(script.Aliases.First());
+                var _ = ReplyAsync("You are not the owner of this tag");
+                return false;
             }
-            
-            await ReplyAsync(reply.ToString());
+            return true;
+        }
+
+        private bool Exists(Tag tag, string name)
+        {
+            if (tag != null)
+            {
+                var _ = ReplyAsync($"The tag `{name}` already exists");
+                return true;
+            }
+            return false;
+        }
+
+        private bool NotExists(Tag tag, string name)
+        {
+            if (tag == null)
+            {
+                var _ = ReplyAsync($"The tag `{name}` does not exist");
+                return true;
+            }
+            return false;
         }
     }
 }

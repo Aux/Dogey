@@ -1,82 +1,101 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dogey.Modules
+namespace Dogey.Modules.Tags
 {
     [Group("tags"), Name("Tags")]
-    [Summary("Search and view available tags.")]
+    [Summary("Search and view information about available tags.")]
     public class TagsModule : ModuleBase<DogeyCommandContext>
     {
-        private readonly TagDatabase _db;
+        private readonly TagManager _manager;
+        private readonly Random _random;
 
-        public TagsModule(IServiceProvider provider)
+        public TagsModule(TagManager manager, Random random)
         {
-            _db = provider.GetService<TagDatabase>();
+            _manager = manager;
+            _random = random;
         }
 
         [Command]
+        [Summary("View all available tags for this guild")]
         public async Task TagsAsync()
         {
-            var tags = await _db.GetTagsAsync(Context.Guild.Id);
+            var tags = await _manager.GetTagsAsync(Context.Guild);
 
-            if (tags.Count() == 0)
-            {
-                await ReplyAsync("This guild has no tags yet!");
+            if (!HasTags(Context.Guild, tags))
                 return;
-            }
 
-            var builder = GetEmbed(tags, Context.Guild.Name, Context.Guild.IconUrl);
+            var builder = new EmbedBuilder()
+                .WithThumbnailUrl(Context.Guild.IconUrl)
+                .WithTitle($"Tags for {Context.Guild}")
+                .WithDescription(string.Join(", ", tags.Select(x => x.Aliases.First())));
+
             await ReplyAsync("", embed: builder);
         }
 
         [Command]
+        [Summary("View all available tags for the specified user")]
         public async Task TagsAsync([Remainder]SocketUser user)
         {
-            var tags = await _db.GetTagsAsync(Context.Guild.Id, user.Id);
+            var tags = await _manager.GetTagsAsync(Context.Guild, user);
 
-            if (tags.Count() == 0)
-            {
-                await ReplyAsync("This user has no tags yet!");
+            if (!HasTags(user, tags))
                 return;
-            }
 
-            var builder = GetEmbed(tags, user.ToString(), user.GetAvatarUrl());
+            var builder = new EmbedBuilder()
+                .WithThumbnailUrl(user.GetAvatarUrl())
+                .WithTitle($"Tags for {user}")
+                .WithDescription(string.Join(", ", tags.Select(x => x.Aliases.First())));
+
             await ReplyAsync("", embed: builder);
         }
 
         [Command("random")]
+        [Summary("Show a random tag from this guild")]
         public async Task RandomAsync()
         {
-            var tags = await _db.GetTagsAsync(Context.Guild.Id);
-            
+            var tags = await _manager.GetTagsAsync(Context.Guild);
+
+            if (!HasTags(Context.Guild, tags))
+                return;
+
+            var selected = SelectRandom(tags);
+            await ReplyAsync($"{selected.Aliases.First()}: {selected.Content}");
+        }
+
+        [Command("random")]
+        [Summary("Show a random tag from the specified user")]
+        public async Task RandomAsync([Remainder]SocketUser user)
+        {
+            var tags = await _manager.GetTagsAsync(Context.Guild, user);
+
+            if (!HasTags(Context.Guild, tags))
+                return;
+
+            var selected = SelectRandom(tags);
+            await ReplyAsync($"{selected.Aliases.First()}: {selected.Content}");
+        }
+
+        private bool HasTags(object obj, IEnumerable<Tag> tags)
+        {
             if (tags.Count() == 0)
             {
-                await ReplyAsync("This guild does not have any tags!");
-                return;
+                var _ = ReplyAsync($"{obj} currently has no tags.");
+                return false;
             }
-
-            var selectedIndex = new Random().Next(0, tags.Count());
-            var tag = tags.ElementAt(selectedIndex);
-
-            await ReplyAsync($"{tag.Aliases.First()}: {tag.Content}");
+            return true;
         }
-        
-        private EmbedBuilder GetEmbed(Tag[] tags, string name, string image)
+
+        private Tag SelectRandom(IEnumerable<Tag> tags)
         {
-            string tagMessage = string.Join(", ", tags.Select(x => x.Aliases.First()));
-
-            var builder = new EmbedBuilder();
-
-            builder.ThumbnailUrl = image;
-            builder.Title = $"Tags for {name}";
-            builder.Description = tagMessage;
-
-            return builder;
+            var index = _random.Next(0, tags.Count());
+            var selected = tags.ElementAt(index);
+            return selected;
         }
     }
 }
