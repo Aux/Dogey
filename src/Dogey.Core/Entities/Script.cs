@@ -6,8 +6,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dogey
 {
-    public class Script : Entity<long>
+    public class Script : IEntity<ulong>
     {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public ulong Id { get; private set; }
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }

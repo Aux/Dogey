@@ -34,7 +34,7 @@ namespace Dogey
                 typeof(List<>).GetTypeInfo().Assembly,
                 typeof(IGuild).GetTypeInfo().Assembly,
                 typeof(SocketGuild).GetTypeInfo().Assembly,
-                typeof(Dogey.Entity<>).GetTypeInfo().Assembly
+                typeof(Dogey.IEntity<>).GetTypeInfo().Assembly
             )
             .AddImports(
                 "System",
