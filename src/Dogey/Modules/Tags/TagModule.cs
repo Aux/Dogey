@@ -134,10 +134,21 @@ namespace Dogey.Modules.Tags
         {
             if (tag == null)
             {
-                var _ = ReplyAsync($"The tag `{name}` does not exist");
+                var _ = ReplySuggestionsAsync(name);
                 return true;
             }
             return false;
+        }
+
+        private async Task ReplySuggestionsAsync(string name)
+        {
+            string msg = $"The tag `{name}` does not exist";
+            var tags = await _manager.FindTagsAsync(name, Context.Guild);
+
+            if (tags.Count() != 0)
+                msg += $"\nDid you mean: {string.Join(", ", tags.Select(x => x.Aliases.First()))}";
+            
+            await ReplyAsync(msg);
         }
     }
 }
