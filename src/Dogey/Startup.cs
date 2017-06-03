@@ -5,6 +5,7 @@ using Google.Apis.Customsearch.v1;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.DependencyInjection;
+using Octokit;
 using System;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace Dogey
     {
         public async Task<IServiceProvider> ConfigureServices()
         {
+            var config = Configuration.Load();
             var services = new ServiceCollection()
                 .AddDbContext<TagDatabase>(ServiceLifetime.Transient)
                 .AddDbContext<ConfigDatabase>(ServiceLifetime.Transient)
@@ -23,8 +25,14 @@ namespace Dogey
                 .AddSingleton<CommandManager>()
                 .AddSingleton<RoslynManager>()
                 .AddSingleton<Random>()
-                .AddSingleton(Configuration.Load());
-            
+                .AddSingleton(config);
+
+            // Github
+            services.AddSingleton(new GitHubClient(new ProductHeaderValue("Dogey"))
+            {
+                Credentials = new Credentials(config.Token.Github)
+            });
+
             // Discord
             await LoadDiscordAsync(services);
 

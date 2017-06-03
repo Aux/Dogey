@@ -60,6 +60,7 @@ namespace Dogey
     {
         public string Discord { get; set; } = "";
         public string Google { get; set; } = "";
+        public string Github { get; set; } = "";
         public string Twitch { get; set; } = "";
     }
 
