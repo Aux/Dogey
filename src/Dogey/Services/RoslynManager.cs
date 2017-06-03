@@ -1,10 +1,7 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
-using Microsoft.Extensions.DependencyInjection;
-using NTwitch.Rest;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -122,12 +119,10 @@ namespace Dogey
     public class RoslynGlobals
     {
         public readonly DogeyCommandContext Context;
-        public readonly TwitchRestClient Twitch;
 
         public RoslynGlobals(IServiceProvider provider, DogeyCommandContext context)
         {
             Context = context;
-            Twitch = provider.GetService<TwitchRestClient>();
         }
     }
 }

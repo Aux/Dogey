@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 namespace Dogey.Modules.Eval
 {
     [Group("eval"), Name("Eval")]
-    [Summary("Evaluate csharp scripts.")]
     [RequireOwner]
     public class EvalModule : ModuleBase<DogeyCommandContext>
     {

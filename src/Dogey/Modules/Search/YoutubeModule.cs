@@ -1,7 +1,5 @@
 ﻿using Discord.Commands;
 using Google.Apis.YouTube.v3;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Youtube = Google.Apis.YouTube.v3.Data;
@@ -12,19 +10,13 @@ namespace Dogey.Modules
     [Summary("Search for things on youtube.")]
     public class YoutubeModule : ModuleBase<DogeyCommandContext>
     {
-        private readonly CommandService _commands;
         private readonly YouTubeService _youtube;
 
-        public YoutubeModule(IServiceProvider provider)
+        public YoutubeModule(YouTubeService youtube)
         {
-            _commands = provider.GetService<CommandService>();
-            _youtube = provider.GetService<YouTubeService>();
+            _youtube = youtube;
         }
         
-        //[Command]
-        //public Task BaseAsync()
-        //    => new HelpModule(_commands).HelpAsync(Context, "youtube");
-
         [Command]
         [Remarks("Search for a video matching the provided text")]
         public async Task SearchAsync([Remainder]string query)

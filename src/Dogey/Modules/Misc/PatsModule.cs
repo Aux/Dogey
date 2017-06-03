@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Name("Pats")]
+    [Summary("Pat pat pat pat pat pat!")]
     public class PatsModule : ModuleBase<DogeyCommandContext>
     {
         private readonly PatsDatabase _db;
@@ -19,10 +20,12 @@ namespace Dogey.Modules
         }
 
         [Command("pats")]
+        [Summary("Get your pat stats")]
         public Task PatsAsync()
             => PatsAsync(Context.User);
 
         [Command("pats")]
+        [Summary("Get pat stats for the specified user")]
         public async Task PatsAsync([Remainder]SocketUser user)
         {
             int sent = await _db.CountSentPatsAsync(user.Id);
@@ -32,6 +35,7 @@ namespace Dogey.Modules
         }
 
         [Command("pat")]
+        [Summary("Pat the specified user")]
         public async Task PatAsync([Remainder]SocketUser user)
         {
             int recentPats = await _db.CountRecentPatsAsync(Context.User.Id);

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace Dogey.Modules.Eval
 {
     [Group("script"), Name("Script")]
-    [Summary("Create and manage scripts.")]
     [RequireOwner]
     public class ScriptModule : ModuleBase<DogeyCommandContext>
     {

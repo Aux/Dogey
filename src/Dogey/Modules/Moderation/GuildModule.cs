@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Name("Config")]
+    [Summary("Bot configuration options")]
     public class GuildModule : ModuleBase<DogeyCommandContext>
     {
         private readonly ConfigDatabase _db;

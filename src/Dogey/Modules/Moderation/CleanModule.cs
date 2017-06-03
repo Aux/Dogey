@@ -13,6 +13,7 @@ namespace Dogey.Modules
     public class CleanModule : ModuleBase<DogeyCommandContext>
     {
         [Command]
+        [Summary("Clean all of Dogey's recent messages")]
         public async Task CleanAsync()
         {
             var self = Context.Guild.CurrentUser;
@@ -29,6 +30,9 @@ namespace Dogey.Modules
         }
 
         [Command("all")]
+        [RequireUserPermission(ChannelPermission.ManageMessages)]
+        [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [Summary("Clean all recent messages")]
         public async Task AllAsync(int history = 25)
         {
             var messages = await GetMessageAsync(history);
@@ -39,6 +43,9 @@ namespace Dogey.Modules
         }
 
         [Command("user")]
+        [RequireUserPermission(ChannelPermission.ManageMessages)]
+        [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [Summary("Clean all recent messages from the specified user")]
         public async Task UserAsync(SocketUser user, int history = 25)
         {
             var messages = (await GetMessageAsync(history)).Where(x => x.Author.Id == user.Id);
@@ -49,6 +56,9 @@ namespace Dogey.Modules
         }
 
         [Command("bots")]
+        [RequireUserPermission(ChannelPermission.ManageMessages)]
+        [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [Summary("Clean all recent messages made by bots")]
         public async Task BotsAsync(int history = 25)
         {
             var messages = (await GetMessageAsync(history)).Where(x => x.Author.IsBot);
@@ -59,6 +69,9 @@ namespace Dogey.Modules
         }
         
         [Command("contains")]
+        [RequireUserPermission(ChannelPermission.ManageMessages)]
+        [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [Summary("Clean all recent messages that contain a certain phrase")]
         public async Task ContainsAsync(string text, int history = 25)
         {
             var messages = (await GetMessageAsync(history)).Where(x => x.Content.ToLower().Contains(text.ToLower()));
@@ -69,6 +82,9 @@ namespace Dogey.Modules
         }
 
         [Command("attachments")]
+        [RequireUserPermission(ChannelPermission.ManageMessages)]
+        [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [Summary("Clean all recent messages with attachments")]
         public async Task AttachmentsAsync(int history = 25)
         {
             var messages = (await GetMessageAsync(history)).Where(x => x.Attachments.Count() != 0);

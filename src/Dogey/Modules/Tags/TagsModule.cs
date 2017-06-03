@@ -79,8 +79,8 @@ namespace Dogey.Modules.Tags
             await ReplyAsync($"{selected.Aliases.First()}: {selected.Content}");
         }
 
-        [Command("info"), Priority(1)]
-        [Summary("")]
+        [Command("info"), Priority(0)]
+        [Summary("Get information about the specified tag")]
         public async Task InfoAsync([Remainder]string name)
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
@@ -88,11 +88,11 @@ namespace Dogey.Modules.Tags
             var count = await _manager.CountLogsAsync(tag.Id);
 
             var builder = new EmbedBuilder()
-                .WithFooter(x => x.Text = "Created")
-                .WithTimestamp(tag.CreatedAt)
+                .WithFooter(x => x.Text = "Last Updated")
+                .WithTimestamp(tag.UpdatedAt)
                 .AddInlineField("Owner", author.Mention)
-                .AddInlineField("Uses", count)
-                .AddInlineField("Aliases", string.Join(", ", tag.Aliases));
+                .AddInlineField("Aliases", string.Join(", ", tag.Aliases))
+                .AddInlineField("Uses", count);
 
             builder.WithAuthor(x =>
             {
@@ -104,7 +104,7 @@ namespace Dogey.Modules.Tags
         }
 
         [Command("info"), Priority(10)]
-        [Summary("")]
+        [Summary("Get information about the specified tag in relation to the specified user")]
         public async Task InfoAsync(string name, [Remainder]SocketUser user)
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
@@ -114,7 +114,7 @@ namespace Dogey.Modules.Tags
         }
 
         [Command("info"), Priority(10)]
-        [Summary("")]
+        [Summary("Get information about the specified tag in relation to the specified channel")]
         public async Task InfoAsync(string name, [Remainder]SocketChannel channel)
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
@@ -124,7 +124,7 @@ namespace Dogey.Modules.Tags
         }
 
         [Command("info"), Priority(5)]
-        [Summary("")]
+        [Summary("Get information about tags for the specified user")]
         public async Task InfoAsync([Remainder]SocketUser user)
         {
             var count = await _manager.CountLogsAsync(user);
@@ -132,7 +132,7 @@ namespace Dogey.Modules.Tags
         }
 
         [Command("info"), Priority(5)]
-        [Summary("")]
+        [Summary("Get information about tags for the specified channel")]
         public async Task InfoAsync([Remainder]SocketChannel channel)
         {
             var count = await _manager.CountLogsAsync(channel);

@@ -1,7 +1,6 @@
 ﻿using Discord.Commands;
 using Google.Apis.Customsearch.v1;
 using Google.Apis.Customsearch.v1.Data;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,49 +10,35 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Group("google"), Alias("g"), Name("Google")]
-    [Summary("Search google for the specified query")]
+    [Summary("Search google for sites relating to a query")]
     public class GoogleModule : ModuleBase<DogeyCommandContext>
     {
-        private readonly CommandService _commands;
-        private readonly Configuration _config;
         private readonly CustomsearchService _search;
+        private readonly Configuration _config;
         
-        public GoogleModule(IServiceProvider provider)
+        public GoogleModule(CustomsearchService search, Configuration config)
         {
-            _commands = provider.GetService<CommandService>();
-            _config = provider.GetService<Configuration>();
-            _search = provider.GetService<CustomsearchService>();
+            _search = search;
+            _config = config;
         }
         
-        //[Command]
-        //public Task BaseAsync()
-        //    => new HelpModule(_commands).HelpAsync(Context, "google");
-
         [Command, Priority(10)]
+        [Summary("Get some links relating to the specified query")]
         public async Task SearchAsync([Remainder]string query)
         {
             var links = await SearchGoogleAsync(query);
 
-            if (links.Count() == 0)
-            {
-                await ReplyAsync("No results found.");
-                return;
-            }
-
+            if (!HasResults(links)) return;
             await ReplyAsync(GetMessage(links));
         }
 
         [Command, Priority(0)]
+        [Summary("Search a specific website for the specified query")]
         public async Task SearchSiteAsync(Uri site, [Remainder]string query)
         {
             var links = await SearchGoogleAsync(query, site);
 
-            if (links.Count() == 0)
-            {
-                await ReplyAsync("No results found.");
-                return;
-            }
-
+            if (!HasResults(links)) return;
             await ReplyAsync(GetMessage(links));
         }
 
@@ -66,6 +51,16 @@ namespace Dogey.Modules
 
             var result = await request.ExecuteAsync();
             return result.Items.Take(_config.CustomSearch.ResultCount);
+        }
+
+        private bool HasResults(IEnumerable<Result> links)
+        {
+            if (links.Count() == 0)
+            {
+                var _ = ReplyAsync("No results found.");
+                return false;
+            }
+            return true;
         }
 
         private string GetMessage(IEnumerable<Result> links)

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Moderation
 {
-    [Group("sudo"), Name("Sudo")]
     [RequireOwner]
+    [Group("sudo"), Name("Sudo")]
+    [Summary("Execute a command as another user")]
     public class SudoModule : ModuleBase<DogeyCommandContext>
     {
         private readonly CommandManager _manager;
@@ -20,6 +21,7 @@ namespace Dogey.Modules.Moderation
         }
 
         [Command]
+        [Summary("Execute a command as the specified user")]
         public async Task SudoAsync(SocketUser user, [Remainder]string command)
         {
             var context = new DogeyCommandContext(Context.Client, Context.Message, user);

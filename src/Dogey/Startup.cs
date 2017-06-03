@@ -5,7 +5,6 @@ using Google.Apis.Customsearch.v1;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.DependencyInjection;
-using NTwitch.Rest;
 using System;
 using System.Threading.Tasks;
 
@@ -25,13 +24,7 @@ namespace Dogey
                 .AddSingleton<RoslynManager>()
                 .AddSingleton<Random>()
                 .AddSingleton(Configuration.Load());
-
-            // Twitch
-            var twitch = new TwitchRestClient();
-            await twitch.LoginAsync(Configuration.Load().Token.Twitch);
-
-            services.AddSingleton(twitch);
-
+            
             // Discord
             await LoadDiscordAsync(services);
 
