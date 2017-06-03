@@ -27,8 +27,7 @@ namespace Dogey.Modules.Tags
         {
             var tags = await _manager.GetTagsAsync(Context.Guild);
 
-            if (!HasTags(Context.Guild, tags))
-                return;
+            if (!HasTags(Context.Guild, tags)) return;
 
             var builder = new EmbedBuilder()
                 .WithThumbnailUrl(Context.Guild.IconUrl)
@@ -44,8 +43,7 @@ namespace Dogey.Modules.Tags
         {
             var tags = await _manager.GetTagsAsync(Context.Guild, user);
 
-            if (!HasTags(user, tags))
-                return;
+            if (!HasTags(user, tags)) return;
 
             var builder = new EmbedBuilder()
                 .WithThumbnailUrl(user.GetAvatarUrl())
@@ -61,10 +59,10 @@ namespace Dogey.Modules.Tags
         {
             var tags = await _manager.GetTagsAsync(Context.Guild);
 
-            if (!HasTags(Context.Guild, tags))
-                return;
+            if (!HasTags(Context.Guild, tags)) return;
 
             var selected = SelectRandom(tags);
+            var _ = _manager.AddLogAsync(selected, Context);
             await ReplyAsync($"{selected.Aliases.First()}: {selected.Content}");
         }
 
@@ -74,10 +72,10 @@ namespace Dogey.Modules.Tags
         {
             var tags = await _manager.GetTagsAsync(Context.Guild, user);
 
-            if (!HasTags(Context.Guild, tags))
-                return;
+            if (!HasTags(Context.Guild, tags)) return;
 
             var selected = SelectRandom(tags);
+            var _ = _manager.AddLogAsync(selected, Context);
             await ReplyAsync($"{selected.Aliases.First()}: {selected.Content}");
         }
 
@@ -130,7 +128,6 @@ namespace Dogey.Modules.Tags
         public async Task InfoAsync([Remainder]SocketUser user)
         {
             var count = await _manager.CountLogsAsync(user);
-
             await ReplyAsync($"{user} executed tags {count} time(s)");
         }
 
@@ -139,7 +136,6 @@ namespace Dogey.Modules.Tags
         public async Task InfoAsync([Remainder]SocketChannel channel)
         {
             var count = await _manager.CountLogsAsync(channel);
-
             await ReplyAsync($"{channel} executed tags {count} time(s)");
         }
 
