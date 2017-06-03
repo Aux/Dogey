@@ -64,7 +64,9 @@ namespace Dogey.Modules
                 return;
             }
 
-            var commands = module.Commands.Where(x => !string.IsNullOrWhiteSpace(x.Summary));
+            var commands = module.Commands.Where(x => !string.IsNullOrWhiteSpace(x.Summary))
+                                 .GroupBy(x => x.Name)
+                                 .Select(x => x.First());
 
             if (commands.Count() == 0)
             {
@@ -73,7 +75,6 @@ namespace Dogey.Modules
             }
 
             var builder = new EmbedBuilder()
-                .WithTitle($"Commands in {module.Name}")
                 .WithFooter(x => x.Text = $"Type `{prefix}help <command>` for more information");
 
             foreach (var command in commands)
