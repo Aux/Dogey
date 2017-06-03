@@ -22,8 +22,8 @@ namespace Dogey.Modules.Tags
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            if (NotExists(tag, name))
-                return;
+            if (await _manager.IsDupeExecutionAsync(tag.Id)) return;
+            if (NotExists(tag, name)) return;
 
             var _ = _manager.AddLogAsync(tag, Context);
             await ReplyAsync($"{tag.Aliases.First()}: {tag.Content}");
@@ -36,8 +36,7 @@ namespace Dogey.Modules.Tags
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            if (Exists(tag, name))
-                return;
+            if (Exists(tag, name)) return;
 
             await _manager.CreateTagAsync(name, content, Context);
             await ReplyAsync(":thumbsup:");
@@ -50,8 +49,7 @@ namespace Dogey.Modules.Tags
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            if (NotExists(tag, name))
-                return;
+            if (NotExists(tag, name)) return;
 
             await _manager.DeleteTagAsync(tag);
             await ReplyAsync(":thumbsup:");
@@ -64,8 +62,7 @@ namespace Dogey.Modules.Tags
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            if (NotExists(tag, name) || !IsOwner(tag))
-                return;
+            if (NotExists(tag, name) || !IsOwner(tag)) return;
 
             await _manager.ModifyTagAsync(tag, content);
             await ReplyAsync(":thumbsup:");
@@ -78,8 +75,7 @@ namespace Dogey.Modules.Tags
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            if (NotExists(tag, name) || !IsOwner(tag))
-                return;
+            if (NotExists(tag, name) || !IsOwner(tag)) return;
 
             await _manager.SetOwnerAsync(tag, user);
             await ReplyAsync(":thumbsup:");
@@ -92,8 +88,7 @@ namespace Dogey.Modules.Tags
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            if (NotExists(tag, name))
-                return;
+            if (NotExists(tag, name)) return;
 
             await _manager.AddAliasesAsync(tag, aliases);
             await ReplyAsync(":thumbsup:");
@@ -106,8 +101,7 @@ namespace Dogey.Modules.Tags
         {
             var tag = await _manager.GetTagAsync(name, Context.Guild);
 
-            if (NotExists(tag, name) || !IsOwner(tag))
-                return;
+            if (NotExists(tag, name) || !IsOwner(tag)) return;
 
             await _manager.RemoveAliasesAsync(tag, aliases);
             await ReplyAsync(":thumbsup:");

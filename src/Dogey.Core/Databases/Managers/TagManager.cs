@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,6 +45,9 @@ namespace Dogey
         /// <summary> Get the total usage of all tags for a guild </summary>
         public Task<int> CountLogsAsync(IGuild guild)
             => _db.Logs.CountAsync(x => x.GuildId == guild.Id);
+        /// <summary> Check if the specified tag has been executed recently </summary>
+        public async Task<bool> IsDupeExecutionAsync(ulong id)
+            => await _db.Logs.AnyAsync(x => x.TagId == id && x.Timestamp.AddSeconds(30) >= DateTime.UtcNow);
 
         /// <summary> Find tags similar to the specified name </summary>
         public async Task<IEnumerable<Tag>> FindTagsAsync(string name, IGuild guild, int stop = 3, int tolerance = 5)
