@@ -93,14 +93,28 @@ namespace Dogey.Modules
             var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) with attachments.");
             await DelayDeleteMessageAsync(reply);
         }
-        
+
+        [Command("duplicates")]
+        [RequireUserPermission(ChannelPermission.ManageMessages)]
+        [RequireBotPermission(ChannelPermission.ManageMessages)]
+        [Summary("Clean all recent messages with attachments")]
+        public async Task DuplicatesAsync(int history = 25)
+        {
+            var groups = (await GetMessageAsync(history)).GroupBy(x => x.Content).Where(x => x.Count() > 1);
+            var messages = groups.SelectMany(x => x.Skip(1));
+            await DeleteMessagesAsync(messages);
+
+            var reply = await ReplyAsync($"Deleted **{messages.Count()}** message(s) with **{groups.Count()-1}** duplicate content(s).");
+            await DelayDeleteMessageAsync(reply);
+        }
+
         private Task<IEnumerable<IMessage>> GetMessageAsync(int count)
             => Context.Channel.GetMessagesAsync(count).Flatten();
 
         private Task DeleteMessagesAsync(IEnumerable<IMessage> messages)
             => Context.Channel.DeleteMessagesAsync(messages);
 
-        private async Task DelayDeleteMessageAsync(IMessage message, int ms = 5000)
+        private async Task DelayDeleteMessageAsync(IMessage message, int ms = 10000)
         {
             await Task.Delay(ms);
             await message.DeleteAsync();

@@ -45,7 +45,8 @@ namespace Dogey
             bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
 
             if (hasStringPrefix || msg.HasMentionPrefix(_discord.CurrentUser, ref argPos))
-                await ExecuteAsync(context, _provider, argPos);
+                using (context.Channel.EnterTypingState())
+                    await ExecuteAsync(context, _provider, argPos);
         }
 
         public async Task ExecuteAsync(DogeyCommandContext context, IServiceProvider provider, int argPos)
