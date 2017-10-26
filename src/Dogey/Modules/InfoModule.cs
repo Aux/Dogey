@@ -10,7 +10,7 @@ namespace Dogey.Modules
 {
     [Group("info"), Name("Info")]
     [Summary("")]
-    public class InfoModule : ModuleBase<DogeyCommandContext>
+    public class InfoModule : DogeyModuleBase
     {
         private readonly GitHubClient _github;
         private Process _process;
@@ -50,7 +50,7 @@ namespace Dogey.Modules
                 .AddInlineField("Uptime", GetUptime())
                 .WithFooter(x => x.Text = GetLibrary());
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(builder);
         }
 
         public string GetUptime()
@@ -65,6 +65,5 @@ namespace Dogey.Modules
             => $"{Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)}mb";
         public string GetLatency()
             => $"{Context.Client.Latency}ms";
-
     }
 }

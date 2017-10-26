@@ -8,7 +8,7 @@ namespace Dogey.Modules
 {
     [Name("Config")]
     [Summary("Bot configuration options")]
-    public class GuildModule : ModuleBase<DogeyCommandContext>
+    public class GuildModule : DogeyModuleBase
     {
         private readonly ConfigDatabase _db;
         

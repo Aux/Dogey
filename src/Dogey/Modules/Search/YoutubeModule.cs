@@ -8,7 +8,7 @@ namespace Dogey.Modules
 {
     [Group("youtube"), Alias("yt"), Name("Youtube")]
     [Summary("Search for things on youtube.")]
-    public class YoutubeModule : ModuleBase<DogeyCommandContext>
+    public class YoutubeModule : DogeyModuleBase
     {
         private readonly YouTubeService _youtube;
 

@@ -11,7 +11,7 @@ namespace Dogey.Modules
 {
     [Group("inspect"), Name("Inspect")]
     [Summary("")]
-    public class InspectModule : ModuleBase<DogeyCommandContext>
+    public class InspectModule : DogeyModuleBase
     {
         private CommandService _service;
 

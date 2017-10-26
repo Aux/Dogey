@@ -10,7 +10,7 @@ namespace Dogey.Modules
 {
     [Name("Pats")]
     [Summary("Pat pat pat pat pat pat!")]
-    public class PatsModule : ModuleBase<DogeyCommandContext>
+    public class PatsModule : DogeyModuleBase
     {
         private readonly PatsDatabase _db;
         

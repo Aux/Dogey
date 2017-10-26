@@ -9,14 +9,14 @@ namespace Dogey.Modules.Moderation
     [RequireOwner]
     [Group("sudo"), Name("Sudo")]
     [Summary("Execute a command as another user")]
-    public class SudoModule : ModuleBase<DogeyCommandContext>
+    public class SudoModule : DogeyModuleBase
     {
-        private readonly CommandManager _manager;
+        private readonly CommandHandler _manager;
         private readonly IServiceProvider _provider;
 
         public SudoModule(IServiceProvider provider)
         {
-            _manager = provider.GetService<CommandManager>();
+            _manager = provider.GetService<CommandHandler>();
             _provider = provider;
         }
 

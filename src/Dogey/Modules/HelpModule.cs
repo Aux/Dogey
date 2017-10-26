@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Group("help"), Name("Help")]
-    public class HelpModule : ModuleBase<DogeyCommandContext>
+    public class HelpModule : DogeyModuleBase
     {
         private readonly CommandService _commands;
         private readonly IServiceProvider _provider;
@@ -49,7 +49,7 @@ namespace Dogey.Modules
                 builder.AddField(module.Name, module.Summary);
             }
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(builder);
         }
 
         [Command]
@@ -84,7 +84,7 @@ namespace Dogey.Modules
                     builder.AddField(prefix + command.Aliases.First(), command.Summary);
             }
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(builder);
         }
 
         [Command]
@@ -141,7 +141,7 @@ namespace Dogey.Modules
 
             builder.WithFooter(x => x.Text = $"Aliases: {string.Join(", ", aliases)}");
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(builder);
         }
     }
 }

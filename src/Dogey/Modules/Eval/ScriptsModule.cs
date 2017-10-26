@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Eval
 {
-    [Group("scripts"), Name("Scripts")]
     [RequireOwner]
-    public class ScriptsModule : ModuleBase<DogeyCommandContext>
+    [Group("scripts"), Name("Scripts")]
+    public class ScriptsModule : DogeyModuleBase
     {
         private readonly ScriptDatabase _db;
 

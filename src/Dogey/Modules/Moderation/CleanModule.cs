@@ -10,7 +10,7 @@ namespace Dogey.Modules
     [Group("clean"), Name("Clean")]
     [RequireContext(ContextType.Guild)]
     [Summary("Clean messages from a channel.")]
-    public class CleanModule : ModuleBase<DogeyCommandContext>
+    public class CleanModule : DogeyModuleBase
     {
         [Command]
         [Summary("Clean all of Dogey's recent messages")]

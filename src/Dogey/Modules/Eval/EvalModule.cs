@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Eval
 {
-    [Group("eval"), Name("Eval")]
     [RequireOwner]
-    public class EvalModule : ModuleBase<DogeyCommandContext>
+    [Group("eval"), Name("Eval")]
+    public class EvalModule : DogeyModuleBase
     {
         private readonly RoslynManager _roslyn;
 

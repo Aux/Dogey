@@ -6,10 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.27.0.466" />
-    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.27.0.760" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.2.0" />
-    <PackageReference Include="Octokit" Version="0.24.1-alpha0001" />
+    <Compile Remove="Modules\InspectModule.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.29.2.896" />
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.29.2.1006" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.4.0" />
+    <PackageReference Include="Octokit" Version="0.27.0" />
   </ItemGroup>
 
   <ItemGroup>

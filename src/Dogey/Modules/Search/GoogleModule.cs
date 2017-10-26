@@ -11,7 +11,7 @@ namespace Dogey.Modules
 {
     [Group("google"), Alias("g"), Name("Google")]
     [Summary("Search google for sites relating to a query")]
-    public class GoogleModule : ModuleBase<DogeyCommandContext>
+    public class GoogleModule : DogeyModuleBase
     {
         private readonly CustomsearchService _search;
         private readonly Configuration _config;

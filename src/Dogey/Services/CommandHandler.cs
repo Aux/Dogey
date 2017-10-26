@@ -1,37 +1,29 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Dogey
 {
-    public class CommandManager
+    public class CommandHandler
     {
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
         private readonly IServiceProvider _provider;
 
-        public CommandManager(IServiceProvider provider)
+        public CommandHandler(
+            DiscordSocketClient discord,
+            CommandService commands,
+            IServiceProvider provider)
         {
+            _discord = discord;
+            _commands = commands;
             _provider = provider;
-            _discord = _provider.GetService<DiscordSocketClient>();
-            _commands = _provider.GetService<CommandService>();
-        }
 
-        public async Task StartAsync()
-        {
-            _commands.AddTypeReader<Uri>(new UriTypeReader());
-
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            
             _discord.MessageReceived += OnMessageReceivedAsync;
-            PrettyConsole.Log(LogSeverity.Info, "Commands", $"Loaded {_commands.Modules.Count()} modules with {_commands.Commands.Count()} commands");
         }
-
+        
         private async Task OnMessageReceivedAsync(SocketMessage s)
         {
             var msg = s as SocketUserMessage;
@@ -65,14 +57,11 @@ namespace Dogey
         {
             if (result.IsSuccess)
                 return;
-
+            
             if (result is ExecuteResult r)
-            {
                 PrettyConsole.Log(LogSeverity.Error, "Commands", r.Exception?.ToString());
-                return;
-            }
-
-            await context.Channel.SendMessageAsync(result.ErrorReason);
+            else
+                await context.Channel.SendMessageAsync(result.ErrorReason);
         }
     }
 }

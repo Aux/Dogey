@@ -6,7 +6,7 @@ namespace Dogey
 {
     public class UriTypeReader : TypeReader
     {
-        public override Task<TypeReaderResult> Read(ICommandContext context, string input)
+        public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
         {
             if (Uri.TryCreate(input, UriKind.Absolute, out Uri uri))
                 return Task.FromResult(TypeReaderResult.FromSuccess(uri));

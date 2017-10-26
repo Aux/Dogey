@@ -10,7 +10,7 @@ namespace Dogey.Modules.Tags
 {
     [Group("tags"), Name("Tags")]
     [Summary("Search and view information about available tags.")]
-    public class TagsModule : ModuleBase<DogeyCommandContext>
+    public class TagsModule : DogeyModuleBase
     {
         private readonly TagManager _manager;
         private readonly Random _random;
@@ -34,7 +34,7 @@ namespace Dogey.Modules.Tags
                 .WithTitle($"Tags for {Context.Guild}")
                 .WithDescription(string.Join(", ", tags.Select(x => x.Aliases.First())));
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(builder);
         }
 
         [Command]
@@ -50,7 +50,7 @@ namespace Dogey.Modules.Tags
                 .WithTitle($"Tags for {user}")
                 .WithDescription(string.Join(", ", tags.Select(x => x.Aliases.First())));
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(builder);
         }
 
         [Command("random")]
@@ -100,7 +100,7 @@ namespace Dogey.Modules.Tags
                 x.IconUrl = author.GetAvatarUrl();
             });
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(builder);
         }
 
         [Command("info"), Priority(10)]
