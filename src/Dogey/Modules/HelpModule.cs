@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +11,27 @@ namespace Dogey.Modules
     [Group("help"), Name("Help")]
     public class HelpModule : DogeyModuleBase
     {
-        private readonly CommandService _commands;
         private readonly IServiceProvider _provider;
+        private readonly ConfigManager _manager;
+        private readonly CommandService _commands;
 
-        public HelpModule(IServiceProvider provider)
+        public HelpModule(
+            CommandService commands,
+            ConfigManager manager, 
+            IServiceProvider provider)
         {
-            _commands = provider.GetService<CommandService>();
             _provider = provider;
+            _manager = manager;
+            _commands = commands;
         }
+
+        private async Task<string> GetPrefixAsync()
+            => (await _manager.GetPrefixAsync(Context.Guild.Id)) ?? $"@{Context.Client.CurrentUser.Username} ";
 
         [Command]
         public async Task HelpAsync()
         {
-            string prefix = (await Context.Guild.GetPrefixAsync()) ?? $"@{Context.Client.CurrentUser.Username} ";
+            string prefix = await GetPrefixAsync();
             var modules = _commands.Modules.Where(x => !string.IsNullOrWhiteSpace(x.Summary));
 
             var builder = new EmbedBuilder()
@@ -55,7 +62,7 @@ namespace Dogey.Modules
         [Command]
         public async Task HelpAsync(string moduleName)
         {
-            string prefix = (await Context.Guild.GetPrefixAsync()) ?? $"@{Context.Client.CurrentUser.Username} ";
+            string prefix = await GetPrefixAsync();
             var module = _commands.Modules.FirstOrDefault(x => x.Name.ToLower() == moduleName.ToLower());
 
             if (module == null)
@@ -91,7 +98,7 @@ namespace Dogey.Modules
         public async Task HelpAsync(string moduleName, string commandName)
         {
             string alias = $"{moduleName} {commandName}".ToLower();
-            string prefix = (await Context.Guild.GetPrefixAsync()) ?? $"@{Context.Client.CurrentUser.Username} ";
+            string prefix = await GetPrefixAsync();
             var module = _commands.Modules.FirstOrDefault(x => x.Name.ToLower() == moduleName.ToLower());
 
             if (module == null)

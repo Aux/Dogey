@@ -7,7 +7,7 @@ namespace Dogey.Modules.Tags
 {
     [Group("tag"), Name("Tag")]
     [Summary("Create and manage tags for this guild")]
-    public class TagModule : ModuleBase<DogeyCommandContext>
+    public class TagModule : DogeyModuleBase
     {
         private readonly TagManager _manager;
 

@@ -11,12 +11,14 @@ namespace Dogey
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
         private readonly LoggingService _logger;
+        private readonly ConfigManager _manager;
         private readonly IServiceProvider _provider;
 
         public CommandHandler(
             DiscordSocketClient discord,
             CommandService commands,
             LoggingService logger,
+            ConfigManager manager,
             IServiceProvider provider)
         {
             _discord = discord;
@@ -34,7 +36,7 @@ namespace Dogey
                 return;
 
             var context = new DogeyCommandContext(_discord, msg);
-            string prefix = await context.Guild.GetPrefixAsync();
+            string prefix = await _manager.GetPrefixAsync(context.Guild.Id);
 
             int argPos = 0;
             bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);

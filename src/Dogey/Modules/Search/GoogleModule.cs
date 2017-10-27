@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Google.Apis.Customsearch.v1;
 using Google.Apis.Customsearch.v1.Data;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,9 @@ namespace Dogey.Modules
     public class GoogleModule : DogeyModuleBase
     {
         private readonly CustomsearchService _search;
-        private readonly Configuration _config;
+        private readonly IConfigurationRoot _config;
         
-        public GoogleModule(CustomsearchService search, Configuration config)
+        public GoogleModule(CustomsearchService search, IConfigurationRoot config)
         {
             _search = search;
             _config = config;
@@ -45,12 +46,16 @@ namespace Dogey.Modules
         private async Task<IEnumerable<Result>> SearchGoogleAsync(string query, Uri site = null)
         {
             var request = _search.Cse.List(query);
-            request.Cx = _config.CustomSearch.EngineId;
+            request.Cx = _config["google:cseid"];
             if (site != null)
                 request.SiteSearch = site.ToString();
 
             var result = await request.ExecuteAsync();
-            return result.Items.Take(_config.CustomSearch.ResultCount);
+            
+            if (int.TryParse(_config["google:result_count"], out int resultCount))
+                return result.Items.Take(resultCount);
+            else
+                return result.Items.Take(3);
         }
 
         private bool HasResults(IEnumerable<Result> links)

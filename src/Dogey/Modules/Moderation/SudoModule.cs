@@ -1,6 +1,5 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -11,12 +10,12 @@ namespace Dogey.Modules.Moderation
     [Summary("Execute a command as another user")]
     public class SudoModule : DogeyModuleBase
     {
-        private readonly CommandHandler _manager;
+        private readonly CommandHandler _handler;
         private readonly IServiceProvider _provider;
 
-        public SudoModule(IServiceProvider provider)
+        public SudoModule(CommandHandler handler, IServiceProvider provider)
         {
-            _manager = provider.GetService<CommandHandler>();
+            _handler = handler;
             _provider = provider;
         }
 
@@ -25,7 +24,7 @@ namespace Dogey.Modules.Moderation
         public async Task SudoAsync(SocketUser user, [Remainder]string command)
         {
             var context = new DogeyCommandContext(Context.Client, Context.Message, user);
-            await _manager.ExecuteAsync(context, _provider, command);
+            await _handler.ExecuteAsync(context, _provider, command);
         }
     }
 }

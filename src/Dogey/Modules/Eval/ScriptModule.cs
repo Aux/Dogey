@@ -1,7 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,20 +10,20 @@ namespace Dogey.Modules.Eval
     [Group("script"), Name("Script")]
     public class ScriptModule : DogeyModuleBase
     {
+        private readonly ScriptManager _manager;
         private readonly RoslynManager _roslyn;
-        private readonly ScriptDatabase _db;
 
-        public ScriptModule(IServiceProvider provider)
+        public ScriptModule(ScriptManager manager, RoslynManager roslyn)
         {
-            _roslyn = provider.GetService<RoslynManager>();
-            _db = provider.GetService<ScriptDatabase>();
+            _manager = manager;
+            _roslyn = roslyn;
         }
 
         [Command(RunMode = RunMode.Async), Priority(0)]
         [Summary("Execute the specified script")]
         public async Task ScriptAsync([Remainder]string name)
         {
-            var script = await _db.GetScriptAsync(name);
+            var script = await _manager.GetScriptAsync(name);
 
             if (script == null)
             {
@@ -34,7 +32,7 @@ namespace Dogey.Modules.Eval
             }
 
             var result = await _roslyn.EvalAsync(Context, script);
-            await ReplyAsync("", embed: result);
+            await ReplyAsync(result);
         }
 
         [Command("create"), Priority(10)]
@@ -42,7 +40,7 @@ namespace Dogey.Modules.Eval
         public async Task CreateAsync(string name, [Remainder]string content)
         {
             string cleancode = _roslyn.GetFormattedCode("cs", content);
-            await _db.CreateScriptAsync(Context.User.Id, name, cleancode);
+            await _manager.CreateScriptAsync(Context.User.Id, name, cleancode);
             await ReplyAsync(":thumbsup:");
         }
 
@@ -71,7 +69,7 @@ namespace Dogey.Modules.Eval
         [Summary("Delete an existing script you own")]
         public async Task DeleteAsync([Remainder]string name)
         {
-            await _db.DeleteScriptAsync(name);
+            await _manager.DeleteScriptAsync(name);
             await ReplyAsync(":thumbsup:");
         }
 
@@ -86,7 +84,7 @@ namespace Dogey.Modules.Eval
         [Summary("Get information about a script")]
         public async Task InfoAsync([Remainder]string name)
         {
-            var script = await _db.GetScriptAsync(name.ToLower());
+            var script = await _manager.GetScriptAsync(name.ToLower());
             var builder = new EmbedBuilder();
 
             var author = Context.Guild.GetUser(script.OwnerId);
@@ -106,7 +104,7 @@ namespace Dogey.Modules.Eval
 
         private async Task SuggestScriptAsync(string name)
         {
-            var scripts = await _db.FindScriptsAsync(name, 3);
+            var scripts = await _manager.FindScriptsAsync(name, 3);
 
             var reply = new StringBuilder();
 

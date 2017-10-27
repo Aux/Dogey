@@ -1,6 +1,4 @@
 ﻿using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.Eval
@@ -11,16 +9,16 @@ namespace Dogey.Modules.Eval
     {
         private readonly RoslynManager _roslyn;
 
-        public EvalModule(IServiceProvider provider)
+        public EvalModule(RoslynManager roslyn)
         {
-            _roslyn = provider.GetService<RoslynManager>();
+            _roslyn = roslyn;
         }
         
         [Command(RunMode = RunMode.Async)]
         public async Task EvalAsync([Remainder]string code)
         {
             var result = await _roslyn.EvalAsync(Context, code);
-            await ReplyAsync("", embed: result);
+            await ReplyAsync(result);
         }
     }
 }

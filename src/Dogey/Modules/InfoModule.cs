@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [Group("info"), Name("Info")]
-    [Summary("")]
+    [Summary("Get information about Dogey")]
     public class InfoModule : DogeyModuleBase
     {
         private readonly GitHubClient _github;

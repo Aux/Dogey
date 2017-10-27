@@ -1,20 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Dogey
+﻿namespace Dogey
 {
-    public class GuildConfig : IEntity<ulong>
+    public class GuildConfig
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public ulong Id { get; private set; }
-        [Required]
+        public ulong Id { get; set; }
         public ulong GuildId { get; set; }
         public string Prefix { get; set; }
-
-        public GuildConfig() { }
-        public GuildConfig(ulong guildId)
-        {
-            GuildId = guildId;
-        }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Dogey
 {
@@ -26,47 +23,28 @@ namespace Dogey
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }
 
-        public Task<Script> GetScriptAsync(string name)
-            => Scripts.FirstOrDefaultAsync(x => x.Names.Contains(name.ToLower()));
-
-        public Task<Script[]> GetScriptsAsync(ulong userId)
-            => Scripts.Where(x => x.OwnerId == userId).ToArrayAsync();
-
-        public Task<Script[]> FindScriptsAsync(string name, int stop)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            int tolerance = Configuration.Load().RelatedTagsLimit;
-            var scripts = Scripts.Where(x => x.Aliases.Any(y => MathHelper.GetStringDistance(name, y) <= tolerance));
-            var selected = scripts.OrderBy(x => x.Aliases.Sum(y => MathHelper.GetStringDistance(name, y))).Take(stop);
-            return selected.ToArrayAsync();
-        }
-
-        public async Task CreateScriptAsync(ulong ownerId, string name, string content)
-        {
-            var duplicate = await Scripts.AnyAsync(x => x.Aliases.Any(y => y == name.ToLower()));
-
-            if (duplicate)
-                throw new ArgumentException($"A script named `{name}` already exists.");
-
-            var script = new Script
-            {
-                OwnerId = ownerId,
-                Aliases = new List<string>() { name },
-                Content = content
-            };
-
-            await Scripts.AddAsync(script);
-            await SaveChangesAsync();
-        }
-
-        public async Task DeleteScriptAsync(string name)
-        {
-            var script = await Scripts.FirstOrDefaultAsync(x => x.Aliases.Any(y => y == name.ToLower()));
-
-            if (script == null)
-                throw new ArgumentException($"A script named `{name}` does not exist.");
-
-            Scripts.Remove(script);
-            await SaveChangesAsync();
+            builder.Entity<Script>()
+                .HasKey(x => x.Id);
+            builder.Entity<Script>()
+                .Property(x => x.Id)
+                .ValueGeneratedOnAdd()
+                .IsRequired();
+            builder.Entity<Script>()
+                .Property(x => x.CreatedAt)
+                .IsRequired();
+            builder.Entity<Script>()
+                .Property(x => x.Content)
+                .IsRequired();
+            builder.Entity<Script>()
+                .Property(x => x.OwnerId)
+                .IsRequired();
+            builder.Entity<Script>()
+                .Property(x => x.Names)
+                .IsRequired();
+            builder.Entity<Script>()
+                .Ignore(x => x.Aliases);
         }
     }
 }

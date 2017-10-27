@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Dogey
 {
-    public class Tag : IEntity<ulong>, IOwnable<ulong>, ITimestamped
+    public class Tag
     {
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;

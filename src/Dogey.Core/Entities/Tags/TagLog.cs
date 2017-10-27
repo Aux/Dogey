@@ -3,7 +3,7 @@ using System;
 
 namespace Dogey
 {
-    public class TagLog : IEntity<ulong>
+    public class TagLog
     {
         public DateTime Timestamp { get; private set; } = DateTime.UtcNow;
         public ulong Id { get; private set; }

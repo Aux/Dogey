@@ -1,7 +1,5 @@
 ﻿using Discord;
 using Discord.Commands;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules
@@ -10,21 +8,21 @@ namespace Dogey.Modules
     [Summary("Bot configuration options")]
     public class GuildModule : DogeyModuleBase
     {
-        private readonly ConfigDatabase _db;
+        private readonly ConfigManager _manager;
         
-        public GuildModule(IServiceProvider provider)
+        public GuildModule(ConfigManager manager)
         {
-            _db = provider.GetService<ConfigDatabase>();
+            _manager = manager;
         }
 
         [Command("prefix")]
         [Summary("Check what prefix this guild has configured.")]
         public async Task PrefixAsync()
         {
-            var config = await _db.GetConfigAsync(Context.Guild.Id);
+            var config = await _manager.GetOrCreateConfigAsync(Context.Guild.Id);
 
             if (config.Prefix == null)
-                await ReplyAsync("This guild has no prefix");
+                await ReplyAsync($"This guild's prefix is {Context.Client.CurrentUser.Mention}");
             else
                 await ReplyAsync($"This guild's prefix is `{config.Prefix}`");
         }
@@ -34,8 +32,8 @@ namespace Dogey.Modules
         [RequireUserPermission(GuildPermission.Administrator)]
         public async Task SetPrefixAsync([Remainder]string prefix)
         {
-            var config = await _db.GetConfigAsync(Context.Guild.Id);
-            await _db.SetPrefixAsync(config, prefix);
+            var config = await _manager.GetOrCreateConfigAsync(Context.Guild.Id);
+            await _manager.SetPrefixAsync(config, prefix);
 
             await ReplyAsync($"This guild's prefix is now `{prefix}`");
         }

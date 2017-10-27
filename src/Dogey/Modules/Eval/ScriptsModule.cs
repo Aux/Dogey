@@ -1,8 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,11 +10,11 @@ namespace Dogey.Modules.Eval
     [Group("scripts"), Name("Scripts")]
     public class ScriptsModule : DogeyModuleBase
     {
-        private readonly ScriptDatabase _db;
+        private readonly ScriptManager _manager;
 
-        public ScriptsModule(IServiceProvider provider)
+        public ScriptsModule(ScriptManager manager)
         {
-            _db = provider.GetService<ScriptDatabase>();
+            _manager = manager;
         }
         
         [Command]
@@ -28,7 +26,7 @@ namespace Dogey.Modules.Eval
         [Summary("")]
         public async Task ScriptsAsync([Remainder]SocketUser user)
         {
-            var scripts = await _db.GetScriptsAsync(user.Id);
+            var scripts = await _manager.GetScriptsAsync(user.Id);
 
             if (scripts.Count() == 0)
             {
@@ -42,7 +40,7 @@ namespace Dogey.Modules.Eval
             builder.Title = $"Scripts for {user}";
             builder.Description = string.Join(", ", scripts.SelectMany(x => x.Aliases));
 
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync(builder);
         }
     }
 }

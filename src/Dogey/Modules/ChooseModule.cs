@@ -8,7 +8,7 @@ namespace Dogey.Modules
 {
     [Group("choose"), Name("Choose")]
     [Summary("Have dogey pick something for you")]
-    public class ChooseModule : ModuleBase<DogeyCommandContext>
+    public class ChooseModule : DogeyModuleBase
     {
         private readonly Random _random;
 
