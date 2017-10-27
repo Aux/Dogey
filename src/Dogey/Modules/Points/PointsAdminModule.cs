@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using System.Threading.Tasks;
 
@@ -26,7 +27,13 @@ namespace Dogey.Modules.Points
         [Summary("Modify the user's points balance by the specified amount")]
         public async Task ModifyAsync(SocketUser user, int amount)
         {
-            await Task.Delay(0);
+            await _manager.UpdateTotalPointsAsync(user.Id, amount);
+            var profile = await _manager.GetProfileAsync(user.Id);
+
+            var builder = new EmbedBuilder()
+                .WithDescription($"{user.Mention} now has {profile.TotalPoints}/{profile.WalletSize} point(s)");
+
+            await ReplyAsync(builder);
         }
 
         [Command("set")]

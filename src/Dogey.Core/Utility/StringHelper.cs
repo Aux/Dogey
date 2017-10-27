@@ -1,11 +1,12 @@
-﻿using System;
-
-namespace Dogey
+﻿namespace Dogey
 {
     public static class StringHelper
     {
         public static int RepeatingChars(object target, int length)
         {
+            if (target == null)
+                return 0;
+
             try
             {
                 var targetString = target.ToString();

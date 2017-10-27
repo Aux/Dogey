@@ -28,7 +28,7 @@ namespace Dogey.Modules.Points
             var profile = await _manager.GetProfileAsync(user.Id);
 
             var embed = new EmbedBuilder()
-                .WithDescription($"{user} currently has {profile.TotalPoints}/{profile.WalletSize} point(s).");
+                .WithDescription($"{user.Mention} currently has {profile.TotalPoints}/{profile.WalletSize} point(s).");
 
             await ReplyAsync(embed);
         }
@@ -60,16 +60,21 @@ namespace Dogey.Modules.Points
         [Remarks("Upgrading your wallet will double your potential max points (250 to 500, 500 to 1000, etc...), at the cost of a maxed-out wallet.")]
         public async Task UpgradeAsync()
         {
+            var builder = new EmbedBuilder();
             var profile = await _manager.GetProfileAsync(Context.User.Id);
 
             if (profile.IsMaxPoints())
             {
                 profile = await _manager.UpgradeWalletAsync(profile);
-                await ReplyAsync($"Your wallet size is now {profile.WalletSize}");
+                
+                builder.WithDescription($"{Context.User.Mention}'s wallet size is now {profile.WalletSize}");
+
+                await ReplyAsync(builder);
                 return;
             }
 
-            await ReplyAsync($"You need {profile.WalletSize - profile.TotalPoints} more point(s) to upgrade your wallet.");
+            builder.WithDescription($"{Context.User.Mention} needs {profile.WalletSize - profile.TotalPoints} more point(s) to upgrade your wallet.");
+            await ReplyAsync(builder);
         }
     }
 }

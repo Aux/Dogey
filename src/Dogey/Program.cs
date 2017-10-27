@@ -40,20 +40,20 @@ namespace Dogey
                     DefaultRunMode = RunMode.Async,
                     LogLevel = LogSeverity.Verbose
                 }))
-                //.AddSingleton(new GitHubClient(new ProductHeaderValue("Dogey"))
-                //{
-                //    Credentials = new Credentials(_config["tokens:github"])
-                //})
-                //.AddSingleton(new CustomsearchService(new BaseClientService.Initializer()
-                //{
-                //    ApiKey = _config["tokens:google"],
-                //    MaxUrlLength = 256
-                //}))
-                //.AddSingleton(new YouTubeService(new BaseClientService.Initializer()
-                //{
-                //    ApiKey = _config["tokens:google"],
-                //    MaxUrlLength = 256
-                //}))
+                .AddSingleton(new GitHubClient(new ProductHeaderValue("Dogey"))
+                {
+                    Credentials = new Credentials(_config["tokens:github"])
+                })
+                .AddSingleton(new CustomsearchService(new BaseClientService.Initializer()
+                {
+                    ApiKey = _config["tokens:google"],
+                    MaxUrlLength = 256
+                }))
+                .AddSingleton(new YouTubeService(new BaseClientService.Initializer()
+                {
+                    ApiKey = _config["tokens:google"],
+                    MaxUrlLength = 256
+                }))
                 .AddDbContext<TagDatabase>(ServiceLifetime.Transient)
                 .AddDbContext<ConfigDatabase>(ServiceLifetime.Transient)
                 .AddDbContext<PatsDatabase>(ServiceLifetime.Transient)
@@ -63,6 +63,8 @@ namespace Dogey
                 .AddTransient<TagManager>()
                 .AddTransient<PointsManager>()
                 .AddTransient<DogManager>()
+                .AddTransient<ConfigManager>()
+                .AddTransient<ScriptManager>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<RoslynManager>()
                 .AddSingleton<ChannelWatcher>()

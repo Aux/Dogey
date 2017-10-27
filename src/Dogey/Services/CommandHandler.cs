@@ -24,6 +24,7 @@ namespace Dogey
             _discord = discord;
             _commands = commands;
             _logger = logger;
+            _manager = manager;
             _provider = provider;
 
             _discord.MessageReceived += OnMessageReceivedAsync;

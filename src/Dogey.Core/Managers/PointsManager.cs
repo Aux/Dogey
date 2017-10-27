@@ -35,9 +35,17 @@ namespace Dogey
         public async Task UpdateTotalPointsAsync(ulong userId, int amount)
         {
             var profile = await GetProfileAsync(userId);
-            if (profile.IsMaxPoints()) return;
-            profile.TotalPoints += (ulong)amount;
+            if (profile.IsMaxPoints())
+                return;
+
+            var total = profile.TotalPoints + (ulong)amount;
+            if (total > profile.WalletSize)
+                profile.TotalPoints = profile.WalletSize;
+            else
+                profile.TotalPoints = total;
+
             _db.Profiles.Update(profile);
+            await _db.SaveChangesAsync();
         }
 
         public async Task TryCreateProfileAsync(ulong userId)

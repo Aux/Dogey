@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using System;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -8,35 +9,51 @@ namespace Dogey
     {
         private readonly DiscordSocketClient _discord;
         private readonly PointsManager _manager;
+        private readonly LoggingService _logger;
 
-        public PointsService(DiscordSocketClient discord, PointsManager manager)
+        private const ulong _dapi = 81384788765712384;
+
+        public PointsService(
+            DiscordSocketClient discord,
+            PointsManager manager,
+            LoggingService logger)
         {
             _discord = discord;
             _manager = manager;
+            _logger = logger;
 
             _discord.MessageReceived += OnMessageReceivedAsync;
-            _discord.MessageDeleted += OnMessageDeletedAsync;
+            //_discord.MessageDeleted += OnMessageDeletedAsync;
         }
 
         private Task OnMessageReceivedAsync(SocketMessage msg)
         {
             _ = Task.Run(async () =>
             {
-                if (msg.Author.IsBot) return;
-
-                var multiplier = GetMultiplier(msg.Id);
-                if (multiplier == 0)
+                if ((msg.Channel is IGuildChannel g) && g.Id == _dapi)
                     return;
 
-                await _manager.CreateAsync(new Point
+                try
                 {
-                    MessageId = msg.Id,
-                    Modifier = multiplier,
-                    UserId = msg.Author.Id
-                });
+                    if (msg.Author.IsBot) return;
 
-                await _manager.TryCreateProfileAsync(msg.Author.Id);
-                await _manager.UpdateTotalPointsAsync(msg.Author.Id, multiplier);
+                    var multiplier = GetMultiplier(msg.Id);
+                    if (multiplier == 0)
+                        return;
+
+                    await _manager.CreateAsync(new Point
+                    {
+                        MessageId = msg.Id,
+                        Modifier = multiplier,
+                        UserId = msg.Author.Id
+                    });
+
+                    await _manager.TryCreateProfileAsync(msg.Author.Id);
+                    await _manager.UpdateTotalPointsAsync(msg.Author.Id, multiplier);
+                } catch (Exception ex)
+                {
+                    await _logger.LogAsync("Error", "PointsService", ex.ToString() + "\n\n");
+                }
             });
             return Task.CompletedTask;
         }
@@ -45,11 +62,18 @@ namespace Dogey
         {
             _ = Task.Run(async () =>
             {
-                var point = await _manager.GetPointAsync(msg.Id);
-                if (point == null) return;
+                try
+                {
+                    var point = await _manager.GetPointAsync(msg.Id);
+                    if (point == null) return;
 
-                await _manager.DeletePointAsync(point);
-                await _manager.UpdateTotalPointsAsync(point.UserId, point.Modifier * -1);
+                    await _manager.DeletePointAsync(point);
+                    await _manager.UpdateTotalPointsAsync(point.UserId, point.Modifier * -1);
+                }
+                catch (Exception ex)
+                {
+                    await _logger.LogAsync("Error", "PointsService", ex.ToString() + "\n\n");
+                }
             });
             return Task.CompletedTask;
         }
@@ -67,7 +91,7 @@ namespace Dogey
             {
                 int repeats = StringHelper.RepeatingChars(msgId, mult);
                 if (repeats > 0)
-                    totalMult += repeats * mult;
+                    totalMult += repeats * (mult - 1);
             }
 
             return totalMult;
