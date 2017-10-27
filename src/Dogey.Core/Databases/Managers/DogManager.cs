@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,11 @@ namespace Dogey
         {
             _random = random;
         }
+
+        public Task<DogImage> GetDogImageAsync(ulong msgId)
+            => _db.Dogs.SingleOrDefaultAsync(x => x.MessageId == msgId);
+        public Task<DogImage> GetLastestImageAsync(ulong channelId)
+            => _db.Dogs.LastOrDefaultAsync();
 
         public Task<DogImage> GetRandomDogImageAsync(ulong channelId)
         {
@@ -38,6 +44,16 @@ namespace Dogey
                 MessageId = msg.Id,
                 Url = image.Url
             });
+        }
+
+        public async Task RemoveDogImageAsync(ulong msgId)
+        {
+            var image = await GetDogImageAsync(msgId);
+            if (image == null)
+                return;
+
+            _db.Dogs.Remove(image);
+            await _db.SaveChangesAsync();
         }
 
         // Create

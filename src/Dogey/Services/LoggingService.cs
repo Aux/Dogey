@@ -26,17 +26,20 @@ namespace Dogey
             _commands.Log += OnLogAsync;
         }
 
-        private Task OnLogAsync(LogMessage msg)
+        public Task LogAsync(object severity, string source, string message)
         {
-            if (!Directory.Exists(_logDirectory)) 
+            if (!Directory.Exists(_logDirectory))
                 Directory.CreateDirectory(_logDirectory);
-            if (!File.Exists(_logFile))           
+            if (!File.Exists(_logFile))
                 File.Create(_logFile).Dispose();
 
-            string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{msg.Severity}] {msg.Source}: {msg.Exception?.ToString() ?? msg.Message}";
-            File.AppendAllText(_logFile, logText + "\n"); 
+            string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{severity}] {source}: {message}";
+            File.AppendAllText(_logFile, logText + "\n");
 
-            return Console.Out.WriteLineAsync(logText);
+            return PrettyConsole.LogAsync(severity, source, message);
         }
+
+        private Task OnLogAsync(LogMessage msg)
+            => LogAsync(msg.Severity, msg.Source, msg.Exception?.ToString() ?? msg.Message);
     }
 }

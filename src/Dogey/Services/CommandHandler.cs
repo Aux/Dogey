@@ -10,15 +10,18 @@ namespace Dogey
     {
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
+        private readonly LoggingService _logger;
         private readonly IServiceProvider _provider;
 
         public CommandHandler(
             DiscordSocketClient discord,
             CommandService commands,
+            LoggingService logger,
             IServiceProvider provider)
         {
             _discord = discord;
             _commands = commands;
+            _logger = logger;
             _provider = provider;
 
             _discord.MessageReceived += OnMessageReceivedAsync;
@@ -59,7 +62,7 @@ namespace Dogey
                 return;
             
             if (result is ExecuteResult r)
-                PrettyConsole.Log(LogSeverity.Error, "Commands", r.Exception?.ToString());
+                await _logger.LogAsync(LogSeverity.Error, "Commands", r.Exception?.ToString() ?? r.ErrorReason);
             else
                 await context.Channel.SendMessageAsync(result.ErrorReason);
         }
