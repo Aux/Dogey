@@ -19,7 +19,7 @@ namespace Dogey
         public Task<DogImage> GetDogImageAsync(ulong msgId)
             => _db.Dogs.SingleOrDefaultAsync(x => x.MessageId == msgId);
         public Task<DogImage> GetLastestImageAsync(ulong channelId)
-            => _db.Dogs.LastOrDefaultAsync();
+            => _db.Dogs.LastOrDefaultAsync(x => x.ChannelId == channelId);
 
         public Task<DogImage> GetRandomDogImageAsync(ulong channelId)
         {

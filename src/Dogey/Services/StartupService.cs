@@ -23,7 +23,7 @@ namespace Dogey
             _discord = discord;
             _commands = commands;
         }
-
+        
         public async Task StartAsync()
         {
             await _discord.LoginAsync(TokenType.Bot, _config["tokens:discord"]);
@@ -32,5 +32,6 @@ namespace Dogey
             _commands.AddTypeReader<Uri>(new UriTypeReader());
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }
+
     }
 }

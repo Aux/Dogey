@@ -2,34 +2,26 @@
 {
     public static class StringHelper
     {
-        public static int RepeatingChars(object target, int length)
+        public static int RepeatingChars(string target, int length)
         {
-            if (target == null)
-                return 0;
-
-            try
+            int total = 0;
+            for (int i = 0; i < target.Length - 1; i++)
             {
-                var targetString = target.ToString();
-                int total = 0;
-                for (int i = 0; i < targetString.Length - 1; i++)
+                char c = target[i];
+
+                bool match = true;
+                for (int n = 0; n < length; n++)
                 {
-                    char c = targetString[i];
-
-                    bool match = true;
-                    for (int n = 0; n < length; n++)
+                    if (target?[i + n] != c)
                     {
-                        if (targetString?[i + n] != c)
-                        {
-                            match = false;
-                            break;
-                        }
+                        match = false;
+                        break;
                     }
-
-                    if (match) total++;
                 }
-                return total;
+
+                if (match) total++;
             }
-            finally { }
+            return total;
         }
     }
 }

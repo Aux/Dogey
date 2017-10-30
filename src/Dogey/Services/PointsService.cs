@@ -41,10 +41,10 @@ namespace Dogey
                     if (multiplier == 0)
                         return;
 
-                    await _manager.CreateAsync(new Point
+                    await _manager.CreateAsync(new MessagePoint
                     {
                         MessageId = msg.Id,
-                        Modifier = multiplier,
+                        Amount = multiplier,
                         UserId = msg.Author.Id
                     });
 
@@ -68,7 +68,7 @@ namespace Dogey
                     if (point == null) return;
 
                     await _manager.DeletePointAsync(point);
-                    await _manager.UpdateTotalPointsAsync(point.UserId, point.Modifier * -1);
+                    await _manager.UpdateTotalPointsAsync(point.UserId, point.Amount * -1);
                 }
                 catch (Exception ex)
                 {
@@ -89,7 +89,7 @@ namespace Dogey
             // Add 3-5x mult for repeating chars
             for (int mult = 3; mult <= 5; mult++)
             {
-                int repeats = StringHelper.RepeatingChars(msgId, mult);
+                int repeats = StringHelper.RepeatingChars(msgId.ToString(), mult);
                 if (repeats > 0)
                     totalMult += repeats * (mult - 1);
             }

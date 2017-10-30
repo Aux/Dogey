@@ -64,10 +64,15 @@ namespace Dogey
             if (result.IsSuccess)
                 return;
             
-            if (result is ExecuteResult r)
-                await _logger.LogAsync(LogSeverity.Error, "Commands", r.Exception?.ToString() ?? r.ErrorReason);
-            else
-                await context.Channel.SendMessageAsync(result.ErrorReason);
+            switch (result)
+            {
+                case ExecuteResult exr:
+                    await _logger.LogAsync(LogSeverity.Error, "Commands", exr.Exception?.ToString() ?? exr.ErrorReason);
+                    break;
+                default:
+                    await context.Channel.SendMessageAsync(result.ErrorReason);
+                    break;
+            }
         }
     }
 }

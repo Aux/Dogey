@@ -14,9 +14,9 @@ namespace Dogey
             => _db.Costs.FirstOrDefaultAsync(x => x.Id == command);
 
         // Points
-        public Task<Point> GetPointAsync(ulong msgId)
-            => _db.Points.SingleOrDefaultAsync(x => x.MessageId == msgId);
-        public Task<Point[]> GetPointsAsync(ulong userId)
+        public Task<Point> GetPointAsync(ulong pointId)
+            => _db.Points.SingleOrDefaultAsync(x => x.Id == pointId);
+        public Task<Point[]> GetEarnedPointsAsync(ulong userId)
             => _db.Points.Where(x => x.UserId == userId).ToArrayAsync();
         public Task<Point[]> GetRecentPointsAsync(ulong userId, int count = 4)
             => _db.Points.Where(x => x.UserId == userId).Take(count).ToArrayAsync();
@@ -31,14 +31,19 @@ namespace Dogey
             => _db.Profiles.AnyAsync(x => x.UserId == userId);
         public Task<PointProfile> GetProfileAsync(ulong userId)
             => _db.Profiles.SingleOrDefaultAsync(x => x.UserId == userId);
+        public async Task<PointProfile> GetOrCreateProfileAsync(ulong userId)
+        {
+            await TryCreateProfileAsync(userId);
+            return await GetProfileAsync(userId);
+        }
         
-        public async Task UpdateTotalPointsAsync(ulong userId, int amount)
+        public async Task UpdateTotalPointsAsync(ulong userId, long amount)
         {
             var profile = await GetProfileAsync(userId);
             if (profile.IsMaxPoints())
                 return;
 
-            var total = profile.TotalPoints + (ulong)amount;
+            var total = profile.TotalPoints + amount;
             if (total > profile.WalletSize)
                 profile.TotalPoints = profile.WalletSize;
             else

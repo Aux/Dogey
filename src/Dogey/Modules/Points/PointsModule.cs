@@ -25,35 +25,35 @@ namespace Dogey.Modules.Points
         [Summary("View the specified user's current points profile")]
         public async Task PointsAsync(SocketUser user)
         {
-            var profile = await _manager.GetProfileAsync(user.Id);
+            var profile = await _manager.GetOrCreateProfileAsync(user.Id);
 
             var embed = new EmbedBuilder()
-                .WithDescription($"{user.Mention} currently has {profile.TotalPoints}/{profile.WalletSize} point(s).");
+                .WithDescription($"{user.Mention} currently has {profile.TotalPoints}/{profile.WalletSize} points.");
 
             await ReplyAsync(embed);
         }
 
-        [Command("recent")]
-        [Summary("View your recent points balance changes")]
-        public Task RecentAsync()
-            => RecentAsync(Context.User);
+        //[Command("recent")]
+        //[Summary("View your recent points balance changes")]
+        //public Task RecentAsync()
+        //    => RecentAsync(Context.User);
 
-        [Command("recent")]
-        [Summary("View the specified user's recent points balance changes")]
-        public async Task RecentAsync(SocketUser user)
-        {
-            var points = await _manager.GetRecentPointsAsync(user.Id);
+        //[Command("recent")]
+        //[Summary("View the specified user's recent points balance changes")]
+        //public async Task RecentAsync(SocketUser user)
+        //{
+        //    var points = await _manager.GetRecentPointsAsync(user.Id);
 
-            var builder = new StringBuilder();
-            foreach (var point in points)
-                builder.AppendLine($"({point.MessageId}) **x{point.Modifier}**");
+        //    var builder = new StringBuilder();
+        //    foreach (var point in points)
+        //        builder.AppendLine($"({point.MessageId}) **x{point.Amount}**");
 
-            var embed = new EmbedBuilder()
-                .WithTitle($"Recent point changes for {user}")
-                .WithDescription(builder.ToString());
+        //    var embed = new EmbedBuilder()
+        //        .WithTitle($"Recent point changes for {user}")
+        //        .WithDescription(builder.ToString());
 
-            await ReplyAsync(embed);
-        }
+        //    await ReplyAsync(embed);
+        //}
         
         [Command("upgrade")]
         [Summary("Double your wallet size")]
@@ -73,7 +73,7 @@ namespace Dogey.Modules.Points
                 return;
             }
 
-            builder.WithDescription($"{Context.User.Mention} needs {profile.WalletSize - profile.TotalPoints} more point(s) to upgrade your wallet.");
+            builder.WithDescription($"{Context.User.Mention} needs {profile.WalletSize - profile.TotalPoints} more points to upgrade your wallet.");
             await ReplyAsync(builder);
         }
     }

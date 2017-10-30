@@ -4,9 +4,9 @@ namespace Dogey
 {
     public class Point
     {
+        public ulong Id { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-        public ulong MessageId { get; set; }
         public ulong UserId { get; set; }
-        public int Modifier { get; set; }
+        public long Amount { get; set; }
     }
 }

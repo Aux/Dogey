@@ -7,6 +7,8 @@ namespace Dogey
     public class PointsDatabase : DbContext
     {
         public DbSet<Point> Points { get; private set; }
+        public DbSet<MessagePoint> MessagePoints { get; private set; }
+        public DbSet<UserPoint> UserPoints { get; private set; }
         public DbSet<PointProfile> Profiles { get; private set; }
         public DbSet<Cost> Costs { get; private set; }
 
@@ -28,7 +30,7 @@ namespace Dogey
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Point>()
-                .HasKey(x => x.MessageId);
+                .HasKey(x => x.Id);
             builder.Entity<Point>()
                 .Property(x => x.Timestamp)
                 .IsRequired();
@@ -36,7 +38,15 @@ namespace Dogey
                 .Property(x => x.UserId)
                 .IsRequired();
             builder.Entity<Point>()
-                .Property(x => x.Modifier)
+                .Property(x => x.Amount)
+                .IsRequired();
+
+            builder.Entity<MessagePoint>()
+                .Property(x => x.MessageId)
+                .IsRequired();
+
+            builder.Entity<UserPoint>()
+                .Property(x => x.PayerId)
                 .IsRequired();
 
             builder.Entity<PointProfile>()
