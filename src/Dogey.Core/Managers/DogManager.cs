@@ -31,6 +31,9 @@ namespace Dogey
             return Task.FromResult(images.ToArray().ElementAt(selected));
         }
 
+        public Task<bool> IsDupeImageAsync(IUserMessage msg)
+            => _db.Dogs.AnyAsync(x => x.MessageId == msg.Id);
+        
         public async Task AddDogImageAsync(IUserMessage msg)
         {
             var image = msg.Attachments.FirstOrDefault();

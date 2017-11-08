@@ -60,12 +60,15 @@ namespace Dogey
                     if (latestImage == null)
                         messages = await channel.GetMessagesAsync(100000).Flatten();
                     else
-                        messages = await channel.GetMessagesAsync(latestImage.MessageId, Direction.Before).Flatten();
+                        messages = await channel.GetMessagesAsync(latestImage.MessageId, Direction.After).Flatten();
                     
                     foreach (var msg in messages)
                     {
                         if (msg is IUserMessage usermsg)
                         {
+                            var isDupe = await _manager.IsDupeImageAsync(usermsg);
+                            if (isDupe) continue;
+
                             await _manager.AddDogImageAsync(usermsg);
                             await _logger.LogAsync("Info", "ChannelWatcher", $"Added {channelId}/{usermsg.Id}");
                         }
