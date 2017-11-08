@@ -73,7 +73,7 @@ namespace Dogey.Modules.Points
                 return;
             }
 
-            builder.WithDescription($"{Context.User.Mention} needs {profile.WalletSize - profile.TotalPoints} more points to upgrade your wallet.");
+            builder.WithDescription($"{Context.User.Mention} needs {profile.WalletSize - profile.TotalPoints} more points to upgrade their wallet.");
             await ReplyAsync(builder);
         }
     }

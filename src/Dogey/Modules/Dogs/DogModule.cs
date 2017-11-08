@@ -40,7 +40,7 @@ namespace Dogey.Modules.Dogs
 
             var embed = new EmbedBuilder()
                 .WithImageUrl(image.Url)
-                .WithFooter($"{Context.User.Mention} now has {points.TotalPoints}/{points.WalletSize} points");
+                .WithFooter($"{Context.User} now has {points.TotalPoints}/{points.WalletSize} points");
 
             await ReplyAsync(embed);
         }
