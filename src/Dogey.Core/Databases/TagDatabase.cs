@@ -7,7 +7,8 @@ namespace Dogey
     public class TagDatabase : DbContext
     {
         public DbSet<Tag> Tags { get; private set; }
-        public DbSet<TagLog> Logs { get; private set; }
+        public DbSet<TagAlias> Aliases { get; private set; }
+        public DbSet<TagDefaults> Defaults { get; private set; }
 
         public TagDatabase()
         {
@@ -45,27 +46,28 @@ namespace Dogey
             builder.Entity<Tag>()
                 .Property(x => x.Content)
                 .IsRequired();
-            builder.Entity<Tag>()
-                .Property(x => x.Names)
-                .IsRequired();
-            builder.Entity<Tag>()
-                .Ignore(x => x.Aliases);
 
-            builder.Entity<TagLog>()
+            builder.Entity<TagAlias>()
                 .Property(x => x.Id)
                 .ValueGeneratedOnAdd()
                 .IsRequired();
-            builder.Entity<TagLog>()
-                .Property(x => x.GuildId)
-                .IsRequired();
-            builder.Entity<TagLog>()
-                .Property(x => x.ChannelId)
-                .IsRequired();
-            builder.Entity<TagLog>()
-                .Property(x => x.UserId)
-                .IsRequired();
-            builder.Entity<TagLog>()
+            builder.Entity<TagAlias>()
                 .Property(x => x.TagId)
+                .IsRequired();
+            builder.Entity<TagAlias>()
+                .Property(x => x.OwnerId)
+                .IsRequired();
+            builder.Entity<TagAlias>()
+                .Property(x => x.Name)
+                .IsRequired();
+            builder.Entity<TagAlias>()
+                .HasOne(x => x.Tag)
+                .WithMany(x => x.Aliases);
+
+            builder.Entity<TagDefaults>()
+                .HasKey(x => x.UserId);
+            builder.Entity<TagDefaults>()
+                .Property(x => x.UserId)
                 .IsRequired();
         }
     }

@@ -30,6 +30,8 @@ namespace Dogey
             await _discord.StartAsync();
 
             _commands.AddTypeReader<Uri>(new UriTypeReader());
+            _commands.AddTypeReader<Tag>(new TagTypeReader());
+
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 

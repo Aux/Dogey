@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Modules\InspectModule.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Google.Apis.Customsearch.v1" Version="1.29.2.896" />
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.29.2.1006" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="2.4.0" />

@@ -71,6 +71,7 @@ namespace Dogey
                 .AddSingleton<LoggingService>()
                 .AddSingleton<StartupService>()
                 .AddSingleton<PointsService>()
+                .AddSingleton<TagService>()
                 .AddSingleton<Random>()
                 .AddSingleton(_config);
 
@@ -82,6 +83,7 @@ namespace Dogey
             provider.GetRequiredService<CommandHandler>();
             provider.GetRequiredService<PointsService>();
             provider.GetRequiredService<ChannelWatcher>();
+            provider.GetRequiredService<TagService>();
 
             await Task.Delay(-1);
         }
