@@ -12,12 +12,12 @@ namespace Dogey
     {
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
-        private readonly IConfigurationRoot _config;
+        private readonly IConfiguration _config;
         
         public StartupService(
             DiscordSocketClient discord,
             CommandService commands,
-            IConfigurationRoot config)
+            IConfiguration config)
         {
             _config = config;
             _discord = discord;
@@ -30,10 +30,8 @@ namespace Dogey
             await _discord.StartAsync();
 
             _commands.AddTypeReader<Uri>(new UriTypeReader());
-            _commands.AddTypeReader<Tag>(new TagTypeReader());
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }
-
     }
 }

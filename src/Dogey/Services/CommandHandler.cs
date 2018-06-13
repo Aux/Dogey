@@ -1,7 +1,10 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -11,68 +14,92 @@ namespace Dogey
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
         private readonly LoggingService _logger;
-        private readonly ConfigManager _manager;
+        private readonly IConfiguration _config;
         private readonly IServiceProvider _provider;
+
+        private const string _tempPrefix = "!";
 
         public CommandHandler(
             DiscordSocketClient discord,
             CommandService commands,
             LoggingService logger,
-            ConfigManager manager,
+            IConfiguration config,
             IServiceProvider provider)
         {
             _discord = discord;
             _commands = commands;
             _logger = logger;
-            _manager = manager;
+            _config = config;
             _provider = provider;
 
             _discord.MessageReceived += OnMessageReceivedAsync;
         }
-        
+
         private async Task OnMessageReceivedAsync(SocketMessage s)
         {
-            var msg = s as SocketUserMessage;
-            if (msg == null)
-                return;
+            if (!(s is SocketUserMessage msg)) return;
+            if (msg.Author.Id == _discord.CurrentUser.Id) return;
 
             var context = new DogeyCommandContext(_discord, msg);
-            string prefix = await _manager.GetPrefixAsync(context.Guild.Id);
+            string prefix = _tempPrefix;
 
             int argPos = 0;
             bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
 
             if (hasStringPrefix || msg.HasMentionPrefix(_discord.CurrentUser, ref argPos))
                 using (context.Channel.EnterTypingState())
-                    await ExecuteAsync(context, _provider, argPos);
-        }
-
-        public async Task ExecuteAsync(DogeyCommandContext context, IServiceProvider provider, int argPos)
-        {
-            var result = await _commands.ExecuteAsync(context, argPos, provider);
-            await ResultAsync(context, result);
+                    await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
         }
 
         public async Task ExecuteAsync(DogeyCommandContext context, IServiceProvider provider, string input)
         {
             var result = await _commands.ExecuteAsync(context, input, provider);
-            await ResultAsync(context, result);
-        }
 
-        private async Task ResultAsync(DogeyCommandContext context, IResult result)
-        {
-            if (result.IsSuccess)
+            if (result.IsSuccess || result.Error == CommandError.UnknownCommand)
                 return;
-            
-            switch (result)
+            if (result is ExecuteResult execute)
+                await _logger.LogAsync(LogSeverity.Error, "Commands", execute.Exception?.ToString());
+            if (result is ParseResult parse && parse.Error == CommandError.BadArgCount)
             {
-                case ExecuteResult exr:
-                    await _logger.LogAsync(LogSeverity.Error, "Commands", exr.Exception?.ToString() ?? exr.ErrorReason);
-                    break;
-                default:
-                    await context.Channel.SendMessageAsync(result.ErrorReason);
-                    break;
+                var command = _commands.Search(context, input).Commands
+                    .OrderByDescending(x => x.Command.Parameters.Count())
+                    .FirstOrDefault().Command;
+
+                var builder = new StringBuilder(_tempPrefix + command.Name);
+                if (command.Parameters.Count > 0)
+                {
+                    // !name <required> [optional=1]
+                    foreach (var arg in command.Parameters)
+                    {
+                        string argText = arg.Name;
+
+                        if (arg.IsRemainder)
+                            argText += "...";
+                        if (arg.IsMultiple)
+                            argText += "+";
+
+                        if (arg.IsOptional)
+                        {
+                            argText = '[' + argText;
+                            if (arg.DefaultValue != null)
+                                argText += ($"={arg.DefaultValue}");
+                            argText += ']';
+                        }
+                        else
+                        {
+                            argText = '<' + argText;
+                            argText += '>';
+                        }
+
+                        builder.Append($" {argText}");
+                    }
+                }
+
+                await context.Channel.SendMessageAsync($"{parse.ErrorReason} {builder}");
+                return;
             }
+
+            await context.Channel.SendMessageAsync(result.ErrorReason);
         }
     }
 }

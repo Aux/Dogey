@@ -1,5 +1,4 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.IO;
@@ -14,8 +13,10 @@ namespace Dogey
 
         private string _logDirectory { get; }
         private string _logFile => Path.Combine(_logDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt");
-        
-        public LoggingService(DiscordSocketClient discord, CommandService commands)
+
+        public LoggingService(
+            DiscordSocketClient discord,
+            CommandService commands)
         {
             _logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
 
@@ -26,7 +27,7 @@ namespace Dogey
             _commands.Log += OnLogAsync;
         }
 
-        public Task LogAsync(object severity, string source, string message)
+        public Task LogAsync(object severity, string source, string message, bool echo = true)
         {
             if (!Directory.Exists(_logDirectory))
                 Directory.CreateDirectory(_logDirectory);
@@ -36,10 +37,13 @@ namespace Dogey
             string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{severity}] {source}: {message}";
             File.AppendAllText(_logFile, logText + "\n");
 
-            return PrettyConsole.LogAsync(severity, source, message);
+            if (echo)
+                return Console.Out.WriteLineAsync(logText);
+            else
+                return Task.CompletedTask;
         }
 
-        private Task OnLogAsync(LogMessage msg)
+        private Task OnLogAsync(Discord.LogMessage msg)
             => LogAsync(msg.Severity, msg.Source, msg.Exception?.ToString() ?? msg.Message);
     }
 }

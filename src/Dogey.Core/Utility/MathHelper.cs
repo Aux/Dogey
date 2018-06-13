@@ -34,19 +34,5 @@ namespace Dogey
 
             return d[n, m];
         }
-
-        public static bool IsPrime(ulong number)
-        {
-            if ((number & 1) == 0)
-                return number == 2;
-            
-            for (ulong i = 3; (i * i) <= number; i += 2)
-            {
-                if ((number % i) == 0)
-                    return false;
-            }
-
-            return number != 1;
-        }
     }
 }
