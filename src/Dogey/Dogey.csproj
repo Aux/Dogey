@@ -13,8 +13,4 @@
     <ProjectReference Include="..\Dogey.Core\Dogey.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Modules\" />
-  </ItemGroup>
-
 </Project>

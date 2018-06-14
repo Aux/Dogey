@@ -7,19 +7,14 @@ namespace Dogey
 {
     public class DogeyModuleBase : ModuleBase<DogeyCommandContext>
     {
-        public async Task<IUserMessage> ReplyAsync(Embed embed = null, RequestOptions options = null)
-        {
-            return await Context.Channel.SendMessageAsync("", false, embed, options).ConfigureAwait(false);
-        }
+        public Task ReplySuccessAsync()
+            => ReplyAsync("Success");
 
-        public async Task<IUserMessage> ReplyAsync(string message, Embed embed = null, RequestOptions options = null)
-        {
-            return await Context.Channel.SendMessageAsync(message, false, embed, options).ConfigureAwait(false);
-        }
+        public Task ReplyEmbedAsync(Embed embed = null)
+            => ReplyAsync("", false, embed, null);
         
-        public async Task<IUserMessage> ReplyAsync(Stream stream, string fileName, string message = null, RequestOptions options = null)
-        {
-            return await Context.Channel.SendFileAsync(stream, fileName, message, false, options).ConfigureAwait(false);
-        }
+        public Task ReplyFileAsync(Stream stream, string fileName, string message = null)
+            => Context.Channel.SendFileAsync(stream, fileName, message, false, null);
+        
     }
 }

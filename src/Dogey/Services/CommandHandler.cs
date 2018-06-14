@@ -14,7 +14,7 @@ namespace Dogey
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
         private readonly LoggingService _logger;
-        private readonly IConfiguration _config;
+        private readonly RootController _root;
         private readonly IServiceProvider _provider;
 
         private const string _tempPrefix = "!";
@@ -23,13 +23,13 @@ namespace Dogey
             DiscordSocketClient discord,
             CommandService commands,
             LoggingService logger,
-            IConfiguration config,
+            RootController root,
             IServiceProvider provider)
         {
             _discord = discord;
             _commands = commands;
             _logger = logger;
-            _config = config;
+            _root = root;
             _provider = provider;
 
             _discord.MessageReceived += OnMessageReceivedAsync;
@@ -41,7 +41,7 @@ namespace Dogey
             if (msg.Author.Id == _discord.CurrentUser.Id) return;
 
             var context = new DogeyCommandContext(_discord, msg);
-            string prefix = _tempPrefix;
+            string prefix = await _root.GetPrefixAsync(context.Guild?.Id ?? 0);
 
             int argPos = 0;
             bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
@@ -99,7 +99,8 @@ namespace Dogey
                 return;
             }
 
-            await context.Channel.SendMessageAsync(result.ErrorReason);
+            if (!string.IsNullOrWhiteSpace(result.ErrorReason))
+                await context.Channel.SendMessageAsync(result.ErrorReason);
         }
     }
 }
