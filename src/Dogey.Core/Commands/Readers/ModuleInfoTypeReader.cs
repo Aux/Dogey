@@ -14,8 +14,7 @@ namespace Dogey
             var module = commandService.Modules.FirstOrDefault(x => x.Name.ToLower() == input.ToLower());
             if (module != null)
                 return Task.FromResult(TypeReaderResult.FromSuccess(module));
-            else
-                return Task.FromResult(TypeReaderResult.FromError(CommandError.Unsuccessful, $"A module named `{input}` does not exist"));
+            return Task.FromResult(TypeReaderResult.FromError(CommandError.Unsuccessful, $"A module named `{input}` does not exist"));
         }
     }
 }

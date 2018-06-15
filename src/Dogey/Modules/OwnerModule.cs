@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [RequireOwner]
+    [RequireEnabled]
     public class OwnerModule : DogeyModuleBase
     {
+        [Command("reactwith")]
+        public async Task ReactWithAsync(Emote emote)
+        {
+            await Context.Message.AddReactionAsync(emote);
+        }
+
         [Command("setactivity")]
         public async Task SetActivityAsync(Uri url, [Remainder]string activity)
         {

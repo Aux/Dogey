@@ -10,11 +10,10 @@ namespace Dogey
         {
             var db = (RootController)services.GetService(typeof(RootController));
 
-            bool enabled = await db.ModuleEnabledAsync(context.Guild, command.Module.Name);
-            if (enabled)
-                return PreconditionResult.FromSuccess();
-            else
+            bool disabled = await db.ModuleEnabledAsync(context.Guild, command.Module.Name);
+            if (disabled)
                 return PreconditionResult.FromError(string.Empty);
+            return PreconditionResult.FromSuccess();
         }
     }
 }
