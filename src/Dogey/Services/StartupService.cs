@@ -31,6 +31,7 @@ namespace Dogey
 
             _commands.AddTypeReader<Uri>(new UriTypeReader());
             _commands.AddTypeReader<ModuleInfo>(new ModuleInfoTypeReader());
+            _commands.AddTypeReader<Emote>(new EmoteTypeReader());
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
         }

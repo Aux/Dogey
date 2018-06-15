@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -18,7 +19,15 @@ namespace Dogey
         [Command("config")]
         public async Task ViewAsync()
         {
-            await Task.Delay(0);
+            var config = await _root.GetOrCreateConfigAsync(Context.Guild);
+            var moduleNames = await _root.GetDisabledModulesAsync(Context.Guild);
+
+            var builder = new EmbedBuilder()
+                .AddField("Prefix", config.Prefix ?? "*none*")
+                .AddField("Disabled Modules", moduleNames.Count > 0 ? string.Join(", ", moduleNames) : "*none*")
+                .WithFooter("Updated")
+                .WithTimestamp(config.UpdatedAt);
+            await ReplyEmbedAsync(builder);
         }
 
         [Command("resetprefix")]
@@ -28,7 +37,7 @@ namespace Dogey
         [Command("setprefix")]
         public async Task SetPrefixAsync([Remainder]string prefix)
         {
-            var config = await _root.GetConfigAsync(Context.Guild);
+            var config = await _root.GetOrCreateConfigAsync(Context.Guild);
             config.Prefix = prefix;
             await _root.ModifyAsync(config);
             await ReplyAsync($"The command prefix is now `{prefix}`");
@@ -37,21 +46,38 @@ namespace Dogey
         [Command("enable")]
         public async Task EnableAsync(ModuleInfo module)
         {
-            var config = new ModuleConfig
+            var config = await _root.GetConfigAsync(Context.Guild, module.Name);
+            if (config == null)
             {
-                GuildId = Context.Guild.Id,
-                ModuleName = module.Name
-            };
+                await ReplyAsync("This module is already enabled");
+                return;
+            }
 
-            await _root.CreateAsync(config);
+            await _root.DeleteAsync(config);
             await ReplySuccessAsync();
         }
 
         [Command("disable")]
         public async Task DisableAsync(ModuleInfo module)
         {
-            var config = await _root.GetConfigAsync(Context.Guild, module.Name);
-            await _root.DeleteAsync(config);
+            if (!module.Preconditions.Any(x => x is RequireEnabledAttribute))
+            {
+                await ReplyAsync("This module cannot be disabled");
+                return;
+            }
+
+            var exists = await _root.ModuleEnabledAsync(Context.Guild, module.Name);
+            if (exists)
+            {
+                await ReplyAsync("This module is already disabled");
+                return;
+            }
+            
+            await _root.CreateAsync(new ModuleConfig
+            {
+                GuildId = Context.Guild.Id,
+                ModuleName = module.Name
+            });
             await ReplySuccessAsync();
         }
     }

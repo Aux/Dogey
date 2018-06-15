@@ -24,6 +24,14 @@ namespace Dogey
         public Task<ModuleConfig> GetConfigAsync(IGuild guild, string moduleName)
             => _db.ModuleConfigs.SingleOrDefaultAsync(x => x.GuildId == guild.Id && x.ModuleName.ToLower() == moduleName.ToLower());
 
+        public async Task<GuildConfig> GetOrCreateConfigAsync(IGuild guild)
+        {
+            bool exists = await _db.GuildConfigs.AnyAsync(x => x.Id == guild.Id);
+            if (exists)
+                return await GetConfigAsync(guild);
+            return await CreateAsync(new GuildConfig { Id = guild.Id });
+        }
+
         public async Task<GuildConfig> CreateAsync(GuildConfig config)
         {
             await _db.GuildConfigs.AddAsync(config);
@@ -43,7 +51,7 @@ namespace Dogey
             await _db.SaveChangesAsync();
             return config;
         }
-
+        
         public async Task DeleteAsync(ModuleConfig config)
         {
             _db.ModuleConfigs.Remove(config);

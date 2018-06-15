@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 using System.Text;
@@ -47,8 +46,7 @@ namespace Dogey
             bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
 
             if (hasStringPrefix || msg.HasMentionPrefix(_discord.CurrentUser, ref argPos))
-                using (context.Channel.EnterTypingState())
-                    await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
+                await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
         }
 
         public async Task ExecuteAsync(DogeyCommandContext context, IServiceProvider provider, string input)
