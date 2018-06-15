@@ -56,6 +56,8 @@ namespace Dogey
                     CaseSensitiveCommands = false,
                     LogLevel = LogSeverity.Verbose
                 }))
+                .AddDbContext<RootDatabase>()
+                .AddTransient<RootController>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<StartupService>()
                 .AddSingleton<CommandHandler>()

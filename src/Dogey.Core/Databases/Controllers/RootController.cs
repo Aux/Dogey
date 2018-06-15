@@ -12,7 +12,7 @@ namespace Dogey
         public RootController(RootDatabase db) : base(db) { }
 
         public async Task<bool> ModuleEnabledAsync(IGuild guild, string moduleName)
-            => await _db.ModuleConfigs.AnyAsync(x => x.GuildId == guild.Id && x.ModuleName.ToLower() == moduleName.ToLower());
+            => await _db.ModuleConfigs.AnyAsync(x => x.GuildId == guild.Id && (x.ModuleName.ToLower() == moduleName.ToLower() || x.ModuleName.ToLower() == moduleName.ToLower() + "module"));
 
         public async Task<string> GetPrefixAsync(ulong guildId)
             => (await _db.GuildConfigs.SingleOrDefaultAsync(x => x.Id == guildId))?.Prefix;

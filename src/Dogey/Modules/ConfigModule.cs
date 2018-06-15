@@ -21,6 +21,10 @@ namespace Dogey
             await Task.Delay(0);
         }
 
+        [Command("resetprefix")]
+        public Task SetPrefixAsync()
+            => SetPrefixAsync(null);
+
         [Command("setprefix")]
         public async Task SetPrefixAsync([Remainder]string prefix)
         {
