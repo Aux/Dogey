@@ -12,7 +12,10 @@ namespace Dogey
         private readonly CommandService _commands;
 
         private string _logDirectory { get; }
-        private string _logFile => Path.Combine(_logDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt");
+        private string _logFile => Path.Combine(_logDirectory, GetFileName(DateTime.UtcNow));
+
+        public static string GetFileName(DateTime dateTime)
+            => dateTime.ToString("yyyy-MM-dd") + ".txt";
 
         public LoggingService(
             DiscordSocketClient discord,

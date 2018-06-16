@@ -58,6 +58,7 @@ namespace Dogey
                 }))
                 .AddDbContext<RootDatabase>()
                 .AddTransient<RootController>()
+                .AddTransient<RoslynService>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<StartupService>()
                 .AddSingleton<CommandHandler>()
