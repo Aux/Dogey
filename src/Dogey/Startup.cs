@@ -34,9 +34,8 @@ namespace Dogey
             var provider = services.BuildServiceProvider();
 
             provider.GetRequiredService<LoggingService>();
-
+            provider.GetRequiredService<GuildBanService>();
             await provider.GetRequiredService<StartupService>().StartAsync();
-
             provider.GetRequiredService<CommandHandler>();
 
             await Task.Delay(-1);
@@ -60,6 +59,7 @@ namespace Dogey
                 .AddTransient<RootController>()
                 .AddTransient<RoslynService>()
                 .AddSingleton<LoggingService>()
+                .AddSingleton<GuildBanService>()
                 .AddSingleton<StartupService>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<Random>()

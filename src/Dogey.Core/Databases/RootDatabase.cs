@@ -6,6 +6,7 @@ namespace Dogey
 {
     public class RootDatabase : DbContext
     {
+        public DbSet<UserConfig> UserConfigs { get; set; }
         public DbSet<GuildConfig> GuildConfigs { get; set; }
         public DbSet<ModuleConfig> ModuleConfigs { get; set; }
 
