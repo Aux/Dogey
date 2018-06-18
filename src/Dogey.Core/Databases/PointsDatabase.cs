@@ -8,6 +8,7 @@ namespace Dogey
     {
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<PointLog> Logs { get; set; }
+        public DbSet<Price> Prices { get; set; }
 
         public PointsDatabase()
         {

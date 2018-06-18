@@ -20,6 +20,8 @@ namespace Dogey
 
         public async Task<string> GetPrefixAsync(ulong guildId)
             => (await _db.GuildConfigs.SingleOrDefaultAsync(x => x.Id == guildId))?.Prefix;
+        public async Task<string> GetCurrencyNameAsync(IGuild guild)
+            => (await GetConfigAsync(guild)).CurrencyName ?? "point";
         public Task<List<string>> GetDisabledModulesAsync(IGuild guild)
             => _db.ModuleConfigs.Where(x => x.GuildId == guild.Id).Select(x => x.ModuleName).ToListAsync();
 

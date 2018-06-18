@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace Dogey
 {
+    [AttributeUsage(AttributeTargets.Class)]
     public class RequireEnabledAttribute : PreconditionAttribute
     {
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)

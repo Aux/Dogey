@@ -24,6 +24,7 @@ namespace Dogey
 
             var builder = new EmbedBuilder()
                 .AddField("Prefix", config.Prefix ?? "*none*")
+                .AddField("Currency", config.CurrencyName ?? "point")
                 .AddField("Disabled Modules", moduleNames.Count > 0 ? string.Join(", ", moduleNames) : "*none*")
                 .WithFooter("Updated")
                 .WithTimestamp(config.UpdatedAt);
@@ -43,6 +44,19 @@ namespace Dogey
             await ReplyAsync($"The command prefix is now `{prefix}`");
         }
 
+        [Command("resetcurrency")]
+        public Task SetCurrencyAsync()
+            => SetCurrencyAsync(null);
+
+        [Command("setcurrency")]
+        public async Task SetCurrencyAsync([Remainder]string currency)
+        {
+            var config = await _root.GetOrCreateConfigAsync(Context.Guild);
+            config.CurrencyName = currency;
+            await _root.ModifyAsync(config);
+            await ReplyAsync($"The currency name is now `{currency}`");
+        }
+        
         [Command("enable")]
         public async Task EnableAsync(ModuleInfo module)
         {
