@@ -36,6 +36,7 @@ namespace Dogey
             provider.GetRequiredService<LoggingService>();
             provider.GetRequiredService<GuildBanService>();
             await provider.GetRequiredService<StartupService>().StartAsync();
+            provider.GetRequiredService<PointsService>();
             provider.GetRequiredService<CommandHandler>();
 
             await Task.Delay(-1);
@@ -56,7 +57,9 @@ namespace Dogey
                     LogLevel = LogSeverity.Verbose
                 }))
                 .AddDbContext<RootDatabase>()
+                .AddDbContext<PointsDatabase>()
                 .AddTransient<RootController>()
+                .AddTransient<PointsController>()
                 .AddTransient<RoslynService>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<GuildBanService>()

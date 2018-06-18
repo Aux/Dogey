@@ -32,14 +32,14 @@ namespace Dogey
 
         public async Task<GuildConfig> GetOrCreateConfigAsync(IGuild guild)
         {
-            bool exists = await _db.GuildConfigs.AnyAsync(x => x.Id == guild.Id);
-            if (exists) return await GetConfigAsync(guild);
+            var config = await GetConfigAsync(guild);
+            if (config != null) return config;
             return await CreateAsync(new GuildConfig { Id = guild.Id });
         }
         public async Task<UserConfig> GetOrCreateConfigAsync(IUser user)
         {
-            bool exists = await _db.UserConfigs.AnyAsync(x => x.Id == user.Id);
-            if (exists) return await GetConfigAsync(user);
+            var config = await GetConfigAsync(user);
+            if (config != null) return config;
             return await CreateAsync(new UserConfig { Id = user.Id });
         }
 

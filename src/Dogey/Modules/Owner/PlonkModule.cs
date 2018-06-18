@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
 
@@ -27,7 +28,7 @@ namespace Dogey.Modules.Owner
         }
 
         [Command("plonk")]
-        public async Task PlonkAsync([Remainder]IUser user)
+        public async Task PlonkAsync([Remainder]SocketUser user)
         {
             var config = await _root.GetOrCreateConfigAsync(user);
             if (config.BannedAt == null)
@@ -51,7 +52,7 @@ namespace Dogey.Modules.Owner
         }
 
         [Command("unplonk")]
-        public async Task UnplonkAsync([Remainder]IUser user)
+        public async Task UnplonkAsync([Remainder]SocketUser user)
         {
             var config = await _root.GetOrCreateConfigAsync(user);
             if (config.BannedAt != null)
