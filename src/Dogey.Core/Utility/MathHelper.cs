@@ -60,8 +60,8 @@ namespace Dogey
         }
 
         public static double KelvinToFahrenheit(double k)
-            => 9 / 5 * (k - 273) + 32;
+            => Math.Round(k * 9 / 5 - 459.67, 1);
         public static double KelvinToCelsius(double k)
-            => k - 273.15;
+            => Math.Round(k - 273.15, 1);
     }
 }

@@ -44,7 +44,7 @@ namespace Dogey
             _ = Task.Run(async () =>
             {
                 bool plonked = await _root.IsBannedAsync(msg.Author);
-                if (plonked) return;
+                if (plonked || msg.Author.IsBot) return;
 
                 var wallet = await _points.GetOrCreateWalletAsync(msg.Author);
 

@@ -29,6 +29,7 @@ namespace Dogey.Modules
 
             var embed = new EmbedBuilder()
                 .WithDescription($"{user.Mention} currently has {wallet.Balance} {currency}(s).");
+            await ReplyEmbedAsync(embed);
         }
 
         [Command("give"), Alias("gift")]

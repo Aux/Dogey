@@ -13,6 +13,7 @@ namespace Dogey
         public const string ApiUrl = "https://api.openweathermap.org/data/2.5/weather";
         public const string IconUrl = "http://openweathermap.org/img/w/{0}.png";
         public const int RequestsPerMinute = 60;
+        public int RequestsRemaining => _requestsRemaining;
 
         private readonly IConfiguration _config;
         private readonly LoggingService _logger;
@@ -66,8 +67,10 @@ namespace Dogey
                 using (var request = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
                 {
                     var response = await _http.SendAsync(request);
-                    var content = await response.Content.ReadAsStringAsync();
+                    if (!response.IsSuccessStatusCode)
+                        return null;
 
+                    var content = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject<Forecast>(content);
                 }
             } catch (Exception ex)

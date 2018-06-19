@@ -29,16 +29,16 @@ namespace Dogey.Modules
             var weather = forecast.Weather.First();
 
             var embed = new EmbedBuilder()
-                .WithColor(Color.DarkBlue)
+                .WithColor(Color.Blue)
                 .WithImageUrl(WeatherService.GetIconUrl(weather.IconId))
-                .WithTitle(forecast.Name + " Weather")
+                .WithTitle(forecast.Name + "'s Weather")
                 .WithDescription(weather.Description)
+                .WithFooter(_weather.RequestsRemaining.ToString())
                 .WithCurrentTimestamp()
-                .AddInlineField("Pressure", forecast.Measurements.Pressure + "**hPA**")
+                .AddInlineField("Pressure", forecast.Measurements.Pressure + " hPa")
                 .AddInlineField("Humidity", forecast.Measurements.Humidity + "%")
-                .AddField("Temp", MathHelper.KelvinToFahrenheit(forecast.Measurements.Temperature))
-                .AddInlineField("Temp Max", MathHelper.KelvinToFahrenheit(forecast.Measurements.TemperatureMax))
-                .AddInlineField("Temp Min", MathHelper.KelvinToFahrenheit(forecast.Measurements.TemperatureMin));
+                .AddInlineField("Temp", MathHelper.KelvinToFahrenheit(forecast.Measurements.Temperature) + "f")
+                .AddInlineField("Temp Range", MathHelper.KelvinToFahrenheit(forecast.Measurements.TemperatureMin) + "f -> " + MathHelper.KelvinToFahrenheit(forecast.Measurements.TemperatureMax) + 'f');
             await ReplyEmbedAsync(embed);
         }
     }
