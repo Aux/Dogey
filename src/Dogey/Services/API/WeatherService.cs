@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +19,8 @@ namespace Dogey
         private readonly IConfiguration _config;
         private readonly LoggingService _logger;
         private readonly RootController _root;
+        private readonly HttpClient _http;
 
-        private HttpClient _http;
         private string _apiKey;
         private int _requestsRemaining = RequestsPerMinute;
         private DateTime? _resetAt = null;
@@ -27,17 +28,14 @@ namespace Dogey
         public static string GetIconUrl(string id)
             => string.Format(IconUrl, id);
 
-        public WeatherService(IConfiguration config, LoggingService logger, RootController root)
+        public WeatherService(IConfiguration config, LoggingService logger, RootController root, HttpClient http)
         {
             _config = config;
             _logger = logger;
             _root = root;
+            _http = http;
 
             _apiKey = _config["tokens:openweather"];
-            _http = new HttpClient
-            {
-                BaseAddress = new Uri(ApiUrl)
-            };
         }
 
         private bool IsRatelimited()
@@ -64,7 +62,7 @@ namespace Dogey
 
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, builder.ToString()))
+                using (var request = new HttpRequestMessage(HttpMethod.Get, Path.Combine(ApiUrl, builder.ToString())))
                 {
                     var response = await _http.SendAsync(request);
                     if (!response.IsSuccessStatusCode)

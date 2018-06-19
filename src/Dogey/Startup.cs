@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
 using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -71,8 +72,9 @@ namespace Dogey
                 .AddTransient<PointsController>()
 
                 // Api Interfaces
-                .AddSingleton<WeatherService>()
-                .AddSingleton<DogService>()
+                .AddSingleton<HttpClient>()
+                .AddTransient<WeatherService>()
+                .AddTransient<DogService>()
 
                 // Etc
                 .AddTransient<RoslynService>()

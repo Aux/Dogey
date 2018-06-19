@@ -18,23 +18,19 @@ namespace Dogey
 
         private readonly IConfiguration _config;
         private readonly LoggingService _logger;
+        private readonly HttpClient _http;
 
-        private HttpClient _http;
         private int _requestsRemaining = RequestsPerMinute;
         private DateTime? _resetAt = null;
 
         public string GetImageUrl(string id, string format = "jpg")
             => string.Format(ImageUrl, id, format);
 
-        public DogService(IConfiguration config, LoggingService logger, RootController root)
+        public DogService(IConfiguration config, LoggingService logger, HttpClient http)
         {
             _config = config;
             _logger = logger;
-
-            _http = new HttpClient
-            {
-                BaseAddress = new Uri(ApiUrl)
-            };
+            _http = http;
         }
 
         private bool IsRatelimited()
@@ -59,7 +55,7 @@ namespace Dogey
 
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, query))
+                using (var request = new HttpRequestMessage(HttpMethod.Get, Path.Combine(ApiUrl, query)))
                 {
                     var response = await _http.SendAsync(request);
                     if (!response.IsSuccessStatusCode)
