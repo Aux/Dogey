@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules.Owner
 {
+    [RequireOwner]
     public class PlonkModule : DogeyModuleBase
     {
         private readonly RootController _root;

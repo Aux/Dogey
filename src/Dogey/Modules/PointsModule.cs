@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
+    [RequireEnabled]
     [Group("points")]
     public class PointsModule : DogeyModuleBase
     {

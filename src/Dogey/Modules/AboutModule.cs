@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
+    [RequireEnabled]
     public class AboutModule : DogeyModuleBase
     {
         public string Library => $"Discord.Net ({DiscordConfig.Version})";
