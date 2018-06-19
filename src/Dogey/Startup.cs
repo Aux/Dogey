@@ -46,6 +46,8 @@ namespace Dogey
         private void ConfigureServices(IServiceCollection services)
         {
             services
+
+                // Clients
                 .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
                 {
                     LogLevel = LogSeverity.Verbose,
@@ -61,12 +63,19 @@ namespace Dogey
                 {
                     Credentials = new Credentials(Configuration["tokens:github"])
                 })
+
+                // Databases
                 .AddDbContext<RootDatabase>()
                 .AddDbContext<PointsDatabase>()
                 .AddTransient<RootController>()
                 .AddTransient<PointsController>()
-                .AddTransient<RoslynService>()
+
+                // Api Interfaces
                 .AddSingleton<WeatherService>()
+                .AddSingleton<DogService>()
+
+                // Etc
+                .AddTransient<RoslynService>()
                 .AddSingleton<PointsService>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<GuildBanService>()
