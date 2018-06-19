@@ -51,5 +51,17 @@ namespace Dogey
             }
             return candidate != 1;
         }
+
+        public static DateTime GetDateTime(long value)
+        {
+            var reference = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var actual = reference.AddMilliseconds(value).ToLocalTime();
+            return actual;
+        }
+
+        public static double KelvinToFahrenheit(double k)
+            => 9 / 5 * (k - 273) + 32;
+        public static double KelvinToCelsius(double k)
+            => k - 273.15;
     }
 }

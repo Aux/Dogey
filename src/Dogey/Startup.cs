@@ -61,6 +61,8 @@ namespace Dogey
                 .AddTransient<RootController>()
                 .AddTransient<PointsController>()
                 .AddTransient<RoslynService>()
+                .AddSingleton<WeatherService>()
+                .AddSingleton<PointsService>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<GuildBanService>()
                 .AddSingleton<StartupService>()

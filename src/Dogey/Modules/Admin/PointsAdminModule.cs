@@ -3,7 +3,7 @@ using Discord.Commands;
 
 namespace Dogey.Modules.Admin
 {
-    [RequireUserPermission(GuildPermission.Administrator]
+    [RequireUserPermission(GuildPermission.Administrator)]
     public class PointsAdminModule : DogeyModuleBase
     {
     }

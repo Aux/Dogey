@@ -41,7 +41,7 @@ namespace Dogey
         }
 
         public async Task<Wallet> ModifyAsync(Wallet wallet)
-        {\
+        {
             if (wallet.Balance < 0) wallet.Balance = 0;
             await _db.SaveChangesAsync();
             return wallet;
