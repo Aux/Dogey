@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Octokit;
 using System;
 using System.Threading.Tasks;
 
@@ -56,6 +57,10 @@ namespace Dogey
                     CaseSensitiveCommands = false,
                     LogLevel = LogSeverity.Verbose
                 }))
+                .AddSingleton(new GitHubClient(new ProductHeaderValue("Dogey"))
+                {
+                    Credentials = new Credentials(Configuration["tokens:github"])
+                })
                 .AddDbContext<RootDatabase>()
                 .AddDbContext<PointsDatabase>()
                 .AddTransient<RootController>()

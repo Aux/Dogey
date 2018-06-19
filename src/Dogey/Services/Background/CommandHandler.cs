@@ -15,9 +15,7 @@ namespace Dogey
         private readonly LoggingService _logger;
         private readonly RootController _root;
         private readonly IServiceProvider _provider;
-
-        private const string _tempPrefix = "!";
-
+        
         public CommandHandler(
             DiscordSocketClient discord,
             CommandService commands,
@@ -63,7 +61,7 @@ namespace Dogey
                     .OrderByDescending(x => x.Command.Parameters.Count())
                     .FirstOrDefault().Command;
 
-                var builder = new StringBuilder(_tempPrefix + command.Name);
+                var builder = new StringBuilder("!" + command.Name);
                 if (command.Parameters.Count > 0)
                 {
                     // !name <required> [optional=1]
