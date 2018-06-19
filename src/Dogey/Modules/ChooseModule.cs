@@ -25,8 +25,8 @@ namespace Dogey.Modules
             await ReplyAsync(selected);
         }
 
-        [Command("choose")]
-        public async Task ChooseAsync(int amount, params string[] choices)
+        [Command("choosemany")]
+        public async Task ChooseManyAsync(int amount, params string[] choices)
         {
             var selected = new List<string>();
             var selectedIndices = new List<int>();
