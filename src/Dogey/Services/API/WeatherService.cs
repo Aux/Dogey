@@ -62,7 +62,7 @@ namespace Dogey
 
             try
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Get, Path.Combine(ApiUrl, builder.ToString())))
+                using (var request = new HttpRequestMessage(HttpMethod.Get, ApiUrl + builder.ToString()))
                 {
                     var response = await _http.SendAsync(request);
                     if (!response.IsSuccessStatusCode)

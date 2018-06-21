@@ -14,7 +14,6 @@ namespace Dogey
     public class RoslynService
     {
         private readonly IServiceProvider _services;
-        private bool _optionsApplied = false;
 
         public RoslynService(IServiceProvider services)
         {
