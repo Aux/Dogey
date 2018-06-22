@@ -13,7 +13,7 @@ namespace Dogey.Modules
     public class AboutModule : DogeyModuleBase
     {
         public string Library => $"Discord.Net ({DiscordConfig.Version})";
-        public string MemoryUsage => $"{Math.Round(_process.PagedMemorySize64 * .000001, 2)}mb";
+        public string MemoryUsage => $"{Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2) * 10}mb";
 
         private readonly GitHubClient _github;
         private readonly Process _process;
