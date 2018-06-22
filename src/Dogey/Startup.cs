@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Google.Apis.Customsearch.v1;
 using Google.Apis.Services;
+using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
@@ -40,7 +41,7 @@ namespace Dogey
             provider.GetRequiredService<LoggingService>();
             provider.GetRequiredService<GuildBanService>();
             await provider.GetRequiredService<StartupService>().StartAsync();
-            provider.GetRequiredService<PointsService>();
+            //provider.GetRequiredService<PointsService>();
             provider.GetRequiredService<CommandHandler>();
 
             await Task.Delay(-1);
@@ -68,7 +69,12 @@ namespace Dogey
                 })
                 .AddSingleton(new CustomsearchService(new BaseClientService.Initializer()
                 {
-                    ApiKey = Configuration["tokens:google"],
+                    ApiKey = Configuration["google:token"],
+                    MaxUrlLength = 256
+                }))
+                .AddSingleton(new YouTubeService(new BaseClientService.Initializer()
+                {
+                    ApiKey = Configuration["google:token"],
                     MaxUrlLength = 256
                 }))
 
