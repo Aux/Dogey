@@ -3,6 +3,7 @@ using Discord.Commands;
 using Octokit;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace Dogey.Modules
     public class AboutModule : DogeyModuleBase
     {
         public string Library => $"Discord.Net ({DiscordConfig.Version})";
-        public string MemoryUsage => $"{Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)}mb";
+        public string MemoryUsage => $"{Math.Round(_process.PagedMemorySize64 * .000001, 2)}mb";
 
         private readonly GitHubClient _github;
         private readonly Process _process;
@@ -51,6 +52,7 @@ namespace Dogey.Modules
                 .AddInlineField("Memory", MemoryUsage)
                 .AddInlineField("Latency", Context.Client.Latency + "ms")
                 .AddInlineField("Uptime", GetUptime())
+                .AddInlineField("OS", RuntimeInformation.OSDescription)
                 .WithFooter(x => x.Text = Library);
             await ReplyEmbedAsync(embed);
         }
