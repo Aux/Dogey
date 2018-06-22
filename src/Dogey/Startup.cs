@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Google.Apis.Customsearch.v1;
+using Google.Apis.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
@@ -64,6 +66,11 @@ namespace Dogey
                 {
                     Credentials = new Credentials(Configuration["tokens:github"])
                 })
+                .AddSingleton(new CustomsearchService(new BaseClientService.Initializer()
+                {
+                    ApiKey = Configuration["tokens:google"],
+                    MaxUrlLength = 256
+                }))
 
                 // Databases
                 .AddDbContext<RootDatabase>()
