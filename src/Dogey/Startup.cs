@@ -86,8 +86,8 @@ namespace Dogey
 
                 // Api Interfaces
                 .AddSingleton<HttpClient>()
-                .AddTransient<WeatherService>()
-                .AddTransient<DogService>()
+                .AddSingleton<WeatherApiService>()
+                .AddSingleton<DogApiService>()
 
                 // Etc
                 .AddTransient<RoslynService>()

@@ -6,9 +6,9 @@ namespace Dogey.Modules
     [RequireEnabled]
     public class DogModule : DogeyModuleBase
     {
-        private readonly DogService _dog;
+        private readonly DogApiService _dog;
 
-        public DogModule(DogService dog)
+        public DogModule(DogApiService dog)
         {
             _dog = dog;
         }

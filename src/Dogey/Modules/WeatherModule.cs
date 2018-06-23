@@ -8,9 +8,9 @@ namespace Dogey.Modules
     [RequireEnabled]
     public class WeatherModule : DogeyModuleBase
     {
-        private readonly WeatherService _weather;
+        private readonly WeatherApiService _weather;
 
-        public WeatherModule(WeatherService weather)
+        public WeatherModule(WeatherApiService weather)
         {
             _weather = weather;
         }
@@ -29,7 +29,7 @@ namespace Dogey.Modules
 
             var embed = new EmbedBuilder()
                 .WithColor(Color.Blue)
-                .WithImageUrl(WeatherService.GetIconUrl(weather.IconId))
+                .WithImageUrl(WeatherApiService.GetIconUrl(weather.IconId))
                 .WithTitle(forecast.Name + "'s Weather")
                 .WithDescription(weather.Description)
                 .WithFooter(_weather.RequestsRemaining.ToString())
