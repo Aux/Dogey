@@ -7,6 +7,7 @@ using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
+using RestEase;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -87,10 +88,13 @@ namespace Dogey
                 // Api Interfaces
                 .AddSingleton<HttpClient>()
                 .AddSingleton<WeatherApiService>()
+                .AddSingleton(RestClient.For<IWeatherApi>(WeatherApiService.GetClient()))
                 .AddSingleton<DogApiService>()
+                .AddSingleton(RestClient.For<IDogApi>(DogApiService.GetClient()))
 
                 // Etc
                 .AddTransient<RoslynService>()
+                .AddSingleton<RatelimitService>()
                 .AddSingleton<PointsService>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<GuildBanService>()

@@ -1,29 +1,40 @@
 ﻿using Discord;
 using Microsoft.Extensions.Configuration;
+using RestEase;
 using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Dogey
 {
-    public class WeatherApiService : ApiServiceBase
+    [Header("User-Agent", "Dogey (https://github.com/Aux/Dogey)")]
+    public interface IWeatherApi
     {
-        public const string ApiUrl = "https://api.openweathermap.org/data/2.5/weather";
+        [Get("weather")]
+        Task<Forecast> GetForecastAsync(string q, string unit, string appid);
+    }
+
+    public class WeatherApiService
+    {
+        public const string ApiUrl = "https://api.openweathermap.org/data/2.5";
         public const string IconUrl = "http://openweathermap.org/img/w/{0}.png";
 
+        public static HttpClient GetClient()
+            => new HttpClient { BaseAddress = new Uri(ApiUrl) };
+
+        private readonly RatelimitService _ratelimiter;
         private readonly IConfiguration _config;
         private readonly LoggingService _logger;
-        private readonly RootController _root;
+        private readonly IWeatherApi _api;
 
         private string _apiKey;
 
-        public WeatherApiService(IConfiguration config, LoggingService logger, RootController root, HttpClient http)
-            : base (http, 60)
+        public WeatherApiService(RatelimitService ratelimiter, IConfiguration config, LoggingService logger, HttpClient http)
         {
+            _ratelimiter = ratelimiter;
             _config = config;
             _logger = logger;
-            _root = root;
+            _api = RestClient.For<IWeatherApi>(ApiUrl);
 
             _apiKey = _config["tokens:openweather"];
         }
@@ -33,16 +44,11 @@ namespace Dogey
         
         public async Task<Forecast> GetForecastAsync(string city, WeatherUnit unit = WeatherUnit.Metric)
         {
-            if (IsRatelimited()) return null;
+            if (_ratelimiter.IsRatelimited(nameof(WeatherApiService))) return null;
             
-            var builder = new StringBuilder();
-            builder.Append("?q=" + city);
-            builder.Append("&unit=" + unit.ToString().ToLower());
-            builder.Append("&appid=" + _apiKey);
-
             try
             {
-                return await SendAsync<Forecast>(HttpMethod.Get, ApiUrl + ApiUrl + builder.ToString());
+                return await _api.GetForecastAsync(city, unit.ToString().ToLower(), _apiKey);
             }
             catch (Exception ex)
             {

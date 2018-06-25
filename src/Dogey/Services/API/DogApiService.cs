@@ -1,5 +1,5 @@
 ﻿using Discord;
-using Microsoft.Extensions.Configuration;
+using RestEase;
 using System;
 using System.IO;
 using System.Linq;
@@ -8,33 +8,40 @@ using System.Threading.Tasks;
 
 namespace Dogey
 {
-    public class DogApiService : ApiServiceBase
+    [Header("User-Agent", "Dogey (https://github.com/Aux/Dogey)")]
+    public interface IDogApi
     {
-        public const string ApiUrl = "https://api.thedogapi.co.uk/v2/dog.php";
-        public const string ImageUrl = "https://i.thedogapi.co.uk/{0}.{1}";
+        [Get("dog.php")]
+        Task<DogResponse> GetDogAsync(string id = null);
+    }
 
-        private readonly IConfiguration _config;
+    public class DogApiService
+    {
+        public const string ApiUrl = "https://api.thedogapi.co.uk/v2";
+
+        public static HttpClient GetClient()
+            => new HttpClient { BaseAddress = new Uri(ApiUrl) };
+
+        private readonly RatelimitService _ratelimiter;
         private readonly LoggingService _logger;
+        private readonly HttpClient _http;
+        private readonly IDogApi _api;
         
-        public DogApiService(IConfiguration config, LoggingService logger, HttpClient http)
-            : base(http, 10)
+        public DogApiService(RatelimitService ratelimiter, LoggingService logger, HttpClient http, IDogApi api)
         {
-            _config = config;
+            _ratelimiter = ratelimiter;
             _logger = logger;
+            _http = http;
+            _api = api;
         }
-
-        public string GetImageUrl(string id, string format = "jpg")
-            => string.Format(ImageUrl, id, format);
         
         public async Task<DogData> GetDogAsync(string id = null)
         {
-            if (IsRatelimited()) return null;
-
-            string query = string.IsNullOrWhiteSpace(id) ? null : query = "?id=" + id;
+            if (_ratelimiter.IsRatelimited(nameof(DogApiService))) return null;
             
             try
             {
-                var response = await SendAsync<DogResponse>(HttpMethod.Get, ApiUrl + query);
+                var response = await _api.GetDogAsync(id);
                 return response.Data.FirstOrDefault();
             }
             catch (Exception ex)
@@ -48,7 +55,11 @@ namespace Dogey
         {
             try
             {
-                return await SendAsync(HttpMethod.Get, data.ImageUrl);
+                using (var request = new HttpRequestMessage(HttpMethod.Get, data.ImageUrl))
+                {
+                    var response = await _http.SendAsync(request);
+                    return await response.Content.ReadAsStreamAsync();
+                }
             }
             catch (Exception ex)
             {

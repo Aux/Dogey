@@ -32,7 +32,6 @@ namespace Dogey.Modules
                 .WithImageUrl(WeatherApiService.GetIconUrl(weather.IconId))
                 .WithTitle(forecast.Name + "'s Weather")
                 .WithDescription(weather.Description)
-                .WithFooter(_weather.RequestsRemaining.ToString())
                 .WithCurrentTimestamp()
                 .AddInlineField("Pressure", forecast.Measurements.Pressure + " hPa")
                 .AddInlineField("Humidity", forecast.Measurements.Humidity + "%")
