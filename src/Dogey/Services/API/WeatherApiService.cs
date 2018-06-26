@@ -18,6 +18,7 @@ namespace Dogey
     {
         public const string ApiUrl = "https://api.openweathermap.org/data/2.5";
         public const string IconUrl = "http://openweathermap.org/img/w/{0}.png";
+        public string Name => nameof(WeatherApiService);
 
         public static HttpClient GetClient()
             => new HttpClient { BaseAddress = new Uri(ApiUrl) };
@@ -44,7 +45,7 @@ namespace Dogey
         
         public async Task<Forecast> GetForecastAsync(string city, WeatherUnit unit = WeatherUnit.Metric)
         {
-            if (_ratelimiter.IsRatelimited(nameof(WeatherApiService))) return null;
+            if (_ratelimiter.IsRatelimited(Name)) return null;
             
             try
             {
@@ -52,7 +53,7 @@ namespace Dogey
             }
             catch (Exception ex)
             {
-                await _logger.LogAsync(LogSeverity.Error, "Weather", ex.ToString());
+                await _logger.LogAsync(LogSeverity.Error, Name, ex.ToString());
             }
             return null;
         }

@@ -91,6 +91,8 @@ namespace Dogey
                 .AddSingleton(RestClient.For<IWeatherApi>(WeatherApiService.GetClient()))
                 .AddSingleton<DogApiService>()
                 .AddSingleton(RestClient.For<IDogApi>(DogApiService.GetClient()))
+                .AddSingleton<NumbersApiService>()
+                .AddSingleton(RestClient.For<INumbersApi>(NumbersApiService.GetClient()))
 
                 // Etc
                 .AddTransient<RoslynService>()

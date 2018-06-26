@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Dogey
 {
-    [Header("User-Agent", "Dogey (https://github.com/Aux/Dogey)")]
     public interface IDogApi
     {
         [Get("dog.php")]
@@ -18,6 +17,7 @@ namespace Dogey
     public class DogApiService
     {
         public const string ApiUrl = "https://api.thedogapi.co.uk/v2";
+        public string Name => nameof(NumbersApiService);
 
         public static HttpClient GetClient()
             => new HttpClient { BaseAddress = new Uri(ApiUrl) };
@@ -37,7 +37,7 @@ namespace Dogey
         
         public async Task<DogData> GetDogAsync(string id = null)
         {
-            if (_ratelimiter.IsRatelimited(nameof(DogApiService))) return null;
+            if (_ratelimiter.IsRatelimited(Name)) return null;
             
             try
             {
@@ -46,7 +46,7 @@ namespace Dogey
             }
             catch (Exception ex)
             {
-                await _logger.LogAsync(LogSeverity.Error, "Dog", ex.ToString());
+                await _logger.LogAsync(LogSeverity.Error, Name, ex.ToString());
             }
             return null;
         }
@@ -63,7 +63,7 @@ namespace Dogey
             }
             catch (Exception ex)
             {
-                await _logger.LogAsync(LogSeverity.Error, "Dog", ex.ToString());
+                await _logger.LogAsync(LogSeverity.Error, Name, ex.ToString());
             }
             return null;
         }
