@@ -10,5 +10,7 @@ namespace Dogey
         public string GitHub { get; set; }
         [JsonProperty("openweather")]
         public string OpenWeather { get; set; }
+        [JsonProperty("nasa")]
+        public string Nasa { get; set; }
     }
 }

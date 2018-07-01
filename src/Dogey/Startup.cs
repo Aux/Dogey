@@ -93,6 +93,8 @@ namespace Dogey
 
                 // Api Interfaces
                 .AddSingleton<HttpClient>()
+                .AddSingleton<NasaApiService>()
+                .AddSingleton(RestClient.For<INasaApi>(NasaApiService.GetClient()))
                 .AddSingleton<WeatherApiService>()
                 .AddSingleton(RestClient.For<IWeatherApi>(WeatherApiService.GetClient()))
                 .AddSingleton<DogApiService>()
