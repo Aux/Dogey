@@ -6,21 +6,25 @@ using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Octokit;
 using RestEase;
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dogey
 {
     public class Startup
     {
+        public CancellationTokenSource CancellationTokenSource { get; }
         public IConfiguration Configuration { get; }
 
         public Startup(string[] args)
         {
-            var builder = new ConfigurationBuilder()
+            CancellationTokenSource = new CancellationTokenSource();
+               var builder = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("_configuration.json");
             Configuration = builder.Build();
@@ -40,10 +44,10 @@ namespace Dogey
             var provider = services.BuildServiceProvider();
 
             provider.GetRequiredService<LoggingService>();
-            provider.GetRequiredService<GuildBanService>();
+            await provider.GetRequiredService<GuildBanService>().StartAsync(CancellationTokenSource.Token);
             await provider.GetRequiredService<StartupService>().StartAsync();
-            //provider.GetRequiredService<PointsService>();
-            provider.GetRequiredService<CommandHandler>();
+            await provider.GetRequiredService<CommandHandlingService>().StartAsync(CancellationTokenSource.Token);
+            await provider.GetRequiredService<PointEarningService>().StartAsync(CancellationTokenSource.Token);
 
             await Task.Delay(-1);
         }
@@ -94,15 +98,18 @@ namespace Dogey
                 .AddSingleton<NumbersApiService>()
                 .AddSingleton(RestClient.For<INumbersApi>(NumbersApiService.GetClient()))
 
+                // Background
+                .AddSingleton<GuildBanService>()
+                .AddSingleton<CommandHandlingService>()
+                .AddSingleton<PointEarningService>()
+
                 // Etc
+                .AddTransient<StartupService>()
                 .AddTransient<RoslynService>()
                 .AddSingleton<RatelimitService>()
-                .AddSingleton<PointsService>()
                 .AddSingleton<LoggingService>()
-                .AddSingleton<GuildBanService>()
-                .AddSingleton<StartupService>()
-                .AddSingleton<CommandHandler>()
                 .AddSingleton<Random>()
+                .AddSingleton(CancellationTokenSource)
                 .AddSingleton(Configuration);
         }
     }

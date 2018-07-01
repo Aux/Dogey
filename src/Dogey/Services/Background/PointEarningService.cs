@@ -1,50 +1,77 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dogey
 {
-    public class PointsService
+    public class PointEarningService : BackgroundService
     {
-        public Dictionary<string, Func<PointLog, Task>> Actions => _actions;
+        public ConcurrentDictionary<string, Func<PointLog, Task>> Actions { get; }
 
+        private readonly CommandHandlingService _commands;
         private readonly DiscordSocketClient _discord;
         private readonly PointsController _points;
         private readonly RootController _root;
         private readonly LoggingService _logger;
 
-        private Dictionary<string, Func<PointLog, Task>> _actions;
+        private CancellationToken _cancellationToken;
 
-        public PointsService(DiscordSocketClient discord, PointsController points, RootController root, LoggingService logger)
+        public PointEarningService(CommandHandlingService commands, DiscordSocketClient discord, PointsController points, RootController root, LoggingService logger)
         {
-            _actions = new Dictionary<string, Func<PointLog, Task>>();
+            Actions = new ConcurrentDictionary<string, Func<PointLog, Task>>();
+            _commands = commands;
             _discord = discord;
             _points = points;
             _root = root;
             _logger = logger;
+        }
 
+        public override async Task StartAsync(CancellationToken cancellationToken)
+        {
+            _cancellationToken = cancellationToken;
             _discord.MessageReceived += OnMessageReceivedAsync;
             _discord.MessageDeleted += OnMessageDeletedAsync;
-        }
-        
-        public void AddAction(string id, Func<PointLog, Task> func)
-        {
-            _actions.Add(id, func);
+            await _logger.LogAsync(LogSeverity.Info, nameof(PointEarningService), "Started");
         }
 
-        public void RemoveAction(string id)
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            _actions.Remove(id);
+            await base.StopAsync(cancellationToken);
+            _discord.MessageReceived += OnMessageReceivedAsync;
+            _discord.MessageDeleted += OnMessageDeletedAsync;
+            await _logger.LogAsync(LogSeverity.Info, nameof(PointEarningService), "Stopped");
+        }
+
+        public bool TryAddAction(string id, Func<PointLog, Task> func)
+        {
+            return Actions.TryAdd(id, func);
+        }
+
+        public bool TryRemoveAction(string id, out Func<PointLog, Task> value)
+        {
+            value = null;
+            if (Actions.TryRemove(id, out Func<PointLog, Task> response))
+                value = response;
+            return value != null;
         }
         
-        private Task OnMessageReceivedAsync(SocketMessage msg)
+        private Task OnMessageReceivedAsync(SocketMessage s)
         {
             _ = Task.Run(async () =>
             {
-                bool plonked = await _root.IsBannedAsync(msg.Author);
-                if (plonked || msg.Author.IsBot) return;
+                //bool plonked = await _root.IsBannedAsync(msg.Author);
+                //if (plonked || msg.Author.IsBot) return;
+
+                if (!(s is SocketUserMessage msg)) return;
+                if (msg.Author.IsBot) return;
+
+                var context = new DogeyCommandContext(_discord, msg);
+                string prefix = await _root.GetPrefixAsync(context.Guild?.Id ?? 0);
+
+                if (_commands.IsCommand(context, prefix, out int argPos)) return;
 
                 var wallet = await _points.GetOrCreateWalletAsync(msg.Author);
 
@@ -66,10 +93,10 @@ namespace Dogey
 
                     if (wallet.Multiplier != null)
                     {
-                        var multiplied = (double)earning * wallet.Multiplier.Value;
+                        var multiplied = earning * wallet.Multiplier.Value;
                         earning += (int)Math.Round(multiplied, MidpointRounding.AwayFromZero);
                     }
-
+                    
                     if (earning > 0)
                     {
                         var log = await _points.CreateAsync(new PointLog
@@ -83,15 +110,15 @@ namespace Dogey
                         wallet.Balance += log.Amount;
                         await _points.ModifyAsync(wallet);
 
-                        foreach (var action in _actions.Values)
+                        foreach (var action in Actions.Values)
                             await action(log);
                     }
                 }
                 catch (Exception ex)
                 {
-                    await _logger.LogAsync(LogSeverity.Error, "Points", $"Unable to add points: {ex}");
+                    await _logger.LogAsync(LogSeverity.Error, nameof(PointEarningService), $"Unable to add points: {ex}");
                 }
-            });
+            }, _cancellationToken);
             return Task.CompletedTask;
         }
 
@@ -113,10 +140,13 @@ namespace Dogey
                 }
                 catch (Exception ex)
                 {
-                    await _logger.LogAsync(LogSeverity.Error, "Points", $"Unable to remove points: {ex}");
+                    await _logger.LogAsync(LogSeverity.Error, nameof(PointEarningService), $"Unable to remove points: {ex}");
                 }
-            });
+            }, _cancellationToken);
             return Task.CompletedTask;
         }
+
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+            => throw new NotImplementedException();
     }
 }

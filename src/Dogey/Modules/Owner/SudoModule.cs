@@ -9,10 +9,10 @@ namespace Dogey.Modules
     [RequireEnabled]
     public class SudoModule : DogeyModuleBase
     {
-        private readonly CommandHandler _handler;
+        private readonly CommandHandlingService _handler;
         private readonly IServiceProvider _provider;
 
-        public SudoModule(CommandHandler handler, IServiceProvider provider)
+        public SudoModule(CommandHandlingService handler, IServiceProvider provider)
         {
             _handler = handler;
             _provider = provider;

@@ -4,11 +4,12 @@ using Discord.WebSocket;
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Dogey
 {
-    public class CommandHandler
+    public class CommandHandlingService : BackgroundService
     {
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
@@ -16,7 +17,7 @@ namespace Dogey
         private readonly RootController _root;
         private readonly IServiceProvider _provider;
         
-        public CommandHandler(
+        public CommandHandlingService(
             DiscordSocketClient discord,
             CommandService commands,
             LoggingService logger,
@@ -28,22 +29,38 @@ namespace Dogey
             _logger = logger;
             _root = root;
             _provider = provider;
-
+        }
+        
+        public override async Task StartAsync(CancellationToken cancellationToken)
+        {
             _discord.MessageReceived += OnMessageReceivedAsync;
+            await _logger.LogAsync(LogSeverity.Info, nameof(CommandHandlingService), "Started");
+        }
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            await base.StopAsync(cancellationToken);
+            _discord.MessageReceived -= OnMessageReceivedAsync;
+            await _logger.LogAsync(LogSeverity.Info, nameof(CommandHandlingService), "Stopped");
+        }
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+            => throw new NotImplementedException();
+        
+        public bool IsCommand(DogeyCommandContext context, string prefix, out int argPos)
+        {
+            argPos = 0;
+            if (context.User.Id == _discord.CurrentUser.Id) return false;
+            bool hasStringPrefix = prefix == null ? false : context.Message.HasStringPrefix(prefix, ref argPos);
+            return (hasStringPrefix || context.Message.HasMentionPrefix(_discord.CurrentUser, ref argPos));
         }
 
         private async Task OnMessageReceivedAsync(SocketMessage s)
         {
             if (!(s is SocketUserMessage msg)) return;
-            if (msg.Author.Id == _discord.CurrentUser.Id) return;
 
             var context = new DogeyCommandContext(_discord, msg);
             string prefix = await _root.GetPrefixAsync(context.Guild?.Id ?? 0);
-
-            int argPos = 0;
-            bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
-
-            if (hasStringPrefix || msg.HasMentionPrefix(_discord.CurrentUser, ref argPos))
+            
+            if (IsCommand(context, prefix, out int argPos))
                 await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
         }
 

@@ -1,4 +1,6 @@
-﻿namespace Dogey
+﻿using System.Linq;
+
+namespace Dogey
 {
     public static class StringHelper
     {
@@ -12,7 +14,7 @@
                 bool match = true;
                 for (int n = 0; n < length; n++)
                 {
-                    if (target?[i + n] != c)
+                    if (target.ElementAtOrDefault(i + n) != c)
                     {
                         match = false;
                         break;
