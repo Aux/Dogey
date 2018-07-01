@@ -1,4 +1,4 @@
-﻿using Discord;
+﻿using Microsoft.Extensions.Logging;
 using RestEase;
 using System;
 using System.Net.Http;
@@ -22,19 +22,18 @@ namespace Dogey
     public class NumbersApiService
     {
         public const string ApiUrl = "http://numbersapi.com";
-        public string Name => nameof(NumbersApiService);
 
         public static HttpClient GetClient()
             => new HttpClient { BaseAddress = new Uri(ApiUrl) };
-        
+
+        private readonly ILogger<NumbersApiService> _logger;
         private readonly RatelimitService _ratelimiter;
-        private readonly LoggingService _logger;
         private readonly INumbersApi _api;
 
-        public NumbersApiService(RatelimitService ratelimiter, LoggingService logger, INumbersApi api)
+        public NumbersApiService(ILogger<NumbersApiService> logger, RatelimitService ratelimiter, INumbersApi api)
         {
-            _ratelimiter = ratelimiter;
             _logger = logger;
+            _ratelimiter = ratelimiter;
             _api = api;
         }
 
@@ -46,7 +45,7 @@ namespace Dogey
 
         public async Task<string> GetRandomAsync(NumberType type)
         {
-            if (_ratelimiter.IsRatelimited(Name)) return null;
+            if (_ratelimiter.IsRatelimited(nameof(NumbersApiService))) return null;
 
             try
             {
@@ -55,14 +54,14 @@ namespace Dogey
             }
             catch (Exception ex)
             {
-                await _logger.LogAsync(LogSeverity.Error, Name, ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return null;
         }
         
         public async Task<string> GetDateAsync(DateTime date)
         {
-            if (_ratelimiter.IsRatelimited(Name)) return null;
+            if (_ratelimiter.IsRatelimited(nameof(NumbersApiService))) return null;
 
             try
             {
@@ -71,14 +70,14 @@ namespace Dogey
             }
             catch (Exception ex)
             {
-                await _logger.LogAsync(LogSeverity.Error, Name, ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return null;
         }
 
         public async Task<string> GetNumberAsync(int number, NumberType type)
         {
-            if (_ratelimiter.IsRatelimited(Name)) return null;
+            if (_ratelimiter.IsRatelimited(nameof(NumbersApiService))) return null;
 
             try
             {
@@ -87,7 +86,7 @@ namespace Dogey
             }
             catch (Exception ex)
             {
-                await _logger.LogAsync(LogSeverity.Error, Name, ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return null;
         }

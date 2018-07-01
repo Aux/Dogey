@@ -1,6 +1,6 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Text;
@@ -11,39 +11,40 @@ namespace Dogey
 {
     public class CommandHandlingService : BackgroundService
     {
+        private readonly ILogger<CommandHandlingService> _logger;
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
-        private readonly LoggingService _logger;
         private readonly RootController _root;
         private readonly IServiceProvider _provider;
 
         private CancellationToken _cancellationToken;
 
         public CommandHandlingService(
+            ILogger<CommandHandlingService> logger,
             DiscordSocketClient discord,
             CommandService commands,
-            LoggingService logger,
             RootController root,
             IServiceProvider provider)
         {
+            _logger = logger;
             _discord = discord;
             _commands = commands;
-            _logger = logger;
             _root = root;
             _provider = provider;
         }
         
-        public override async Task StartAsync(CancellationToken cancellationToken)
+        public override Task StartAsync(CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
             _discord.MessageReceived += OnMessageReceivedAsync;
-            await _logger.LogAsync(LogSeverity.Info, nameof(CommandHandlingService), "Started");
+            _logger.LogInformation("Started");
+            return Task.CompletedTask;
         }
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             await base.StopAsync(cancellationToken);
             _discord.MessageReceived -= OnMessageReceivedAsync;
-            await _logger.LogAsync(LogSeverity.Info, nameof(CommandHandlingService), "Stopped");
+            _logger.LogInformation("Stopped");
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
             => throw new NotImplementedException();
@@ -78,7 +79,7 @@ namespace Dogey
             if (result.IsSuccess || result.Error == CommandError.UnknownCommand)
                 return;
             if (result is ExecuteResult execute)
-                await _logger.LogAsync(LogSeverity.Error, "Commands", execute.Exception?.ToString());
+                _logger.LogError(execute.Exception?.ToString());
             if (result is ParseResult parse && parse.Error == CommandError.BadArgCount)
             {
                 var command = _commands.Search(context, input).Commands

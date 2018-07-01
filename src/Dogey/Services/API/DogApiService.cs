@@ -1,4 +1,4 @@
-﻿using Discord;
+﻿using Microsoft.Extensions.Logging;
 using RestEase;
 using System;
 using System.IO;
@@ -17,27 +17,26 @@ namespace Dogey
     public class DogApiService
     {
         public const string ApiUrl = "https://api.thedogapi.co.uk/v2";
-        public string Name => nameof(NumbersApiService);
 
         public static HttpClient GetClient()
             => new HttpClient { BaseAddress = new Uri(ApiUrl) };
 
+        private readonly ILogger<DogApiService> _logger;
         private readonly RatelimitService _ratelimiter;
-        private readonly LoggingService _logger;
         private readonly HttpClient _http;
         private readonly IDogApi _api;
         
-        public DogApiService(RatelimitService ratelimiter, LoggingService logger, HttpClient http, IDogApi api)
+        public DogApiService(ILogger<DogApiService> logger, RatelimitService ratelimiter, HttpClient http, IDogApi api)
         {
-            _ratelimiter = ratelimiter;
             _logger = logger;
+            _ratelimiter = ratelimiter;
             _http = http;
             _api = api;
         }
         
         public async Task<DogData> GetDogAsync(string id = null)
         {
-            if (_ratelimiter.IsRatelimited(Name)) return null;
+            if (_ratelimiter.IsRatelimited(nameof(DogApiService))) return null;
             
             try
             {
@@ -46,7 +45,7 @@ namespace Dogey
             }
             catch (Exception ex)
             {
-                await _logger.LogAsync(LogSeverity.Error, Name, ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return null;
         }
@@ -63,7 +62,7 @@ namespace Dogey
             }
             catch (Exception ex)
             {
-                await _logger.LogAsync(LogSeverity.Error, Name, ex.ToString());
+                _logger.LogError(ex.ToString());
             }
             return null;
         }

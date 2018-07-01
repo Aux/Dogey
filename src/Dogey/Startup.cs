@@ -6,10 +6,11 @@ using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using Octokit;
 using RestEase;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,10 +24,11 @@ namespace Dogey
 
         public Startup(string[] args)
         {
+            TryGenerateConfiguration();
             CancellationTokenSource = new CancellationTokenSource();
-               var builder = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("_configuration.json");
+            var builder = new ConfigurationBuilder()
+             .SetBasePath(AppContext.BaseDirectory)
+             .AddJsonFile("_configuration.json");
             Configuration = builder.Build();
         }
 
@@ -104,6 +106,7 @@ namespace Dogey
                 .AddSingleton<PointEarningService>()
 
                 // Etc
+                .AddLogging()
                 .AddTransient<StartupService>()
                 .AddTransient<RoslynService>()
                 .AddSingleton<RatelimitService>()
@@ -111,6 +114,16 @@ namespace Dogey
                 .AddSingleton<Random>()
                 .AddSingleton(CancellationTokenSource)
                 .AddSingleton(Configuration);
+        }
+
+        public static bool TryGenerateConfiguration()
+        {
+            var filePath = Path.Combine(AppContext.BaseDirectory, "_configuration.json");
+            if (File.Exists(filePath)) return false;
+
+            var json = JsonConvert.SerializeObject(new AppSettings(true), Formatting.Indented);
+            File.WriteAllText(filePath, json);
+            return true;
         }
     }
 }

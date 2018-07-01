@@ -1,4 +1,4 @@
-﻿using Discord;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,9 +10,9 @@ namespace Dogey
         public IEnumerable<RatelimitInfo> Ratelimits => _ratelimits.Values;
 
         private readonly ConcurrentDictionary<string, RatelimitInfo> _ratelimits;
-        private readonly LoggingService _logger;
+        private readonly ILogger<RatelimitService> _logger;
 
-        public RatelimitService(LoggingService logger)
+        public RatelimitService(ILogger<RatelimitService> logger)
         {
             _ratelimits = new ConcurrentDictionary<string, RatelimitInfo>();
             _logger = logger;
@@ -29,7 +29,7 @@ namespace Dogey
             var info = new RatelimitInfo(requestLimit, resetInterval);
             if (_ratelimits.TryAdd(serviceName, info))
                 return info;
-            _ = _logger.LogAsync(LogSeverity.Error, nameof(RatelimitService), $"`{serviceName}` already has a ratelimiter activated");
+            _logger.LogWarning("`{serviceName}` already has a ratelimiter activated", serviceName);
             return null;
         }
         public RatelimitInfo GetOrCreateInfo(string serviceName, int? requestLimit = null, int? resetInterval = null)

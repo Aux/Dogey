@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -11,38 +12,39 @@ namespace Dogey
     {
         public ConcurrentDictionary<string, Func<PointLog, Task>> Actions { get; }
 
+        private readonly ILogger<PointEarningService> _logger;
         private readonly CommandHandlingService _commands;
         private readonly DiscordSocketClient _discord;
         private readonly PointsController _points;
         private readonly RootController _root;
-        private readonly LoggingService _logger;
 
         private CancellationToken _cancellationToken;
 
-        public PointEarningService(CommandHandlingService commands, DiscordSocketClient discord, PointsController points, RootController root, LoggingService logger)
+        public PointEarningService(ILogger<PointEarningService> logger, CommandHandlingService commands, DiscordSocketClient discord, PointsController points, RootController root)
         {
             Actions = new ConcurrentDictionary<string, Func<PointLog, Task>>();
+            _logger = logger;
             _commands = commands;
             _discord = discord;
             _points = points;
             _root = root;
-            _logger = logger;
         }
 
-        public override async Task StartAsync(CancellationToken cancellationToken)
+        public override Task StartAsync(CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
             _discord.MessageReceived += OnMessageReceivedAsync;
             _discord.MessageDeleted += OnMessageDeletedAsync;
-            await _logger.LogAsync(LogSeverity.Info, nameof(PointEarningService), "Started");
+            _logger.LogInformation("Started");
+            return Task.CompletedTask;
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             await base.StopAsync(cancellationToken);
-            _discord.MessageReceived += OnMessageReceivedAsync;
-            _discord.MessageDeleted += OnMessageDeletedAsync;
-            await _logger.LogAsync(LogSeverity.Info, nameof(PointEarningService), "Stopped");
+            _discord.MessageReceived -= OnMessageReceivedAsync;
+            _discord.MessageDeleted -= OnMessageDeletedAsync;
+            _logger.LogInformation("Stopped");
         }
 
         public bool TryAddAction(string id, Func<PointLog, Task> func)
@@ -116,7 +118,7 @@ namespace Dogey
                 }
                 catch (Exception ex)
                 {
-                    await _logger.LogAsync(LogSeverity.Error, nameof(PointEarningService), $"Unable to add points: {ex}");
+                    _logger.LogError("Unable to add points: {ex}", ex);
                 }
             }, _cancellationToken);
             return Task.CompletedTask;
@@ -140,7 +142,7 @@ namespace Dogey
                 }
                 catch (Exception ex)
                 {
-                    await _logger.LogAsync(LogSeverity.Error, nameof(PointEarningService), $"Unable to remove points: {ex}");
+                    _logger.LogError("Unable to remove points: {ex}", ex);
                 }
             }, _cancellationToken);
             return Task.CompletedTask;

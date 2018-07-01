@@ -1,5 +1,5 @@
-﻿using Discord;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,16 +8,16 @@ namespace Dogey
 {
     public class GuildBanService : BackgroundService
     {
+        private readonly ILogger<GuildBanService> _logger;
         private readonly DiscordSocketClient _discord;
-        private readonly LoggingService _logger;
         private readonly RootController _root;
 
         private CancellationToken _cancellationToken;
 
-        public GuildBanService(DiscordSocketClient discord, LoggingService logger, RootController root)
+        public GuildBanService(ILogger<GuildBanService> logger, DiscordSocketClient discord, RootController root)
         {
-            _discord = discord;
             _logger = logger;
+            _discord = discord;
             _root = root;
         }
         
@@ -28,19 +28,20 @@ namespace Dogey
                 bool banned = await _root.IsBannedAsync(guild);
                 if (banned)
                 {
-                    await _logger.LogAsync(LogSeverity.Info, nameof(GuildBanService), $"Leaving banned guild `{guild.Name} ({guild.Id})`");
+                    _logger.LogInformation("Leaving banned guild `{name} ({id})`", guild.Name, guild.Id);
                     await guild.LeaveAsync();
                 }
             }, _cancellationToken);
             return Task.CompletedTask;
         }
 
-        public override async Task StartAsync(CancellationToken cancellationToken)
+        public override Task StartAsync(CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
             _discord.JoinedGuild += CheckGuildAsync;
             _discord.GuildAvailable += CheckGuildAsync;
-            await _logger.LogAsync(LogSeverity.Info, nameof(GuildBanService), "Started");
+            _logger.LogInformation("Started");
+            return Task.CompletedTask;
         }
 
         public override async Task StopAsync(CancellationToken cancellationToken)
@@ -48,7 +49,7 @@ namespace Dogey
             await base.StopAsync(cancellationToken);
             _discord.JoinedGuild -= CheckGuildAsync;
             _discord.GuildAvailable -= CheckGuildAsync;
-            await _logger.LogAsync(LogSeverity.Info, nameof(GuildBanService), "Stopped");
+            _logger.LogInformation("Stopped");
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
