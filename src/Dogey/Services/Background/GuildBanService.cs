@@ -12,6 +12,8 @@ namespace Dogey
         private readonly LoggingService _logger;
         private readonly RootController _root;
 
+        private CancellationToken _cancellationToken;
+
         public GuildBanService(DiscordSocketClient discord, LoggingService logger, RootController root)
         {
             _discord = discord;
@@ -19,18 +21,23 @@ namespace Dogey
             _root = root;
         }
         
-        private async Task CheckGuildAsync(SocketGuild guild)
+        private Task CheckGuildAsync(SocketGuild guild)
         {
-            bool banned = await _root.IsBannedAsync(guild);
-            if (banned)
+            _ = Task.Run(async () =>
             {
-                await _logger.LogAsync(LogSeverity.Info, nameof(GuildBanService), $"Leaving banned guild `{guild.Name} ({guild.Id})`");
-                await guild.LeaveAsync();
-            }
+                bool banned = await _root.IsBannedAsync(guild);
+                if (banned)
+                {
+                    await _logger.LogAsync(LogSeverity.Info, nameof(GuildBanService), $"Leaving banned guild `{guild.Name} ({guild.Id})`");
+                    await guild.LeaveAsync();
+                }
+            }, _cancellationToken);
+            return Task.CompletedTask;
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
+            _cancellationToken = cancellationToken;
             _discord.JoinedGuild += CheckGuildAsync;
             _discord.GuildAvailable += CheckGuildAsync;
             await _logger.LogAsync(LogSeverity.Info, nameof(GuildBanService), "Started");

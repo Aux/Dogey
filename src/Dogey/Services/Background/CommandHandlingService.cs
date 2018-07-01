@@ -16,7 +16,9 @@ namespace Dogey
         private readonly LoggingService _logger;
         private readonly RootController _root;
         private readonly IServiceProvider _provider;
-        
+
+        private CancellationToken _cancellationToken;
+
         public CommandHandlingService(
             DiscordSocketClient discord,
             CommandService commands,
@@ -33,6 +35,7 @@ namespace Dogey
         
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
+            _cancellationToken = cancellationToken;
             _discord.MessageReceived += OnMessageReceivedAsync;
             await _logger.LogAsync(LogSeverity.Info, nameof(CommandHandlingService), "Started");
         }
@@ -53,15 +56,19 @@ namespace Dogey
             return (hasStringPrefix || context.Message.HasMentionPrefix(_discord.CurrentUser, ref argPos));
         }
 
-        private async Task OnMessageReceivedAsync(SocketMessage s)
+        private Task OnMessageReceivedAsync(SocketMessage s)
         {
-            if (!(s is SocketUserMessage msg)) return;
+            _ = Task.Run(async () =>
+            {
+                if (!(s is SocketUserMessage msg)) return;
 
-            var context = new DogeyCommandContext(_discord, msg);
-            string prefix = await _root.GetPrefixAsync(context.Guild?.Id ?? 0);
-            
-            if (IsCommand(context, prefix, out int argPos))
-                await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
+                var context = new DogeyCommandContext(_discord, msg);
+                string prefix = await _root.GetPrefixAsync(context.Guild?.Id ?? 0);
+
+                if (IsCommand(context, prefix, out int argPos))
+                    await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
+            }, _cancellationToken);
+            return Task.CompletedTask;
         }
 
         public async Task ExecuteAsync(DogeyCommandContext context, IServiceProvider provider, string input)
