@@ -17,6 +17,8 @@ Dogey is a bot (for [Discord](https://discordapp.com) duh) built for use in mult
 - Plonk (Ban users and guilds from using the bot)
 - Sudo (Execute commands as other users)
 - Config (Change guild settings, command prefix, currency name, enable/disable modules)
+- Numbers (Get (interesting?) facts about numbers and dates)
+- Nasa (Get the current or a previous Astronomy Picture of the Day)
 
 ##### Upcoming
 - Points (Earn points based on customizable events, set cost of commands and actions in a guild)
