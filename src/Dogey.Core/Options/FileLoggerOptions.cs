@@ -8,7 +8,7 @@ namespace Dogey
         {
             UseRelativeOutput = true;
             OutputDirectory = "logs";
-            FileNameFormat = "yyyy-MM-dd";
+            DateTimeFormat = "yyyy-MM-dd";
             MaxFileSizeKb = 5000;
         }
 
@@ -16,8 +16,8 @@ namespace Dogey
         public bool UseRelativeOutput { get; set; }
         [JsonProperty("output_directory")]
         public string OutputDirectory { get; set; }
-        [JsonProperty("filename_format")]
-        public string FileNameFormat { get; set; }
+        [JsonProperty("datetime_format")]
+        public string DateTimeFormat { get; set; }
         [JsonProperty("max_filesize_kb")]
         public int? MaxFileSizeKb { get; set; }
     }
