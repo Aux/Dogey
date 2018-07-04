@@ -40,6 +40,8 @@ namespace Dogey
 
         public async Task RunAsync()
         {
+            Colorful.Console.WriteAscii("Dogey", System.Drawing.Color.DarkGreen);
+
             var services = new ServiceCollection();
             ConfigureServices(services);
 

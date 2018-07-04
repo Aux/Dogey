@@ -19,7 +19,7 @@ namespace Dogey
                 ? Path.Combine(AppContext.BaseDirectory, _options.OutputDirectory) 
                 : _options.OutputDirectory;
 
-            return new DogeyLogger(categoryName, outputDirectory, _options.FileNameFormat, _options.MaxFileSizeKb);
+            return new DogeyLogger(categoryName, outputDirectory, _options.DateTimeFormat, _options.MaxFileSizeKb);
         }
 
         public void Dispose()

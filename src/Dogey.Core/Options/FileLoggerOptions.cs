@@ -19,6 +19,6 @@ namespace Dogey
         [JsonProperty("datetime_format")]
         public string DateTimeFormat { get; set; }
         [JsonProperty("max_filesize_kb")]
-        public int? MaxFileSizeKb { get; set; }
+        public int MaxFileSizeKb { get; set; }
     }
 }
