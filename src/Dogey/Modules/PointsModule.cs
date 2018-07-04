@@ -34,32 +34,16 @@ namespace Dogey.Modules
         }
 
         [Command("give"), Alias("gift")]
-        public async Task GiveAsync(SocketUser user, int amount)
+        public async Task GiveAsync(SocketUser user, [Range(1, int.MaxValue)]int amount)
         {
-            var currency = await _root.GetCurrencyNameAsync(Context.Guild);
-            var sender = await _points.GetOrCreateWalletAsync(Context.User);
-            if (sender.Balance < amount)
+            var log = await _points.TradePointsAsync(Context.User, user, amount);
+            if (log == null)
             {
-                await ReplyAsync($"You don't have enough {currency}s to do that.");
+                await ReplyAsync($"You don't have enough points to do that.");
                 return;
             }
             
-            var receiver = await _points.GetOrCreateWalletAsync(user);
-
-            await _points.CreateAsync(new PointLog
-            {
-                UserId = sender.Id,
-                SenderId = receiver.Id,
-                Amount = amount * -1
-            });
-            await _points.CreateAsync(new PointLog
-            {
-                UserId = receiver.Id,
-                SenderId = sender.Id,
-                Amount = amount
-            });
-
-            await ReplyAsync($"{Context.User.Mention} has given {MentionUtils.MentionUser(receiver.Id)} **{amount}** {currency}(s).");
+            await ReplyAsync($"{Context.User.Mention} has given {user.Mention} **{amount}** point(s).");
         }
     }
 }

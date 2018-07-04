@@ -5,7 +5,12 @@ VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dogey", "src\Dogey\Dogey.csproj", "{49FF2687-974E-4ACE-A14C-35B2563F1428}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dogey.Core", "src\Dogey.Core\Dogey.Core.csproj", "{DA51E047-98DC-4602-AECA-00E8F6BCC9AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dogey.Core", "src\Dogey.Core\Dogey.Core.csproj", "{DA51E047-98DC-4602-AECA-00E8F6BCC9AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{D134C16D-4581-47F0-A697-24A85B244C3A}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,5 +49,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C44D1F80-95B6-434E-AA76-5EBA2F74AA3B}
 	EndGlobalSection
 EndGlobal

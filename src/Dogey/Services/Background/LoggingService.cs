@@ -27,7 +27,7 @@ namespace Dogey
         
         private Task OnLogAsync(LogMessage msg)
         {
-            var logger = _factory.CreateLogger(msg.Source);
+            var logger = _factory.CreateLogger("Discord." + msg.Source);
             string message = msg.Exception?.ToString() ?? msg.Message;
             switch (msg.Severity)
             {

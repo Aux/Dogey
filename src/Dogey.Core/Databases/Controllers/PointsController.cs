@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,27 @@ namespace Dogey
 
         public Task<List<Price>> GetPricesAsync(IGuild guild)
             => _db.Prices.Where(x => x.GuildId == guild.Id).ToListAsync();
+
+        public async Task<PointLog> TradePointsAsync(IUser sender, IUser receiver, int amount)
+        {
+            var senderWallet = await GetOrCreateWalletAsync(sender);
+            if (senderWallet.Balance < amount) return null;
+
+            var receiverWallet = await GetOrCreateWalletAsync(receiver);
+
+            var log = await CreateAsync(new PointLog
+            {
+                Timestamp = DateTime.UtcNow,
+                SenderId = sender.Id,
+                UserId = receiver.Id,
+                Amount = amount
+            });
+
+            senderWallet.Balance -= amount;
+            receiverWallet.Balance += amount;
+            await _db.SaveChangesAsync();
+            return log;
+        }
 
         public async Task<Wallet> GetOrCreateWalletAsync(IUser user)
         {
@@ -46,7 +68,7 @@ namespace Dogey
             await _db.SaveChangesAsync();
             return wallet;
         }
-
+        
         public Task DeleteAsync(PointLog log)
         {
             _db.Logs.Remove(log);
