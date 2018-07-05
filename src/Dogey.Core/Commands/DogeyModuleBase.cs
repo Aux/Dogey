@@ -12,7 +12,10 @@ namespace Dogey
 
         public Task ReplyEmbedAsync(Embed embed = null)
             => ReplyAsync("", false, embed, null);
-        
+
+        public Task ReplyReactionAsync(IEmote emote)
+            => Context.Message.AddReactionAsync(emote);
+
         public Task ReplyFileAsync(Stream stream, string fileName, string message = null)
             => Context.Channel.SendFileAsync(stream, fileName, message, false, null);
         

@@ -10,6 +10,7 @@ namespace Dogey
             Tokens = new TokenOptions();
             Google = new GoogleOptions();
             FileLogger = new FileLoggerOptions();
+            Responsive = new ResponsiveOptions();
         }
 
         [JsonProperty("tokens")]
@@ -18,5 +19,7 @@ namespace Dogey
         public GoogleOptions Google { get; set; }
         [JsonProperty("filelogger")]
         public FileLoggerOptions FileLogger { get; set; }
+        [JsonProperty("responsive")]
+        public ResponsiveOptions Responsive { get; set; }
     }
 }

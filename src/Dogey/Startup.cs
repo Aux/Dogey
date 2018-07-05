@@ -111,6 +111,7 @@ namespace Dogey
 
                 // Etc
                 .AddLogging()
+                .AddTransient<ResponsiveService>()
                 .AddTransient<StartupService>()
                 .AddTransient<RoslynService>()
                 .AddSingleton<RatelimitService>()
