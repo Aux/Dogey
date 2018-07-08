@@ -3,6 +3,7 @@ using Discord.Commands;
 using Octokit;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,10 +50,10 @@ namespace Dogey.Modules
             var embed = new EmbedBuilder()
                 .WithAuthor(app.Owner)
                 .WithDescription(builder.ToString())
-                .AddInlineField("Memory", MemoryUsage)
-                .AddInlineField("Latency", Context.Client.Latency + "ms")
-                .AddInlineField("Uptime", GetUptime())
-                .AddInlineField("OS", RuntimeInformation.OSDescription)
+                .AddField("Memory", MemoryUsage, true)
+                .AddField("Latency", Context.Client.Latency + "ms", true)
+                .AddField("Uptime", GetUptime(), true)
+                .AddField("OS", RuntimeInformation.OSDescription.Split(new[] { '#' }, 2).FirstOrDefault(), true)
                 .WithFooter(x => x.Text = Library);
             await ReplyEmbedAsync(embed);
         }

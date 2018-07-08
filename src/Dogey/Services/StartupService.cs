@@ -13,17 +13,20 @@ namespace Dogey
     public class StartupService
     {
         private readonly ILoggerFactory _loggerFactory;
+        private readonly IServiceProvider _provider;
+        private readonly IConfiguration _config;
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
-        private readonly IConfiguration _config;
         
         public StartupService(
             ILoggerFactory loggerFactory,
+            IServiceProvider provider,
+            IConfiguration config,
             DiscordSocketClient discord,
-            CommandService commands,
-            IConfiguration config)
+            CommandService commands)
         {
             _loggerFactory = loggerFactory;
+            _provider = provider;
             _config = config;
             _discord = discord;
             _commands = commands;
@@ -46,7 +49,7 @@ namespace Dogey
             _commands.AddTypeReader<Emote>(new EmoteTypeReader());
             _commands.AddTypeReader<ModuleInfo>(new ModuleInfoTypeReader());
 
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
         }
     }
 }

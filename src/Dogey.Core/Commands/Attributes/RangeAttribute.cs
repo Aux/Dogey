@@ -36,7 +36,7 @@ namespace Dogey
             Maximum = maximum;
         }
         
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, ParameterInfo parameter, object value, IServiceProvider services)
+        public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, ParameterInfo parameter, object value, IServiceProvider services)
         {
             if (IsValid(value))
                 return Task.FromResult(PreconditionResult.FromSuccess());

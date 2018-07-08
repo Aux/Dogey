@@ -105,7 +105,7 @@ namespace Dogey
                 {
                     x.Text = $"In {executeTime}ms";
                 });
-            return builder;
+            return builder.Build();
         }
     }
 

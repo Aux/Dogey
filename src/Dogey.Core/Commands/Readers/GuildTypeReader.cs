@@ -8,7 +8,7 @@ namespace Dogey
 {
     public class GuildTypeReader : TypeReader
     {
-        public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
+        public override Task<TypeReaderResult> ReadAsync(ICommandContext context, string input, IServiceProvider services)
         {
             var discord = context.Client as DiscordSocketClient;
 

@@ -7,7 +7,7 @@ namespace Dogey
 {
     public class EmoteTypeReader : TypeReader
     {
-        public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
+        public override Task<TypeReaderResult> ReadAsync(ICommandContext context, string input, IServiceProvider services)
         {
             if (Emote.TryParse(input, out Emote result))
                 return Task.FromResult(TypeReaderResult.FromSuccess(result));

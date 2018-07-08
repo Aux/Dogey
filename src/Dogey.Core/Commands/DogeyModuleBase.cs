@@ -10,8 +10,10 @@ namespace Dogey
         public Task ReplySuccessAsync()
             => ReplyAsync("Success");
 
-        public Task ReplyEmbedAsync(Embed embed = null)
+        public Task ReplyEmbedAsync(Embed embed)
             => ReplyAsync("", false, embed, null);
+        public Task ReplyEmbedAsync(EmbedBuilder builder)
+            => ReplyAsync("", false, builder.Build(), null);
 
         public Task ReplyReactionAsync(IEmote emote)
             => Context.Message.AddReactionAsync(emote);

@@ -67,7 +67,10 @@ namespace Dogey
                 string prefix = await _root.GetPrefixAsync(context.Guild?.Id ?? 0);
 
                 if (IsCommand(context, prefix, out int argPos))
-                    await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
+                {
+                    using (context.Channel.EnterTypingState())
+                        await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
+                }
             }, _cancellationToken);
             return Task.CompletedTask;
         }

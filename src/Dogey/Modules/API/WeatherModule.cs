@@ -33,10 +33,10 @@ namespace Dogey.Modules
                 .WithTitle(forecast.Name + "'s Weather")
                 .WithDescription(weather.Description)
                 .WithCurrentTimestamp()
-                .AddInlineField("Pressure", forecast.Measurements.Pressure + " hPa")
-                .AddInlineField("Humidity", forecast.Measurements.Humidity + "%")
-                .AddInlineField("Temp", MathHelper.KelvinToFahrenheit(forecast.Measurements.Temperature) + "f")
-                .AddInlineField("Temp Range", MathHelper.KelvinToFahrenheit(forecast.Measurements.TemperatureMin) + "f -> " + MathHelper.KelvinToFahrenheit(forecast.Measurements.TemperatureMax) + 'f');
+                .AddField("Pressure", forecast.Measurements.Pressure + " hPa", true)
+                .AddField("Humidity", forecast.Measurements.Humidity + "%", true)
+                .AddField("Temp", MathHelper.KelvinToFahrenheit(forecast.Measurements.Temperature) + "f", true)
+                .AddField("Temp Range", MathHelper.KelvinToFahrenheit(forecast.Measurements.TemperatureMin) + "f -> " + MathHelper.KelvinToFahrenheit(forecast.Measurements.TemperatureMax) + 'f', true);
             await ReplyEmbedAsync(embed);
         }
     }

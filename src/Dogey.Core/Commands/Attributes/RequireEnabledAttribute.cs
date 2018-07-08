@@ -7,7 +7,7 @@ namespace Dogey
     [AttributeUsage(AttributeTargets.Class)]
     public class RequireEnabledAttribute : PreconditionAttribute
     {
-        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
+        public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             var db = (RootController)services.GetService(typeof(RootController));
 
