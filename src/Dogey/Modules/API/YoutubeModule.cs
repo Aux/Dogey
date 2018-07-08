@@ -14,7 +14,8 @@ namespace Dogey.Modules
         public string GetVideoUrl(string id)
             => BaseUrl + id;
 
-        public YoutubeModule(YouTubeService youtube)
+        public YoutubeModule(YouTubeService youtube, RootController root)
+            : base(root)
         {
             _youtube = youtube;
         }

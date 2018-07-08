@@ -7,23 +7,25 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [RequireOwner]
-    [RequireEnabled]
     public class OwnerModule : DogeyModuleBase
     {
+        public OwnerModule(RootController root)
+            : base(root) { }
+
         [Command("reactwith")]
         public async Task ReactWithAsync(Emote emote)
         {
             await Context.Message.AddReactionAsync(emote);
         }
 
-        [Command("setactivity")]
-        public async Task SetActivityAsync(Uri url, [Remainder]string activity)
+        [Command("setstreaming")]
+        public async Task SetActivityAsync(Uri url, [Remainder]string name)
         {
-            await Context.Client.SetGameAsync(activity, url.ToString(), StreamType.Twitch);
+            await Context.Client.SetActivityAsync(new StreamingGame(name, url.ToString()));
             await ReplySuccessAsync();
         }
 
-        [Command("setactivity")]
+        [Command("setgame")]
         public async Task SetActivityAsync([Remainder]string activity)
         {
             await Context.Client.SetGameAsync(activity);

@@ -8,7 +8,8 @@ namespace Dogey.Modules
     {
         private readonly RoslynService _roslyn;
 
-        public CSharpModule(RoslynService roslyn)
+        public CSharpModule(RoslynService roslyn, RootController root)
+            : base(root)
         {
             _roslyn = roslyn;
         }

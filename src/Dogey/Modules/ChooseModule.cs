@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [RequireEnabled]
     public class ChooseModule : DogeyModuleBase
     {
         private readonly Random _random;
 
-        public ChooseModule(Random random)
+        public ChooseModule(Random random, RootController root)
+            : base(root)
         {
             _random = random;
         }

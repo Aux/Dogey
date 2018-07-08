@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [RequireEnabled]
     public class WeatherModule : DogeyModuleBase
     {
         private readonly WeatherApiService _weather;
 
-        public WeatherModule(WeatherApiService weather)
+        public WeatherModule(WeatherApiService weather, RootController root)
+            : base(root)
         {
             _weather = weather;
         }

@@ -47,6 +47,8 @@ namespace Dogey
             _commands.AddTypeReader<SocketGuild>(guildReader);
             _commands.AddTypeReader<Uri>(new UriTypeReader());
             _commands.AddTypeReader<Emote>(new EmoteTypeReader());
+            _commands.AddTypeReader<IEmote>(new EmoteTypeReader());
+            _commands.AddTypeReader<Emoji>(new EmoteTypeReader());
             _commands.AddTypeReader<ModuleInfo>(new ModuleInfoTypeReader());
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);

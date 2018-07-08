@@ -11,7 +11,8 @@ namespace Dogey.Modules.Admin
     {
         private readonly PointEarningService _points;
 
-        public PointsAdminModule(PointEarningService points)
+        public PointsAdminModule(PointEarningService points, RootController root)
+            : base(root)
         {
             _points = points;
         }

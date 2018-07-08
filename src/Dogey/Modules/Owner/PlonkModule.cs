@@ -9,12 +9,8 @@ namespace Dogey.Modules.Owner
     [RequireOwner]
     public class PlonkModule : DogeyModuleBase
     {
-        private readonly RootController _root;
-
         public PlonkModule(RootController root)
-        {
-            _root = root;
-        }
+            : base(root) { }
 
         [Command("plonk")]
         public async Task PlonkAsync([Remainder]IGuild guild)

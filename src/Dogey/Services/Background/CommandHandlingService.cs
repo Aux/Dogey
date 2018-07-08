@@ -64,7 +64,7 @@ namespace Dogey
                 if (!(s is SocketUserMessage msg)) return;
 
                 var context = new DogeyCommandContext(_discord, msg);
-                string prefix = await _root.GetPrefixAsync(context.Guild?.Id ?? 0);
+                string prefix = await _root.GetPrefixAsync(context.Guild);
 
                 if (IsCommand(context, prefix, out int argPos))
                 {

@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [RequireEnabled]
     public class DogModule : DogeyModuleBase
     {
         private readonly DogApiService _dog;
 
-        public DogModule(DogApiService dog)
+        public DogModule(DogApiService dog, RootController root)
+            : base(root)
         {
             _dog = dog;
         }

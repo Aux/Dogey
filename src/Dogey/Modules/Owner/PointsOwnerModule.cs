@@ -11,7 +11,8 @@ namespace Dogey.Modules.Owner
     {
         private readonly PointsController _points;
 
-        public PointsOwnerModule(PointsController points)
+        public PointsOwnerModule(PointsController points, RootController root)
+            : base(root)
         {
             _points = points;
         }

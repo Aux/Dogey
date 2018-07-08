@@ -71,7 +71,7 @@ namespace Dogey
                 if (msg.Author.IsBot) return;
 
                 var context = new DogeyCommandContext(_discord, msg);
-                string prefix = await _root.GetPrefixAsync(context.Guild?.Id ?? 0);
+                string prefix = await _root.GetPrefixAsync(context.Guild);
 
                 if (_commands.IsCommand(context, prefix, out int argPos)) return;
 

@@ -9,7 +9,8 @@ namespace Dogey.Modules.API
     {
         private readonly NasaApiService _nasa;
 
-        public NasaModule(NasaApiService nasa)
+        public NasaModule(NasaApiService nasa, RootController root)
+            : base(root)
         {
             _nasa = nasa;
         }

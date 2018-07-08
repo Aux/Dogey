@@ -14,7 +14,8 @@ namespace Dogey.Modules
         private readonly CustomsearchService _cse;
         private readonly IConfiguration _config;
 
-        public GoogleModule(CustomsearchService cse, IConfiguration config)
+        public GoogleModule(CustomsearchService cse, IConfiguration config, RootController root)
+            : base(root)
         {
             _cse = cse;
             _config = config;

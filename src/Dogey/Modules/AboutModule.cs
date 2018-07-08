@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [RequireEnabled]
     public class AboutModule : DogeyModuleBase
     {
         public string Library => $"Discord.Net ({DiscordConfig.Version})";
@@ -19,7 +18,8 @@ namespace Dogey.Modules
         private readonly GitHubClient _github;
         private readonly Process _process;
 
-        public AboutModule(GitHubClient github)
+        public AboutModule(GitHubClient github, RootController root)
+            : base(root)
         {
             _github = github;
             _process = Process.GetCurrentProcess();

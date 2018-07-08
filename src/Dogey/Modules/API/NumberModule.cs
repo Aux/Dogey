@@ -8,7 +8,8 @@ namespace Dogey.Modules
     {
         private readonly NumbersApiService _numbers;
 
-        public NumberModule(NumbersApiService numbers)
+        public NumberModule(NumbersApiService numbers, RootController root)
+            : base(root)
         {
             _numbers = numbers;
         }

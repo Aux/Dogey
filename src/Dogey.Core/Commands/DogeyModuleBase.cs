@@ -7,8 +7,15 @@ namespace Dogey
 {
     public class DogeyModuleBase : ModuleBase<DogeyCommandContext>
     {
-        public Task ReplySuccessAsync()
-            => ReplyAsync("Success");
+        protected readonly RootController _root;
+
+        public DogeyModuleBase(RootController root)
+        {
+            _root = root;
+        }
+
+        public async Task ReplySuccessAsync()
+            => await Context.Message.AddReactionAsync(await _root.GetSuccessEmojiAsync(Context.Guild, Context.Channel as IGuildChannel));
 
         public Task ReplyEmbedAsync(Embed embed)
             => ReplyAsync("", false, embed, null);

@@ -10,7 +10,8 @@ namespace Dogey.Modules.Owner
     {
         private readonly ResponsiveService _responsive;
 
-        public TestModule(ResponsiveService responsive)
+        public TestModule(ResponsiveService responsive, RootController root)
+            : base(root)
         {
             _responsive = responsive;
         }
@@ -32,6 +33,12 @@ namespace Dogey.Modules.Owner
             }
 
             await ReplyAsync("You said: " + msg.Content);
+        }
+
+        [Command("success")]
+        public async Task SuccessAsync()
+        {
+            await ReplySuccessAsync();
         }
 
         [Command("reacttest")]

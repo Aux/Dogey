@@ -5,17 +5,15 @@ using System.Threading.Tasks;
 
 namespace Dogey.Modules
 {
-    [RequireEnabled]
     [Group("points")]
     public class PointsModule : DogeyModuleBase
     {
         private readonly PointsController _points;
-        private readonly RootController _root;
 
         public PointsModule(PointsController points, RootController root)
+            : base(root)
         {
             _points = points;
-            _root = root;
         }
         
         [Command]

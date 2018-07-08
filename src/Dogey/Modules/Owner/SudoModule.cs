@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 namespace Dogey.Modules
 {
     [RequireOwner]
-    [RequireEnabled]
     public class SudoModule : DogeyModuleBase
     {
         private readonly CommandHandlingService _handler;
         private readonly IServiceProvider _provider;
 
-        public SudoModule(CommandHandlingService handler, IServiceProvider provider)
+        public SudoModule(CommandHandlingService handler, IServiceProvider provider, RootController root)
+            : base(root)
         {
             _handler = handler;
             _provider = provider;
