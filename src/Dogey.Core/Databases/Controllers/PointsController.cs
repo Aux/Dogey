@@ -33,6 +33,7 @@ namespace Dogey
                 Timestamp = DateTime.UtcNow,
                 SenderId = sender.Id,
                 UserId = receiver.Id,
+                EarningType = EarningType.Trade,
                 Amount = amount
             });
 

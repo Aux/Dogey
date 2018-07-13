@@ -103,6 +103,8 @@ namespace Dogey
                 .AddSingleton(RestClient.For<IDogApi>(DogApiService.GetClient()))
                 .AddSingleton<NumbersApiService>()
                 .AddSingleton(RestClient.For<INumbersApi>(NumbersApiService.GetClient()))
+                .AddSingleton<TriviaApiService>()
+                .AddSingleton(RestClient.For<ITriviaApi>(TriviaApiService.GetClient()))
 
                 // Background
                 .AddSingleton<GuildBanService>()

@@ -13,68 +13,58 @@ namespace Dogey
     {
         private readonly ILogger<ResponsiveService> _logger;
         private readonly ResponsiveOptions _options;
-        private DogeyCommandContext _context;
+        private readonly DiscordSocketClient _discord;
 
-        public ResponsiveService(ILogger<ResponsiveService> logger, IConfiguration config)
+        public ResponsiveService(ILogger<ResponsiveService> logger, IConfiguration config, DiscordSocketClient discord)
         {
             _logger = logger;
+            _discord = discord;
 
             var options = new ResponsiveOptions();
             config.Bind("responsive", options);
             _options = options;
         }
-
-        public bool IsSuccessReply(IMessage msg)
-            => _options.TrueReplies.Any(x => msg.Content.ToLower().Contains(x.ToLower()));
-
-        public void SetContext(DogeyCommandContext context)
+        
+        private async Task<T> WaitAsync<T>(TaskCompletionSource<T> tcs, TimeSpan? expireAfter = null)
         {
-            _context = context;
-        }
-
-        private async Task<T> WaitAsync<T>(TaskCompletionSource<T> tcs, bool expire)
-        {
-            if (expire) new Timer((s) => tcs.TrySetCanceled(), null, TimeSpan.FromSeconds(_options.ExpireSeconds), TimeSpan.Zero);
+            new Timer((s) => tcs.TrySetCanceled(), null, expireAfter == null ? TimeSpan.FromSeconds(_options.DefaultExpireSeconds) : (TimeSpan)expireAfter, TimeSpan.Zero);
             try
             {
                 return await tcs.Task;
             }
             catch (Exception)
             {
-                _logger.LogInformation("Cancelled task after {0} seconds with no reply", _options.ExpireSeconds);
+                _logger.LogInformation("Cancelled task after {0} seconds with no reply", _options.DefaultExpireSeconds);
             }
             return default;
         }
         
-        public async Task<SocketUserMessage> WaitForReplyAsync(ISocketMessageChannel channel, IUser user, bool expire = true)
+        public async Task<SocketMessage> WaitForMessageAsync(Func<SocketMessage, bool> condition, TimeSpan? expireAfter = null)
         {
-            var tcs = new TaskCompletionSource<SocketUserMessage>();
+            var tcs = new TaskCompletionSource<SocketMessage>();
 
-            _context.Client.MessageReceived += (msg) =>
+            _discord.MessageReceived += (msg) =>
             {
-                if (msg is SocketUserMessage userMsg)
-                {
-                    if (msg.Channel.Id == channel.Id && msg.Author.Id == user.Id)
-                        tcs.TrySetResult(userMsg);
-                }
+                if (condition(msg))
+                    tcs.TrySetResult(msg);
                 return Task.CompletedTask;
             };
 
-            return await WaitAsync(tcs, expire);
+            return await WaitAsync(tcs, expireAfter);
         }
-
-        public async Task<SocketReaction> WaitForReactionAsync(IUserMessage msg, IUser user, bool expire = true)
+        
+        public async Task<SocketReaction> WaitForReactionAsync(Func<Cacheable<IUserMessage, ulong>, ISocketMessageChannel, SocketReaction, bool> condition, TimeSpan? expireAfter = null)
         {
             var tcs = new TaskCompletionSource<SocketReaction>();
 
-            _context.Client.ReactionAdded += (cache, ch, reaction) =>
+            _discord.ReactionAdded += (cache, ch, r) =>
             {
-                if (ch.Id == msg.Channel.Id && reaction.UserId == user.Id)
-                    tcs.TrySetResult(reaction);
+                if (condition(cache, ch, r))
+                    tcs.TrySetResult(r);
                 return Task.CompletedTask;
             };
 
-            return await WaitAsync(tcs, expire);
+            return await WaitAsync(tcs, expireAfter);
         }
     }
 }

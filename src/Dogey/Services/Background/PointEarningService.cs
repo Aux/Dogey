@@ -106,6 +106,7 @@ namespace Dogey
                             Timestamp = msg.Timestamp.DateTime,
                             UserId = msg.Author.Id,
                             SenderId = msg.Id,
+                            EarningType = EarningType.Message,
                             Amount = earning
                         });
 
