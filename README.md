@@ -1,7 +1,7 @@
 ## Dogey  
 [![Discord](https://discordapp.com/api/guilds/158057120493862912/widget.png)](https://discord.gg/B4BwQ8r)  
 
-Dogey is a bot (for [Discord](https://discordapp.com) duh) built for use in multiple guilds but not tested on a large scale. It also serves as the guinea pig for new ideas I might want to do test implementations of. Currently undergoing it's 27th rewrite, I'm adding features constantly as the motivation arises. [Click on this link right here to join my guild and laugh in my face about my code](https://discord.gg/B4BwQ8r).
+Dogey is a bot (for [Discord](https://discordapp.com) duh) built for use in multiple guilds but not tested on a large scale. It also serves as the guinea pig for new ideas I might want to do test implementations of. Currently undergoing it's 27th rewrite, I'm adding features constantly as the motivation arises. [Click on this link right here to join my guild](https://discord.gg/B4BwQ8r).
 
 ### What it do
 ##### Live
