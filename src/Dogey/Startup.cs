@@ -52,6 +52,7 @@ namespace Dogey
             await provider.GetRequiredService<StartupService>().StartAsync();
             await provider.GetRequiredService<CommandHandlingService>().StartAsync(CancellationTokenSource.Token);
             await provider.GetRequiredService<PointEarningService>().StartAsync(CancellationTokenSource.Token);
+            await provider.GetRequiredService<ReactionRoleService>().StartAsync(CancellationTokenSource.Token);
 
             await Task.Delay(-1);
         }
@@ -110,6 +111,7 @@ namespace Dogey
                 .AddSingleton<GuildBanService>()
                 .AddSingleton<CommandHandlingService>()
                 .AddSingleton<PointEarningService>()
+                .AddSingleton<ReactionRoleService>()
 
                 // Etc
                 .AddLogging()

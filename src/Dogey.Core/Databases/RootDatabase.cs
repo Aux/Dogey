@@ -9,6 +9,7 @@ namespace Dogey
         public DbSet<UserConfig> UserConfigs { get; set; }
         public DbSet<GuildConfig> GuildConfigs { get; set; }
         public DbSet<ChannelConfig> ChannelConfigs { get; set; }
+        public DbSet<ReactionRole> ReactionRoles { get; set; }
 
         public RootDatabase()
         {

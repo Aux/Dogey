@@ -2,6 +2,8 @@
 using Discord.Addons.EmojiTools;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -83,24 +85,17 @@ namespace Dogey
             await SaveAsync();
             return config;
         }
+        
+        public async Task<IEnumerable<ReactionRole>> GetReactionRolesAsync()
+            => await _db.ReactionRoles.ToListAsync();
+        public async Task<IEnumerable<ReactionRole>> GetReactionRolesAsync(ulong guildId)
+            => await _db.ReactionRoles.Where(x => x.GuildId == guildId).ToListAsync(); 
 
-        public async Task<UserConfig> ModifyAsync(UserConfig config)
+        public async Task<ReactionRole> CreateAsync(ReactionRole role)
         {
-            config.UpdatedAt = DateTime.UtcNow;
+            await _db.ReactionRoles.AddAsync(role);
             await SaveAsync();
-            return config;
-        }
-        public async Task<GuildConfig> ModifyAsync(GuildConfig config)
-        {
-            config.UpdatedAt = DateTime.UtcNow;
-            await SaveAsync();
-            return config;
-        }
-        public async Task<ChannelConfig> ModifyAsync(ChannelConfig config)
-        {
-            config.UpdatedAt = DateTime.UtcNow;
-            await SaveAsync();
-            return config;
+            return role;
         }
 
         public Task SaveAsync()
