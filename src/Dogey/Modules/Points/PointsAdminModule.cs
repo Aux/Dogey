@@ -2,6 +2,8 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.Admin
@@ -21,9 +23,14 @@ namespace Dogey.Modules.Admin
         public async Task MirrorPointEarningsAsync(SocketTextChannel channel)
         {
             var guild = Context.Guild;
-            _points.TryAddAction(Context.Guild.Id.ToString(), async log =>
+            _points.TryAddAction(Context.Guild.Id.ToString(), async logs =>
             {
-                await channel.SendMessageAsync($"{guild.GetUser(log.UserId)} has earned **{log.Amount}** point(s)");
+                var message = $"{logs.Count()} user(s) have earned points this cycle ({logs.First().SenderId})";
+
+                if (logs.Count() <= 25)
+                    message += $": {string.Join(", ", logs.Select(x => guild.GetUser(x.UserId)))}";
+
+                await channel.SendMessageAsync(message);
             });
             await ReplySuccessAsync();
         }
@@ -31,7 +38,7 @@ namespace Dogey.Modules.Admin
         [Command("mirrorearnings")]
         public async Task MirrorPointEarningsAsync()
         {
-            if (_points.TryRemoveAction(Context.Guild.Id.ToString(), out Func<PointLog, Task> value))
+            if (_points.TryRemoveAction(Context.Guild.Id.ToString(), out Func<IEnumerable<PointLog>, Task> value))
             {
                 await ReplySuccessAsync();
                 return;

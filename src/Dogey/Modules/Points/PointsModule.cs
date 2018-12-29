@@ -23,7 +23,7 @@ namespace Dogey.Modules
         [Command]
         public async Task PointsAsync([Remainder]SocketUser user)
         {
-            var currency = await _root.GetCurrencyNameAsync(Context.Guild);
+            var currency = "point"; //await _root.GetCurrencyNameAsync(Context.Guild);
             var wallet = await _points.GetOrCreateWalletAsync(user);
 
             var embed = new EmbedBuilder()

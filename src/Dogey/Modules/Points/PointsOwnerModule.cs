@@ -47,7 +47,8 @@ namespace Dogey.Modules.Owner
             {
                 Timestamp = DateTime.UtcNow,
                 UserId = user.Id,
-                SenderId = 0,
+                SenderId = Context.User.Id.ToString(),
+                EarningType = EarningType.Gift,
                 Amount = amount
             });
 

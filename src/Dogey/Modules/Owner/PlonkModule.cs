@@ -19,7 +19,6 @@ namespace Dogey.Modules.Owner
             if (config.BannedAt == null)
             {
                 config.BannedAt = DateTime.UtcNow;
-                await _root.ModifyAsync(config);
                 await ReplySuccessAsync();
             }
         }
@@ -31,7 +30,6 @@ namespace Dogey.Modules.Owner
             if (config.BannedAt == null)
             {
                 config.BannedAt = DateTime.UtcNow;
-                await _root.ModifyAsync(config);
                 await ReplySuccessAsync();
             }
         }
@@ -43,7 +41,6 @@ namespace Dogey.Modules.Owner
             if (config.BannedAt != null)
             {
                 config.BannedAt = null;
-                await _root.ModifyAsync(config);
                 await ReplySuccessAsync();
             }
         }
@@ -55,7 +52,6 @@ namespace Dogey.Modules.Owner
             if (config.BannedAt != null)
             {
                 config.BannedAt = null;
-                await _root.ModifyAsync(config);
                 await ReplySuccessAsync();
             }
         }

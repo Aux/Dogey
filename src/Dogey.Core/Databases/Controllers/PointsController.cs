@@ -1,8 +1,6 @@
 ﻿using Discord;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Dogey
@@ -13,13 +11,8 @@ namespace Dogey
 
         public Task<Wallet> GetWalletAsync(IUser user)
             => _db.Wallets.SingleOrDefaultAsync(x => x.Id == user.Id);
-        public Task<PointLog> GetLogAsync(ulong id)
+        public Task<PointLog> GetLogAsync(string id)
             => _db.Logs.SingleOrDefaultAsync(x => x.SenderId == id);
-        public Task<Price> GetPriceAsync(IGuild guild, string name)
-            => _db.Prices.SingleOrDefaultAsync(x => x.GuildId == guild.Id && x.Name.ToLower() == name.ToLower());
-
-        public Task<List<Price>> GetPricesAsync(IGuild guild)
-            => _db.Prices.Where(x => x.GuildId == guild.Id).ToListAsync();
 
         public async Task<PointLog> TradePointsAsync(IUser sender, IUser receiver, int amount)
         {
@@ -31,7 +24,7 @@ namespace Dogey
             var log = await CreateAsync(new PointLog
             {
                 Timestamp = DateTime.UtcNow,
-                SenderId = sender.Id,
+                SenderId = sender.Id.ToString(),
                 UserId = receiver.Id,
                 EarningType = EarningType.Trade,
                 Amount = amount

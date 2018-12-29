@@ -66,7 +66,6 @@ namespace Dogey.Modules.Configs
         {
             var config = await _root.GetOrCreateConfigAsync(Context.Guild);
             config.Prefix = prefix;
-            await _root.ModifyAsync(config);
             await ReplySuccessAsync();
         }
 
@@ -87,7 +86,6 @@ namespace Dogey.Modules.Configs
         {
             var config = await _root.GetOrCreateConfigAsync(Context.Guild);
             config.SuccessEmoji = emote.ToString();
-            await _root.ModifyAsync(config);
             await ReplySuccessAsync();
         }
     }
