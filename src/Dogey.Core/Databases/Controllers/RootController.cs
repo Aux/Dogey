@@ -85,7 +85,10 @@ namespace Dogey
             await SaveAsync();
             return config;
         }
-        
+
+        public async Task<ReactionRole> GetReactionRoleAsync(ulong messageId)
+            => await _db.ReactionRoles.SingleOrDefaultAsync(x => x.MessageId == messageId);
+
         public async Task<IEnumerable<ReactionRole>> GetReactionRolesAsync()
             => await _db.ReactionRoles.ToListAsync();
         public async Task<IEnumerable<ReactionRole>> GetReactionRolesAsync(ulong guildId)
@@ -96,6 +99,11 @@ namespace Dogey
             await _db.ReactionRoles.AddAsync(role);
             await SaveAsync();
             return role;
+        }
+        public Task DeleteAsync(ReactionRole role)
+        {
+            _db.ReactionRoles.Remove(role);
+            return SaveAsync();
         }
 
         public Task SaveAsync()

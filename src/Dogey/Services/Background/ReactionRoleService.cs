@@ -67,7 +67,16 @@ namespace Dogey
 
         private async Task OnReactionRemovedAsync(Cacheable<IUserMessage, ulong> cache, ISocketMessageChannel channel, SocketReaction reaction)
         {
-            await Task.Delay(0);
+            var reactionRole = ReactionRoles.SingleOrDefault(x => x.MessageId == cache.Id);
+            if (reactionRole == null) return;
+
+            var author = reaction.User.Value as SocketGuildUser;
+            if (author == null) return;
+
+            if (!author.Roles.Any(x => x.Id == reactionRole.RoleId)) return;
+            var role = author.Guild.GetRole(reactionRole.RoleId);
+
+            await author.RemoveRoleAsync(role);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
