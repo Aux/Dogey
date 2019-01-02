@@ -5,26 +5,47 @@ Dogey is a bot (for [Discord](https://discordapp.com) duh) built for use in mult
 
 ### What it do
 ##### Live
-- About (bot information)
-- Choose (pick a random thing)
-- Dog (Grab a random dog image from the infinite void of internet)
-- Google (Global and per site quering with google's custom search engine api)
-- Weather (Get some basic information about the weather in a city)
-- Youtube (Search youtube with a basic query)
-- CSharp (Evaluate a string of c# code)
-- Owner (Change bot settings)
-- Plonk (Ban users and guilds from using the bot)
-- Sudo (Execute commands as other users)
-- Config (Change guild settings, command prefix, currency name, enable/disable modules)
-- Numbers (Get (interesting?) facts about numbers and dates)
-- Nasa (Get the current or a previous Astronomy Picture of the Day)
-- Trivia (Answer questions on various topics and get points!)
+- **About**  
+View various information about the bot
+- **Choose**  
+Have the bot choose between some random options
+- **Dog**  
+Grab a random dog image from the infinite void of the internet and post it in chat
+- **Google**  
+Global and per site quering with google's custom search engine api
+- **Weather**  
+Get some basic information about the weather in a city
+- **Youtube**  
+Search youtube with a basic query
+- **CSharp**  
+Evaluate a string of c# code
+- **Plonk**  
+Ban users and guilds from using the bot
+- **Sudo**  
+Execute commands as other users
+- **Config**  
+Change guild settings, command prefix, currency name, enable/disable modules
+- **Numbers**  
+Get (interesting?) facts about numbers and dates
+- **Nasa**  
+Get the current or a previous Astronomy Picture of the Day
+- **Trivia**  
+Answer questions on various topics and get points!
+- **Reaction Roles**  
+Assign and remove roles based on reactions to a configured message
+- **Points**  
+Earn an arbitrary amount of points based on message activity in a guild
 
 ##### Upcoming
-- Points (Earn points based on customizable events, set cost of commands and actions in a guild)
-- Twitch (Make some stuff work in twitch chat, get twitch notifications, maybe)
-- Github (View and manage github issues, other stuff as I think it up)
-- Gitlab (Github but gitlab)
+- **Points**  
+Disable point earning in specified channels, set channel point modifiers, change the name of the currency.
+- **Store**  
+Spend points on things like designated roles, guild invites, force nickname, and other chaotic things.
+- **Twitch**  
+Make some of the features listed above work in twitch chat if possible, configure twitch notifications, edit channel from discord.
+- **Github**  
+View a summary of issues, post a comment to an issue or commit, view recent commits, etc...
 
-##### Considering
-- Web Dashboard (The bot dev's dream)
+##### On Hold
+- **Web Dashboard**  
+Make some of the features listed above configurable from a web page.
