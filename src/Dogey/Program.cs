@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 
 namespace Dogey
 {
     class Program
     {
-        static Task Main(string[] args)
-            => Startup.RunAsync(args);
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World!");
+        }
     }
 }
