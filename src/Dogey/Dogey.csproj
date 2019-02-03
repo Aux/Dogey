@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Colorful.Console" Version="1.2.9" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Dogey.Core\Dogey.Core.csproj" />
   </ItemGroup>
 
