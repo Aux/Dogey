@@ -7,7 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dogey.Core", "src\Dogey.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dogey", "src\Dogey\Dogey.csproj", "{56A53137-3296-4897-88BF-6D928411CAB6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dogey.Web", "src\Dogey.Web\Dogey.Web.csproj", "{ACD6AC84-6511-41A9-919B-A3633E75E26A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dogey.Web", "src\Dogey.Web\Dogey.Web.csproj", "{ACD6AC84-6511-41A9-919B-A3633E75E26A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{95FAF49F-64A7-4709-8983-17CB507D7B73}"
+	ProjectSection(SolutionItems) = preProject
+		dogey_banner_example.png = dogey_banner_example.png
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
