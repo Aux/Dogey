@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -73,6 +74,7 @@ namespace Dogey.Logging
 
             File.AppendAllText(_logFile, logText);
             SendConsole(log);
+            Debug.Write(logText);
         }
 
         private void SendConsole(DogeyLogMessage log)

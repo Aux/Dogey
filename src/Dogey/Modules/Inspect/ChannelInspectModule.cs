@@ -2,19 +2,21 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 
 namespace Dogey.Modules.Inspect
 {
     [Name("Inspect"), Group("channel")]
+    [RequireContext(ContextType.Guild)]
     public class ChannelInspectModule : DogeyModuleBase
     {
         [Command]
         [Summary("Inspect the properties of this channel")]
         public Task ChannelAsync()
-            => ChannelAsync(Context.Channel);
+            => ChannelAsync(Context.Channel as SocketGuildChannel);
         [Command]
         [Summary("Inspect the properties of a specified channel")]
-        public async Task ChannelAsync([Remainder]IChannel channel)
+        public async Task ChannelAsync([Remainder]SocketGuildChannel channel)
         {
             var embed = new EmbedBuilder()
                 .WithTitle(channel.Name + $" ({channel.Id})")

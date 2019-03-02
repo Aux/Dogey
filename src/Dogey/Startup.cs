@@ -50,6 +50,7 @@ namespace Dogey
 
             provider.GetRequiredService<LoggingService>().Start();
             provider.GetRequiredService<StartupService>().Start();
+            provider.GetRequiredService<CommandHandlingService>().Start();
 
             await Task.Delay(-1);
         }
@@ -72,6 +73,8 @@ namespace Dogey
             // Internal
             .AddSingleton<StartupService>()
             .AddSingleton<LoggingService>()
+            .AddSingleton<CommandHandlingService>()
+            .AddTransient<ScriptHandlingService>()
 
             // Etc
             .AddLogging()

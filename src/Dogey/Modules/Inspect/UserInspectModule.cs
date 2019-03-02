@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 
 namespace Dogey.Modules.Inspect
 {
@@ -14,7 +15,7 @@ namespace Dogey.Modules.Inspect
             => UserAsync(Context.User);
         [Command]
         [Summary("Inspect the properties of a specified user")]
-        public async Task UserAsync([Remainder]IUser user)
+        public async Task UserAsync([Remainder]SocketUser user)
         {
             var embed = new EmbedBuilder()
                 .WithTitle(user.ToString() + $" ({user.Id})")
