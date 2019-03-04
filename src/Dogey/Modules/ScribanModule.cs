@@ -35,6 +35,7 @@ namespace Dogey.Modules
         public async Task EvalAsync([Remainder]string text)
         {
             var context = new TemplateContext();
+            context.EnableRelaxedMemberAccess = true;
             context.PushGlobal(new DiscordFunctions(Context));
             context.PushGlobal(new BuiltinFunctions());
 
@@ -43,9 +44,14 @@ namespace Dogey.Modules
             if (template.HasErrors)
                 await ReplyAsync(string.Join("\n", template.Messages));
             else
+            {
+                var result = template.Render(context);
+                if (string.IsNullOrWhiteSpace(result))
+                    return;
                 await ReplyEmbedAsync(new EmbedBuilder()
                     .WithTitle("Result")
-                    .WithDescription(template.Render(context)));
+                    .WithDescription(result));
+            }
         }
     }
 }
