@@ -6,14 +6,13 @@ namespace Dogey.Scripting
 {
     public class ConfigFunctions : ScriptObject
     {
-        private readonly IConfiguration _config;
-
         public ConfigFunctions(IConfiguration config)
         {
-            _config = config;
+            var configFuncs = new ScriptObject();
+            configFuncs.Import("get", new Func<string, string>((path) => config[path]));
+            configFuncs.Import("set", new Action<string, string>((path, value) => config[path] = value));
 
-            this.Import("getconfig", new Func<string, string>((path) => _config[path]));
-            this.Import("setconfig", new Action<string, string>((path, value) => _config[path] = value));
+            SetValue("config", configFuncs, true);
         }
     }
 }

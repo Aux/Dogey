@@ -3,6 +3,7 @@ using Discord;
 using Discord.Commands;
 using Dogey.Scripting;
 using Dogey.Services;
+using Microsoft.Extensions.Configuration;
 using Scriban;
 using Scriban.Functions;
 using Scriban.Runtime;
@@ -13,10 +14,12 @@ namespace Dogey.Modules
     public class ScribanModule : DogeyModuleBase
     {
         private readonly ScriptHandlingService _scripter;
+        private readonly IConfiguration _config;
 
-        public ScribanModule(ScriptHandlingService scripter)
+        public ScribanModule(ScriptHandlingService scripter, IConfiguration config)
         {
             _scripter = scripter;
+            _config = config;
         }
 
         [Command("file")]
@@ -37,6 +40,7 @@ namespace Dogey.Modules
             var context = new TemplateContext();
             context.EnableRelaxedMemberAccess = true;
             context.PushGlobal(new DiscordFunctions(Context));
+            context.PushGlobal(new ConfigFunctions(_config));
             context.PushGlobal(new BuiltinFunctions());
 
             var template = Template.Parse(text);
