@@ -11,7 +11,7 @@
             }
         }
 
-        public string SuccessEmoji { get; set; } = ":thumbs_up:";
+        public CommandOptions Commands { get; set; }
         public DiscordOptions Discord { get; set; }
         public LoggingOptions Logging { get; set; }
     }

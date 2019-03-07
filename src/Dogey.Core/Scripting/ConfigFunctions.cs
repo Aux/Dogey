@@ -9,8 +9,13 @@ namespace Dogey.Scripting
         public ConfigFunctions(IConfiguration config)
         {
             var configFuncs = new ScriptObject();
-            configFuncs.Import("get", new Func<string, string>((path) => config[path]));
-            configFuncs.Import("set", new Action<string, string>((path, value) => config[path] = value));
+            configFuncs.Import("getstring", new Func<string, string>((path) => config[path]));
+            configFuncs.Import("getnumber", new Func<string, float?>((path) => 
+            {
+                if (float.TryParse(config[path], out float value))
+                    return value;
+                return null;
+            }));
 
             SetValue("config", configFuncs, true);
         }

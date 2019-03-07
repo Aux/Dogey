@@ -5,6 +5,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Dogey.Config;
+using Dogey.Databases;
 using Dogey.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,7 +75,14 @@ namespace Dogey
             .AddSingleton<StartupService>()
             .AddSingleton<LoggingService>()
             .AddSingleton<CommandHandlingService>()
+
             .AddTransient<ScriptHandlingService>()
+            .AddTransient<PrefixService>()
+
+            .AddTransient<ConfigDatabase>()
+            .AddTransient<ConfigController>()
+            .AddTransient<LogDatabase>()
+            .AddTransient<LogController>()
 
             // Etc
             .AddLogging()

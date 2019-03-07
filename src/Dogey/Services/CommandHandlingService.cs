@@ -15,19 +15,20 @@ namespace Dogey.Services
         private readonly IServiceProvider _provider;
         private readonly DiscordSocketClient _discord;
         private readonly CommandService _commands;
-
-        public const string Prefix = "$";
+        private readonly PrefixService _prefix;
 
         public CommandHandlingService(
             ILogger<CommandHandlingService> logger,
             IServiceProvider provider,
             DiscordSocketClient discord,
-            CommandService commands)
+            CommandService commands,
+            PrefixService prefix)
         {
             _logger = logger;
             _provider = provider;
             _discord = discord;
             _commands = commands;
+            _prefix = prefix;
         }
         
         public override void Start()
@@ -42,16 +43,6 @@ namespace Dogey.Services
             _logger.LogInformation("Stopped");
         }
         
-        public bool IsCommand(DogeyCommandContext context, string prefix, out int argPos)
-        {
-            argPos = 0;
-            if (context.User.Id == _discord.CurrentUser.Id)
-                return false;
-
-            var hasStringPrefix = prefix == null ? false : context.Message.HasStringPrefix(prefix, ref argPos);
-            return (hasStringPrefix || context.Message.HasMentionPrefix(_discord.CurrentUser, ref argPos));
-        }
-
         private Task OnMessageReceivedAsync(SocketMessage s)
         {
             _ = Task.Run(async () =>
@@ -59,14 +50,13 @@ namespace Dogey.Services
                 if (!(s is SocketUserMessage msg)) return;
 
                 var context = new DogeyCommandContext(_discord, msg);
-                if (IsCommand(context, Prefix, out int argPos))
+                if (_prefix.TryGetPosition(context, out int argPos))
                 {
-                    using (context.Channel.EnterTypingState())
-                    {
-                        await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
-                    }
+                    var typing = context.Channel.EnterTypingState();
+                    await ExecuteAsync(context, _provider, context.Message.Content.Substring(argPos));
+                    typing.Dispose();
                 }
-        });
+            });
             return Task.CompletedTask;
         }
 
@@ -85,7 +75,7 @@ namespace Dogey.Services
                     .OrderByDescending(x => x.Command.Parameters.Count())
                     .FirstOrDefault().Command;
 
-                var builder = new StringBuilder(Prefix + command.Name);
+                var builder = new StringBuilder(context.Client.CurrentUser.Mention + " " + command.Name);
                 if (command.Parameters.Count > 0)
                 {
                     // !name <required> [optional=1]
