@@ -68,11 +68,15 @@ namespace Dogey.Logging
 
             var fileInfo = new FileInfo(_logFile);
             if (!fileInfo.Exists)
+            {
                 fileInfo.Create().Dispose();
+                fileInfo.Refresh();
+            }
             if (fileInfo.Length + logText.Length > _maxFileSizeKb * 1000)
                 _duplicateLogFileCount++;
-
-            File.AppendAllText(_logFile, logText);
+            using (var writer = fileInfo.AppendText())
+                writer.Write(logText);
+            
             SendConsole(log);
             Debug.Write(logText);
         }
