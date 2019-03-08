@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Dogey.Scripting;
@@ -15,11 +16,13 @@ namespace Dogey.Modules
     {
         private readonly ScriptHandlingService _scripter;
         private readonly IConfiguration _config;
+        private readonly HttpClient _http;
 
-        public ScribanModule(ScriptHandlingService scripter, IConfiguration config)
+        public ScribanModule(ScriptHandlingService scripter, IConfiguration config, HttpClient http)
         {
             _scripter = scripter;
             _config = config;
+            _http = http;
         }
 
         [Command("file")]
@@ -41,6 +44,7 @@ namespace Dogey.Modules
             context.EnableRelaxedMemberAccess = true;
             context.PushGlobal(new DiscordFunctions(Context));
             context.PushGlobal(new ConfigFunctions(_config));
+            context.PushGlobal(new HttpFunctions(_http));
             context.PushGlobal(new BuiltinFunctions());
 
             var template = Template.Parse(text);

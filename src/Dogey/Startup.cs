@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -75,8 +76,8 @@ namespace Dogey
             .AddSingleton<StartupService>()
             .AddSingleton<LoggingService>()
             .AddSingleton<CommandHandlingService>()
+            .AddSingleton<ScriptHandlingService>()
 
-            .AddTransient<ScriptHandlingService>()
             .AddTransient<PrefixService>()
 
             .AddTransient<ConfigDatabase>()
@@ -87,6 +88,7 @@ namespace Dogey
             // Etc
             .AddLogging()
             .AddSingleton<Random>()
+            .AddSingleton<HttpClient>()
             .AddSingleton(Configuration);
         }
     }

@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using Dogey.Scripting;
 using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Functions;
@@ -20,10 +22,14 @@ namespace Dogey.Services
         public int TotalScripts { get; }
 
         private readonly ILogger<ScriptHandlingService> _logger;
+        private readonly BuiltinFunctions _builtinFunctions;
+        private readonly HttpClient _http;
 
-        public ScriptHandlingService(ILogger<ScriptHandlingService> logger)
+        public ScriptHandlingService(ILogger<ScriptHandlingService> logger, HttpClient http)
         {
             _logger = logger;
+            _builtinFunctions = new BuiltinFunctions();
+            _http = http;
 
             DefaultLexerOptions = new LexerOptions
             {
@@ -68,7 +74,8 @@ namespace Dogey.Services
         public string ExecuteAsync(Template template, ScriptObject scriptObject)
         {
             var timer = Stopwatch.StartNew();
-            var context = new TemplateContext(new BuiltinFunctions());
+            var context = new TemplateContext(_builtinFunctions);
+            context.PushGlobal(new HttpFunctions(_http));
             context.PushGlobal(scriptObject);
 
             var rendered = template.Render(context);
