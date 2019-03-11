@@ -13,7 +13,7 @@ using Scriban.Runtime;
 
 namespace Dogey.Services
 {
-    public class CommandHandlingService : Service
+    public class CommandHandlingService : BackgroundService
     {
         private readonly ILogger<CommandHandlingService> _logger;
         private readonly IServiceProvider _provider;

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dogey.Services
 {
-    public class LoggingService : Service
+    public class LoggingService : BackgroundService
     {
         private readonly ILoggerFactory _factory;
         private readonly DiscordSocketClient _discord;

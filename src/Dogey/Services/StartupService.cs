@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Dogey.Services
 {
-    public class StartupService : Service
+    public class StartupService : BackgroundService
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly IServiceProvider _provider;
