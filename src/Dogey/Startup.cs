@@ -8,6 +8,8 @@ using Discord.WebSocket;
 using Dogey.Config;
 using Dogey.Databases;
 using Dogey.Services;
+using Google.Apis.Services;
+using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using YamlDotNet.Serialization;
@@ -53,6 +55,7 @@ namespace Dogey
             provider.GetRequiredService<LoggingService>().Start();
             provider.GetRequiredService<StartupService>().Start();
             provider.GetRequiredService<CommandHandlingService>().Start();
+            provider.GetRequiredService<RssService>().Start();
 
             await Task.Delay(-1);
         }
@@ -71,11 +74,16 @@ namespace Dogey
                 CaseSensitiveCommands = false,
                 LogLevel = LogSeverity.Verbose
             }))
+            .AddSingleton(new YouTubeService(new BaseClientService.Initializer
+            {
+                ApiKey = Configuration["google:token"]
+            }))
 
             // Internal
             .AddSingleton<StartupService>()
             .AddSingleton<LoggingService>()
             .AddSingleton<CommandHandlingService>()
+            .AddSingleton<RssService>()
             .AddSingleton<ScriptHandlingService>()
 
             .AddTransient<PrefixService>()

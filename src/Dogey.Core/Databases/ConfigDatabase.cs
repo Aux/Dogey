@@ -9,7 +9,7 @@ namespace Dogey.Databases
     public class ConfigDatabase : DbContext
     {
         public DbSet<GuildConfig> Guilds { get; set; }
-        //public DbSet<ChannelConfig> Channels { get; set; }
+        public DbSet<RssFeed> RssFeeds { get; set; }
 
         public ConfigDatabase()
         {
