@@ -60,6 +60,34 @@ namespace Dogey.Services
             _delay = new CancellationTokenSource();
         }
 
+        private IEnumerable<RssArticle> ParseGeneric(XElement node, RssFeed feed)
+        {
+            var articles = node
+                .Element("channel")
+                .Elements("item")
+                .Select(x => new RssArticle
+                {
+                    FeedId = feed.Id,
+                    Title = x.Element("title")?.Value,
+                    Link = x.Element("link")?.Value,
+                    PublishedAt = DateTime.Parse(x.Element("pubDate").Value)
+                });
+            return articles;
+        }
+
+        private IEnumerable<RssArticle> ParseAtom(XElement node, RssFeed feed)
+        {
+            var articles = node.Elements("{http://www.w3.org/2005/Atom}entry")
+                .Select(x => new RssArticle
+                {
+                    FeedId = feed.Id,
+                    Title = x.Element("{http://www.w3.org/2005/Atom}title")?.Value,
+                    Link = x.Element("{http://www.w3.org/2005/Atom}link")?.Attribute("href")?.Value,
+                    PublishedAt = DateTime.Parse(x.Element("{http://www.w3.org/2005/Atom}published").Value)
+                });
+            return articles;
+        }
+
         private async Task RunAsync(CancellationToken cancellationToken)
         {
             try
@@ -84,25 +112,13 @@ namespace Dogey.Services
 
                         var articles = new List<RssArticle>();
                         if (rssNode != null)
-                        {
-
-                        } else
+                            articles.AddRange(ParseGeneric(rssNode, feed));
+                        else
                         if (atomNode != null)
-                        {
-                            articles.AddRange(atomNode
-                                .Elements("{http://www.w3.org/2005/Atom}entry")
-                                .Select(x => new RssArticle
-                                {
-                                    FeedId = feed.Id,
-                                    Title = x.Element("{http://www.w3.org/2005/Atom}title")?.Value,
-                                    Link = x.Element("{http://www.w3.org/2005/Atom}link")?.Attribute("href")?.Value,
-                                    PublishedAt = DateTime.Parse(x.Element("{http://www.w3.org/2005/Atom}published").Value)
-                                }));
-                        } else
-                        {
+                            articles.AddRange(ParseAtom(atomNode, feed));
+                        else
                             throw new InvalidOperationException("Unknown feed type found");
-                        }
-
+                        
                         articles = articles
                             .Where(x => x.PublishedAt > feed.UpdatedAt)
                             .OrderBy(x => x.PublishedAt)
