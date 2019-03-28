@@ -87,6 +87,7 @@ namespace Dogey
             .AddSingleton<ScriptHandlingService>()
 
             .AddTransient<PrefixService>()
+            .AddTransient<ResponsiveService>()
 
             .AddTransient<ConfigDatabase>()
             .AddTransient<ConfigController>()

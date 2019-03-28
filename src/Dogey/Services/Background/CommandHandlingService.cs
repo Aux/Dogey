@@ -75,10 +75,12 @@ namespace Dogey.Services
 
             if (result.Error == CommandError.UnknownCommand)
             {
-                if (_scripting.TryGetScript(input, out Template template))
+                var parameters = input.Split(' ');
+                if (_scripting.TryGetScript(parameters.FirstOrDefault(), out Template template))
                 {
                     var discordFunctions = new DiscordFunctions(context);
-                    var reply = _scripting.ExecuteAsync(template, discordFunctions);
+                    var paramFunctions = new ParameterFunctions(parameters.Skip(1).ToArray());
+                    var reply = _scripting.ExecuteAsync(template, discordFunctions, paramFunctions);
 
                     await context.Channel.SendMessageAsync(reply);
                     return;

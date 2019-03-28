@@ -1,5 +1,5 @@
 ﻿using Scriban.Runtime;
-using System;
+using System.Linq;
 
 namespace Dogey.Scripting
 {
@@ -8,10 +8,11 @@ namespace Dogey.Scripting
         public ParameterFunctions(string[] parameters)
         {
             var paramFunc = new ScriptObject();
+            paramFunc.SetValue("array", parameters, true);
             paramFunc.SetValue("value", string.Join(" ", parameters), true);
-            paramFunc.Import("get", new Func<int, string>((i) => parameters?[i]));
+            paramFunc.SetValue("count", parameters.Count(), true);
 
-            SetValue("params", paramFunc, true);
+            SetValue("parameters", paramFunc, true);
         }
     }
 }

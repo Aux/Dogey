@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using Dogey.Scripting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Scriban;
 using Scriban.Functions;
@@ -23,28 +24,32 @@ namespace Dogey.Services
 
         private readonly ILogger<ScriptHandlingService> _logger;
         private readonly BuiltinFunctions _builtinFunctions;
+        private readonly IConfiguration _config;
         private readonly HttpClient _http;
 
-        public ScriptHandlingService(ILogger<ScriptHandlingService> logger, HttpClient http)
+        public ScriptHandlingService(ILogger<ScriptHandlingService> logger, IConfiguration config, HttpClient http)
         {
             _logger = logger;
             _builtinFunctions = new BuiltinFunctions();
+            _config = config;
             _http = http;
 
             DefaultLexerOptions = new LexerOptions
             {
                 FrontMatterMarker = FrontMatterMarker,
-                Mode = ScriptMode.FrontMatterAndContent
+                Mode = ScriptMode.ScriptOnly
             };
 
             TotalScripts = GetScriptFiles("*").Length;
         }
 
-        private string[] GetScriptFiles(string fileName)
+        public string[] GetScriptFiles(string fileName)
             => Directory.GetFiles(ScriptsDirectory, fileName + ScriptExtension, SearchOption.AllDirectories);
-        private string GetRelativePath(string filePath)
+        public string GetRelativePath(string filePath)
             => "../" + new Uri(ScriptsDirectory).MakeRelativeUri(new Uri(filePath)).OriginalString;
-
+        public FileInfo GetFileInfo(string name)
+            => new FileInfo(Path.Combine(AppContext.BaseDirectory, "scripts", GetScriptFiles(name).FirstOrDefault()));
+        
         public Template GetScript(string name)
         {
             if (!TryGetScript(name, out Template value))
@@ -63,27 +68,30 @@ namespace Dogey.Services
             return true;
         }
 
-        public string ExecuteAsync(string name, ScriptObject scriptObject)
+        public string ExecuteAsync(string name, params ScriptObject[] scriptObjects)
         {
             if (!TryGetScript(name, out Template value))
                 return null;
             if (value.HasErrors)
                 return string.Join("\n", value.Messages);
-            return ExecuteAsync(value, scriptObject);
+            return ExecuteAsync(value, scriptObjects);
         }
-        public string ExecuteAsync(Template template, ScriptObject scriptObject)
+        public string ExecuteAsync(Template template, params ScriptObject[] scriptObjects)
         {
             var timer = Stopwatch.StartNew();
             var context = new TemplateContext(_builtinFunctions);
             context.PushGlobal(new HttpFunctions(_http));
-            context.PushGlobal(scriptObject);
+            context.PushGlobal(new ConfigFunctions(_config));
+            context.PushGlobal(new ParserFunctions());
+            foreach (var scriptObject in scriptObjects)
+                context.PushGlobal(scriptObject);
 
-            var rendered = template.Render(context);
+            var result = template.Render(context);
 
             timer.Stop();
             _logger.LogInformation($"Executed `{template.SourceFilePath}` in {timer.ElapsedMilliseconds}ms");
 
-            return rendered;
+            return result;
         }
     }
 }
