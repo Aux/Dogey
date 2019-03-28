@@ -4,7 +4,6 @@ using Dogey.Databases;
 using Dogey.Models;
 using Dogey.Modules;
 using Microsoft.Extensions.Configuration;
-using System;
 
 namespace Dogey.Services
 {
