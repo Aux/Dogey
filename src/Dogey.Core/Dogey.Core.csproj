@@ -9,13 +9,14 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.0.2-dev-01059" />
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.38.0.1488" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.2.0" />
     <PackageReference Include="Nancy.Hosting.Self" Version="1.4.1" />
     <PackageReference Include="NetEscapades.Configuration.Yaml" Version="1.6.0" />
+    <PackageReference Include="Octokit" Version="0.32.0" />
     <PackageReference Include="Scriban" Version="2.0.0" />
   </ItemGroup>
 

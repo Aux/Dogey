@@ -12,6 +12,7 @@ using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Octokit;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -78,6 +79,10 @@ namespace Dogey
             {
                 ApiKey = Configuration["google:token"]
             }))
+            .AddSingleton(new GitHubClient(new ProductHeaderValue("Dogey"))
+            {
+                Credentials = new Credentials(Configuration["github:token"])
+            })
 
             // Internal
             .AddSingleton<StartupService>()
