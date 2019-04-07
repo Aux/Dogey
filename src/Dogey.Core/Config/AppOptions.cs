@@ -15,6 +15,8 @@
             }
         }
 
+        public int RegexTimeoutSeconds = 5;
+
         public CommandOptions Commands { get; set; }
         public DiscordOptions Discord { get; set; }
         public GoogleOptions Google { get; set; }

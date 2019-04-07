@@ -1,6 +1,8 @@
 ﻿using Discord.WebSocket;
+using Dogey.Config;
 using Dogey.Databases;
 using Dogey.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -33,13 +35,20 @@ namespace Dogey.Services
         private readonly ILogger<RssService> _logger;
         private readonly HttpClient _http;
 
+        private readonly TimeSpan _regexTimeout;
+
         public RssService(
             DiscordSocketClient discord,
             ConfigController controller,
             ILogger<RssService> logger,
+            IConfiguration config,
             HttpClient http)
         {
             Feeds = new List<RssFeed>();
+
+            var options = new AppOptions();
+            config.Bind(options);
+            _regexTimeout = TimeSpan.FromSeconds(options.RegexTimeoutSeconds);
 
             _discord = discord;
             _controller = controller;
@@ -130,7 +139,7 @@ namespace Dogey.Services
                         
                         articles = articles
                             .Where(x => x.PublishedAt > feed.UpdatedAt)
-                            .Where(x => feed.Regex != null ? Regex.Match(x.Title, feed.Regex).Success : true)
+                            .Where(x => feed.Regex != null ? Regex.Match(x.Title, feed.Regex, RegexOptions.None, _regexTimeout).Success : true)
                             .OrderBy(x => x.PublishedAt)
                             .ToList();
 

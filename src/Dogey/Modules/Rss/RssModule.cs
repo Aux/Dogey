@@ -1,10 +1,12 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Dogey.Config;
 using Dogey.Databases;
 using Dogey.Models;
 using Dogey.Services;
 using Google.Apis.YouTube.v3;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 using System.Text;
@@ -21,11 +23,21 @@ namespace Dogey.Modules.Rss
         private readonly YouTubeService _youtube;
         private readonly RssService _rss;
 
-        public RssModule(ConfigController controller, YouTubeService youtube, RssService rss)
+        private readonly TimeSpan _regexTimeout;
+
+        public RssModule(
+            ConfigController controller, 
+            YouTubeService youtube,
+            IConfiguration config,
+            RssService rss)
         {
             _controller = controller;
             _youtube = youtube;
             _rss = rss;
+
+            var options = new AppOptions();
+            config.Bind(options);
+            _regexTimeout = TimeSpan.FromSeconds(options.RegexTimeoutSeconds);
         }
 
         [Command("add")]
@@ -40,7 +52,13 @@ namespace Dogey.Modules.Rss
             try
             {
                 Regex.Match("", regex);
-            } catch (Exception)
+            }
+            catch (RegexMatchTimeoutException rex)
+            {
+                ReplyAsync(rex.Message).GetAwaiter().GetResult();
+                return false;
+            }
+            catch
             {
                 ReplyAsync($"Invalid regex specified: `{regex}`").GetAwaiter().GetResult();
                 return false;
