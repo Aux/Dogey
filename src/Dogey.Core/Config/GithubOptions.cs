@@ -1,7 +1,7 @@
 ﻿namespace Dogey.Config
 {
-    public class GithubOptions
+    public class GithubOptions : ITokenOptions
     {
-        public string Token = "";
+        public string Token { get; set; } = "";
     }
 }

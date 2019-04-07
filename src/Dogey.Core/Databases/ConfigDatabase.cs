@@ -49,6 +49,7 @@ namespace Dogey.Databases
         public void Add(object config)
         {
             Database.Add(config);
+            Database.SaveChanges();
         }
     }
 }

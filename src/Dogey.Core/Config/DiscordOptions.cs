@@ -1,6 +1,6 @@
 ﻿namespace Dogey.Config
 {
-    public class DiscordOptions
+    public class DiscordOptions : ITokenOptions
     {
         public string Token { get; set; } = "";
     }

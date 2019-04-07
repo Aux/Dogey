@@ -6,7 +6,11 @@
         {
             if (isgenerating)
             {
+                Commands = new CommandOptions();
                 Discord = new DiscordOptions();
+                Google = new GoogleOptions();
+                Github = new GithubOptions();
+                Twitch = new TwitchOptions();
                 Logging = new LoggingOptions();
             }
         }
@@ -15,7 +19,7 @@
         public DiscordOptions Discord { get; set; }
         public GoogleOptions Google { get; set; }
         public GithubOptions Github { get; set; }
-        public WebOptions Web { get; set; }
+        public TwitchOptions Twitch { get; set; }
         public LoggingOptions Logging { get; set; }
     }
 }
