@@ -9,13 +9,13 @@ namespace Dogey.Modules.Rss
     public partial class RssModule : DogeyModuleBase
     {
         [Command("addyoutube")]
-        public Task AddYoutubeAsync(string channelName, [Remainder]SocketTextChannel channel = null)
-            => AddYoutubeAsync(channelName, channel ?? Context.Channel);
+        public Task AddYoutubeAsync(string channelName, SocketTextChannel channel = null, string regex = null)
+            => AddYoutubeAsync(channelName, channel ?? Context.Channel, regex);
         [Command("addyoutubeid")]
-        public Task AddYoutubeIdAsync(string channelId, [Remainder]SocketTextChannel channel = null)
-            => AddYoutubeAsync(channelId, channel ?? Context.Channel, true);
+        public Task AddYoutubeIdAsync(string channelId, SocketTextChannel channel = null, string regex = null)
+            => AddYoutubeAsync(channelId, channel ?? Context.Channel, regex, true);
 
-        private async Task AddYoutubeAsync(string value, IChannel channel, bool isId = false)
+        private async Task AddYoutubeAsync(string value, IChannel channel, string regex = null, bool isId = false)
         {
             var request = _youtube.Search.List("snippet");
             if (isId)
@@ -32,8 +32,8 @@ namespace Dogey.Modules.Rss
                 return;
             }
 
-            AddFeed($"https://www.youtube.com/feeds/videos.xml?channel_id={ytchannel.Snippet.ChannelId}", channel);
-            await ReplyAsync($"Added feed for youtube channel `{ytchannel.Snippet.ChannelTitle}`");
+            if (AddFeed($"https://www.youtube.com/feeds/videos.xml?channel_id={ytchannel.Snippet.ChannelId}", channel, regex)) 
+                await ReplyAsync($"Added feed for youtube channel `{ytchannel.Snippet.ChannelTitle}`");
         }
     }
 }

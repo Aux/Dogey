@@ -73,6 +73,7 @@ namespace Dogey
             {
                 DefaultRunMode = RunMode.Async,
                 CaseSensitiveCommands = false,
+                QuotationMarkAliasMap = null,
                 LogLevel = LogSeverity.Verbose
             }))
             .AddSingleton(new YouTubeService(new BaseClientService.Initializer

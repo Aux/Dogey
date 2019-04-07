@@ -1,10 +1,12 @@
 ﻿using Discord.WebSocket;
+using Dogey.Databases;
 using Dogey.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -27,20 +29,27 @@ namespace Dogey.Services
         private Task _runTask;
 
         private readonly DiscordSocketClient _discord;
+        private readonly ConfigController _controller;
         private readonly ILogger<RssService> _logger;
         private readonly HttpClient _http;
 
-        public RssService(DiscordSocketClient discord, ILogger<RssService> logger, HttpClient http)
+        public RssService(
+            DiscordSocketClient discord,
+            ConfigController controller,
+            ILogger<RssService> logger,
+            HttpClient http)
         {
             Feeds = new List<RssFeed>();
 
             _discord = discord;
+            _controller = controller;
             _logger = logger;
             _http = http;
         }
 
         public override void Start()
         {
+            Feeds.AddRange(_controller.Database.RssFeeds);
             _cts = new CancellationTokenSource();
             _delay = new CancellationTokenSource();
             _runTask = RunAsync(_cts.Token);
@@ -121,6 +130,7 @@ namespace Dogey.Services
                         
                         articles = articles
                             .Where(x => x.PublishedAt > feed.UpdatedAt)
+                            .Where(x => feed.Regex != null ? Regex.Match(x.Title, feed.Regex).Success : true)
                             .OrderBy(x => x.PublishedAt)
                             .ToList();
 

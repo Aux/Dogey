@@ -8,6 +8,7 @@ using Google.Apis.YouTube.v3;
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.Rss
@@ -28,37 +29,48 @@ namespace Dogey.Modules.Rss
         }
 
         [Command("add")]
-        public async Task AddAsync(Uri url, [Remainder]SocketTextChannel channel = null)
+        public async Task AddAsync(Uri url, SocketTextChannel channel = null, string regex = null)
         {
-            AddFeed(url.ToString(), channel);
+            AddFeed(url.ToString(), channel, regex);
             await ReplyAsync("Added feed");
         }
 
-        private void AddFeed(string url, IChannel channel)
+        private bool AddFeed(string url, IChannel channel, string regex)
         {
+            try
+            {
+                Regex.Match("", regex);
+            } catch (Exception)
+            {
+                ReplyAsync($"Invalid regex specified: `{regex}`").GetAwaiter().GetResult();
+                return false;
+            }
+
             channel = channel ?? Context.Channel;
             var feed = new RssFeed
             {
                 ChannelId = channel.Id,
-                Url = url
+                Url = url,
+                Regex = string.IsNullOrWhiteSpace(regex) ? null : regex
             };
             _controller.Add(feed);
             _rss.Feeds.Add(feed);
+            return true;
         }
 
         [Command("remove")]
-        public async Task RemoveAsync(Uri url, [Remainder]SocketTextChannel channel)
+        public async Task RemoveAsync(ulong id)
         {
-            var feed = _controller.Database.RssFeeds.SingleOrDefault(x => x.Url == url.ToString());
+            var feed = _controller.Database.RssFeeds.SingleOrDefault(x => x.Id == id);
             if (feed == null)
             {
                 await ReplyAsync("No feed was found for the specified url");
                 return;
             }
 
-            _controller.Database.Remove(feed);
+            _controller.Database.RssFeeds.Remove(feed);
             _rss.Feeds.Remove(feed);
-            await ReplyAsync("Removed feed");
+            await ReplyAsync($"Removed feed `{feed.Id}` from {MentionUtils.MentionChannel(feed.ChannelId)}");
         }
 
         [Command("list")]
@@ -70,7 +82,10 @@ namespace Dogey.Modules.Rss
 
             var builder = new StringBuilder();
             foreach (var feed in feeds)
-                builder.AppendLine($"{((SocketTextChannel)Context.Client.GetChannel(feed.ChannelId)).Mention} {feed.Url}");
+            {
+                var regex = feed.Regex == null ? "" : $"`{feed.Regex}` ";
+                builder.AppendLine($"{feed.Id}. {((SocketTextChannel)Context.Client.GetChannel(feed.ChannelId)).Mention} {regex}{feed.Url}");
+            }
 
             await ReplyEmbedAsync(new EmbedBuilder()
                 .WithTitle($"Available Feeds ({feeds.Count()})")
