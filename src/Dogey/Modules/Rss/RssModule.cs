@@ -41,29 +41,14 @@ namespace Dogey.Modules.Rss
         }
 
         [Command("add")]
-        public async Task AddAsync(Uri url, SocketTextChannel channel = null, string regex = null)
+        public async Task AddAsync(Uri url, SocketTextChannel channel = null, Regex regex = null)
         {
-            AddFeed(url.ToString(), channel, regex);
+            AddFeed(url.ToString(), channel, regex.ToString());
             await ReplyAsync("Added feed");
         }
 
         private bool AddFeed(string url, IChannel channel, string regex)
         {
-            try
-            {
-                Regex.Match("", regex);
-            }
-            catch (RegexMatchTimeoutException rex)
-            {
-                ReplyAsync(rex.Message).GetAwaiter().GetResult();
-                return false;
-            }
-            catch
-            {
-                ReplyAsync($"Invalid regex specified: `{regex}`").GetAwaiter().GetResult();
-                return false;
-            }
-
             channel = channel ?? Context.Channel;
             var feed = new RssFeed
             {

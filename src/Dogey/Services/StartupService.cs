@@ -1,15 +1,16 @@
-﻿using System;
-using System.Reflection;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.Rest;
 using Discord.WebSocket;
+using Dogey.Commands.Readers;
 using Dogey.Config;
 using Dogey.Logging;
-using Dogey.Modules.Readers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Dogey.Services
 {
@@ -54,6 +55,7 @@ namespace Dogey.Services
             _commands.AddTypeReader<RestGuild>(guildReader);
             _commands.AddTypeReader<SocketGuild>(guildReader);
             _commands.AddTypeReader<Uri>(new UriTypeReader());
+            _commands.AddTypeReader<Regex>(new RegexTypeReader());
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
         }

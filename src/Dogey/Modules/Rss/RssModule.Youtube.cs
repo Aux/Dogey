@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Dogey.Modules.Rss
@@ -9,11 +10,11 @@ namespace Dogey.Modules.Rss
     public partial class RssModule : DogeyModuleBase
     {
         [Command("addyoutube")]
-        public Task AddYoutubeAsync(string channelName, SocketTextChannel channel = null, string regex = null)
-            => AddYoutubeAsync(channelName, channel ?? Context.Channel, regex);
+        public Task AddYoutubeAsync(string channelName, SocketTextChannel channel = null, Regex regex = null)
+            => AddYoutubeAsync(channelName, channel ?? Context.Channel, regex.ToString());
         [Command("addyoutubeid")]
-        public Task AddYoutubeIdAsync(string channelId, SocketTextChannel channel = null, string regex = null)
-            => AddYoutubeAsync(channelId, channel ?? Context.Channel, regex, true);
+        public Task AddYoutubeIdAsync(string channelId, SocketTextChannel channel = null, Regex regex = null)
+            => AddYoutubeAsync(channelId, channel ?? Context.Channel, regex.ToString(), true);
 
         private async Task AddYoutubeAsync(string value, IChannel channel, string regex = null, bool isId = false)
         {
