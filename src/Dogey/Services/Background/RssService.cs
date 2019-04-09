@@ -29,6 +29,7 @@ namespace Dogey.Services
 
         private CancellationTokenSource _cts, _delay;
         private Task _runTask;
+        private int _iteration = 0;
 
         private readonly DiscordSocketClient _discord;
         private readonly ConfigController _controller;
@@ -112,6 +113,9 @@ namespace Dogey.Services
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
+                    _iteration++;
+                    _logger.LogInformation($"Beginning poll #{_iteration}");
+
                     var queue = new Queue<RssFeed>(Feeds);
                     while (queue.Count > 0)
                     {
@@ -158,7 +162,10 @@ namespace Dogey.Services
                     {
                         await Task.Delay(TimeSpan.FromMinutes(5), _delay.Token);
                     }
-                    catch { }
+                    catch
+                    {
+                        _logger.LogWarning("Poll delay cancelled");
+                    }
                 }
             }
             catch (Exception ex)
