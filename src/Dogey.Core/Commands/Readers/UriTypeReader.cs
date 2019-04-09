@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Discord.Commands;
 
-namespace Dogey.Modules.Readers
+namespace Dogey.Commands.Readers
 {
     public class UriTypeReader : TypeReader
     {

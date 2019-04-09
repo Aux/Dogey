@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace Dogey.Modules.Readers
+namespace Dogey.Commands.Readers
 {
     public class GuildTypeReader : TypeReader
     {
