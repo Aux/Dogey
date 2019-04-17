@@ -11,6 +11,7 @@
                 Google = new GoogleOptions();
                 Github = new GithubOptions();
                 Twitch = new TwitchOptions();
+                Scripting = new ScriptingOptions();
                 Logging = new LoggingOptions();
             }
         }
@@ -22,6 +23,7 @@
         public GoogleOptions Google { get; set; }
         public GithubOptions Github { get; set; }
         public TwitchOptions Twitch { get; set; }
+        public ScriptingOptions Scripting { get; set; }
         public LoggingOptions Logging { get; set; }
     }
 }
