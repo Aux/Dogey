@@ -18,7 +18,7 @@ namespace Dogey.Services
         private readonly ILogger<CommandHandlingService> _logger;
         private readonly IServiceProvider _provider;
         private readonly DiscordSocketClient _discord;
-        private readonly ScriptHandlingService _scripting;
+        private readonly ScriptingService _scripting;
         private readonly CommandService _commands;
         private readonly PrefixService _prefix;
 
@@ -26,7 +26,7 @@ namespace Dogey.Services
             ILogger<CommandHandlingService> logger,
             IServiceProvider provider,
             DiscordSocketClient discord,
-            ScriptHandlingService scripting,
+            ScriptingService scripting,
             CommandService commands,
             PrefixService prefix)
         {
@@ -76,13 +76,10 @@ namespace Dogey.Services
             if (result.Error == CommandError.UnknownCommand)
             {
                 var parameters = input.Split(' ');
-                if (_scripting.TryGetScript(parameters.FirstOrDefault(), out Template template))
+                if (_scripting.TryExecuteScript(parameters.FirstOrDefault().ToLower(), context, out string scriptReply))
                 {
-                    var discordFunctions = new DiscordFunctions(context);
-                    var paramFunctions = new ParameterFunctions(parameters.Skip(1).ToArray());
-                    var reply = _scripting.ExecuteAsync(template, discordFunctions, paramFunctions);
-
-                    await context.Channel.SendMessageAsync(reply);
+                    if (!string.IsNullOrWhiteSpace(scriptReply))
+                        await context.Channel.SendMessageAsync(scriptReply);
                     return;
                 }
             }

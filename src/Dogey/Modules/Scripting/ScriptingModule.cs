@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
-using Dogey.Services;
-using Scriban;
+using Dogey.Scripting;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,34 +8,46 @@ using System.Threading.Tasks;
 namespace Dogey.Modules.Scripting
 {
     [Name("Scripting"), Group("script")]
-    public partial class ScriptingModule : DogeyModuleBase
+    public class ScriptingModule : DogeyModuleBase
     {
-        private readonly ScriptHandlingService _scripter;
+        private readonly ScriptingService _scripting;
 
-        public ScriptingModule(ScriptHandlingService scripter)
+        public ScriptingModule(ScriptingService scripting)
         {
-            _scripter = scripter;
+            _scripting = scripting;
         }
 
         [Command("show")]
-        public async Task ShowAsync(string name)
+        public Task ShowAsync(string name)
         {
-            var file = _scripter.GetFileInfo(name);
-            if (!_scripter.TryGetScript(name, out Template template))
-            {
-                await ReplyAsync($"A script by the name of `{name}` was not found.");
-                return;
-            }
+            var filePath = _scripting.GetScriptPath(name);
+            if (filePath != null)
+                return ShowInternalAsync(filePath);
 
-            await ReplyEmbedAsync(new EmbedBuilder()
-                .WithTitle($"Contents of {template.SourceFilePath}")
-                .WithDescription(Format.Code(File.ReadAllText(file.FullName), "bash")));
+            var part = name.Split('.');
+            if (part.Length == 2)
+                return ShowAsync(part[0], part[1]);
+            else
+                return ReplyAsync($"`{name}` is not a valid script file");
+        }
+        [Command("show")]
+        public Task ShowAsync(string name, string extension)
+        {
+            var file = _scripting.GetScriptPath(name, extension);
+            return ShowInternalAsync(file);
+        }
+
+        private Task ShowInternalAsync(string filePath)
+        {
+            return ReplyEmbedAsync(new EmbedBuilder()
+                .WithTitle($"Contents of {ScriptingService.GetRelativePath(filePath)}")
+                .WithDescription(Format.Code(File.ReadAllText(filePath), Path.GetExtension(filePath).Substring(1))));
         }
 
         [Command("list")]
         public async Task ListAsync()
         {
-            var scriptFiles = _scripter.GetScriptFiles("*");
+            var scriptFiles = _scripting.GetScriptFilePaths();
 
             await ReplyEmbedAsync(new EmbedBuilder()
                 .WithTitle($"Available Scripts ({scriptFiles.Count()})")

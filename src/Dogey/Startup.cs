@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Dogey.Config;
 using Dogey.Databases;
+using Dogey.Scripting;
 using Dogey.Services;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
@@ -90,7 +91,7 @@ namespace Dogey
             .AddSingleton<LoggingService>()
             .AddSingleton<CommandHandlingService>()
             .AddSingleton<RssService>()
-            .AddSingleton<ScriptHandlingService>()
+            .AddSingleton<ScriptingService>()
 
             .AddTransient<PrefixService>()
             .AddTransient<ResponsiveService>()
