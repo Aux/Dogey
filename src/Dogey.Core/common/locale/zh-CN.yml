@@ -1,0 +1,13 @@
+﻿name: 'Chinese (Simplified)'
+
+formatting:
+  date: "yyyy/M/d"
+  time: "H:mm:ss"
+  decimal: "."
+  digit: ","
+  list: ","
+  
+options:
+  locale_get: "您的语言当前为{name}`{code}`"
+  locale_set: "您的语言现在为{name}`{code}`"
+  locale_not_found: "未配置语言`{code}`"

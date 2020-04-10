@@ -1,0 +1,13 @@
+﻿name: 'Spanish (Spain)'
+
+formatting:
+  date: "dd/MM/yyyy"
+  time: "H:mm:ss"
+  decimal: ","
+  digit: "."
+  list: ";"
+
+options:
+  locale_get: "Tu idioma es actualmente {name} `{code}`"
+  locale_set: "Tu idioma es ahora {name} `{code}`"
+  locale_not_found: "El idioma `{code}` no está configurado"

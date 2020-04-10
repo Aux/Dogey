@@ -1,33 +1,20 @@
 ﻿using Discord;
 using Discord.Commands;
-using Discord.Rest;
-using System.IO;
+using Dogey.Services;
 using System.Threading.Tasks;
 
-namespace Dogey
+namespace Dogey.Commands
 {
-    public class DogeyModuleBase : ModuleBase<DogeyCommandContext>
+    public abstract class DogeyModuleBase : ModuleBase<DogeyCommandContext>
     {
-        protected readonly RootController _root;
+        protected readonly LocaleService _locale;
 
-        public DogeyModuleBase(RootController root)
+        public DogeyModuleBase(LocaleService locale)
         {
-            _root = root;
+            _locale = locale;
         }
 
-        public async Task ReplySuccessAsync()
-            => await Context.Message.AddReactionAsync(await _root.GetSuccessEmojiAsync(Context.Guild, Context.Channel as IGuildChannel));
-
-        public Task<IUserMessage> ReplyEmbedAsync(Embed embed)
-            => ReplyAsync("", false, embed, null);
-        public Task<IUserMessage> ReplyEmbedAsync(EmbedBuilder builder)
-            => ReplyAsync("", false, builder.Build(), null);
-
-        public Task ReplyReactionAsync(IEmote emote)
-            => Context.Message.AddReactionAsync(emote);
-
-        public Task<RestUserMessage> ReplyFileAsync(Stream stream, string fileName, string message = null)
-            => Context.Channel.SendFileAsync(stream, fileName, message, false, null);
-        
+        public Task ReplyAsync(Embed embed, RequestOptions options = null)
+            => ReplyAsync("", false, embed, options);
     }
 }

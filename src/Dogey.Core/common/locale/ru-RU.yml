@@ -1,0 +1,13 @@
+﻿name: 'Russian (Russia)'
+
+formatting:
+  date: "dd.MM.yyyy"
+  time: "H:mm:ss"
+  decimal: ","
+  digit: ""
+  list: ";"
+  
+options:
+  locale_get: "Ваш язык в настоящее время {name} `{code}`"
+  locale_set: "Ваш язык теперь {name} `{code}`"
+  locale_not_found: "Язык `{code}` не настроен"

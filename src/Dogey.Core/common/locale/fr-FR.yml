@@ -1,0 +1,13 @@
+﻿name: 'French (France)'
+
+formatting:
+  date: "dd/MM/yyyy"
+  time: "HH:mm:ss"
+  decimal: ","
+  digit: ""
+  list: ";"
+  
+options:
+  locale_get: "Votre langue est actuellement {name} `{code}`"
+  locale_set: "Votre langue est maintenant {name} `{code}`"
+  locale_not_found: "La langue `{code}` n'est pas configurée"

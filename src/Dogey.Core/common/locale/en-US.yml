@@ -1,0 +1,13 @@
+﻿name: 'English (United States)'
+
+formatting:
+  date: "M/D/yyyy"
+  time: "h:mm:ss tt"
+  decimal: "."
+  digit: ","
+  list: ","
+
+options:
+  locale_get: "Your language is currently {name} `{code}`"
+  locale_set: "Your language is now {name} `{code}`"
+  locale_not_found: "The language `{code}` is not configured"

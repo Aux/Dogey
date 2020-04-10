@@ -2,7 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace Dogey
+namespace Dogey.Commands
 {
     public class DogeyCommandContext : ICommandContext
     {
