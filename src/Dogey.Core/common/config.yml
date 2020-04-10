@@ -1,1 +1,12 @@
-﻿
+﻿locale:
+  default: en-US
+
+discord:
+  token: ""
+
+logging:
+  use_color_output: true
+  use_relative_output: true
+  max_file_size_kb: 5000
+  output_directory: "logs"
+  date_time_format: "yyyy-MM-dd""
