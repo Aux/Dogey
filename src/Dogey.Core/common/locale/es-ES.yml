@@ -5,9 +5,13 @@ formatting:
   time: "H:mm:ss"
   decimal: ","
   digit: "."
-  list: ";"
+  list: "; "
 
 options:
-  locale_get: "Tu idioma es actualmente {name} `{code}`"
-  locale_set: "Tu idioma es ahora {name} `{code}`"
-  locale_not_found: "El idioma `{code}` no está configurado"
+  locale_get: "Tu idioma es actualmente `{Code}`"
+  locale_set: "Tu idioma es ahora `{Code}`"
+  locale_not_found: "El idioma `{Code}` no está configurado"
+  
+gdpr:
+  user_data_null: "Lo sentimos {Username}, no tiene datos para exportar."
+  user_data_get: "{Username}, verifique sus mensajes privados."

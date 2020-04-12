@@ -5,9 +5,13 @@ formatting:
   time: "H:mm:ss"
   decimal: ","
   digit: ""
-  list: ";"
+  list: "; "
   
 options:
-  locale_get: "Ваш язык в настоящее время {name} `{code}`"
-  locale_set: "Ваш язык теперь {name} `{code}`"
-  locale_not_found: "Язык `{code}` не настроен"
+  locale_get: "Ваш язык в настоящее время `{Code}`"
+  locale_set: "Ваш язык теперь `{Code}`"
+  locale_not_found: "Язык `{Code}` не настроен"
+  
+gdpr:
+  user_data_null: "Извините, {Username}, у вас нет данных для экспорта."
+  user_data_get: "{Username}, пожалуйста, проверьте ваши личные сообщения."
