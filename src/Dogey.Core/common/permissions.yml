@@ -1,0 +1,15 @@
+﻿groups:
+  - name: Default
+    description: Nodes in this group will be assigned to users without a configured role.
+    default: true
+    children:
+      - "options.locale"
+  - name: Admin
+    description: 
+    permission_bind: Administrator
+    children:
+      - "*"
+  - name: Blocked
+    description: Users or roles assigned to this group will have no access to the bot.
+    children:
+      - "-*"
