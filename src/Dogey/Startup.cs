@@ -15,7 +15,6 @@ namespace Dogey
     public class Startup
     {
         private IConfiguration _config;
-        private LocaleService _locales;
 
         public Startup(string[] args)
         {
@@ -24,7 +23,6 @@ namespace Dogey
                 .AddYamlFile("config.yml")
                 .AddCommandLine(args);
             _config = builder.Build();
-            _locales = new LocaleService(_config);
         }
 
         public async Task StartAsync()
@@ -42,6 +40,7 @@ namespace Dogey
 
             provider.GetRequiredService<ILoggerFactory>().AddProvider(new BotLoggerProvider(_config));
             provider.GetRequiredService<LoggingService>().Start();
+            provider.GetRequiredService<CommandHandlingService>().Start();
 
             await Task.Delay(-1);
         }
@@ -60,8 +59,10 @@ namespace Dogey
                     IgnoreExtraArgs = false
                 }))
                 .AddSingleton(_config)
-                .AddSingleton(_locales)
+                .AddSingleton<LocaleService>()
                 .AddSingleton<LoggingService>()
+                .AddSingleton<CommandHandlingService>()
+                .AddDbContext<RootDatabase>()
                 .AddLogging();
         }
     }
